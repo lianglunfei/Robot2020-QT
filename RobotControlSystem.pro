@@ -44,7 +44,8 @@ SOURCES += \
     jointcontrol.cpp \
     controls.cpp \
     offlinecontrol.cpp \
-    incompletecombox.cpp
+    incompletecombox.cpp \
+    controltableview.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -70,7 +71,8 @@ HEADERS += \
     doubleslider.h \
     controls.h \
     offlinecontrol.h \
-    incompletecombox.h
+    incompletecombox.h \
+    controltableview.h
 
 FORMS += \
         mainwindow.ui \
