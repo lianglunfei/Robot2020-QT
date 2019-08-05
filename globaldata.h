@@ -23,7 +23,7 @@ enum {
     CONNECT_TYPE_LINUX=1, CONNECT_TYPE_WINDOWS_ALYSIST
 };
 
-#define NODE_NUM 12
+#define NODE_NUM 14
 
 class GlobalData
 {

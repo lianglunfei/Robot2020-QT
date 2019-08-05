@@ -8,6 +8,10 @@
 
 #include <QStandardItemModel>
 
+#define BTN_START_INDEX NODE_NUM+3 //行按钮开始的位置=节点数+mode+time+name
+#define ROW_BTN_NUM 5 //按钮个数：上下移动、增加删除、运行
+#define BEFORE_VALUE_NUM 2 //节点数之前的数值个数：name、mode
+
 OfflineControl::OfflineControl(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::OfflineControl)
@@ -22,6 +26,13 @@ OfflineControl::OfflineControl(QWidget *parent) :
     addTableviewRow(0, 0, false);
 }
 
+/**
+*@projectName   RobotControlSystem
+*@brief         表头初始化，与BTN_START_INDEX、ROW_BTN_NUM、BEFORE_VALUE_NUM有关联
+*@parameter
+*@author        XingZhang.Wu
+*@date          20190805
+**/
 void OfflineControl::headerDataInit()
 {
     headerData.clear();
@@ -40,7 +51,6 @@ void OfflineControl::modelInit()
     model->setColumnCount(headerData.length());
     for(int i=0;i<headerData.length();i++) {
         model->setHeaderData(i,Qt::Horizontal,headerData[i]);
-        qDebug() << headerData[i];
     }
 }
 
@@ -55,6 +65,13 @@ void OfflineControl::tableViewInit()
     ui->tableView->setModel(model);
 }
 
+/**
+*@projectName   RobotControlSystem
+*@brief         valueList为初始化、新增表中行时的数据来源
+*@parameter
+*@author        XingZhang.Wu
+*@date          20190805
+**/
 void OfflineControl::valueListInit()
 {
     valueList.clear();
@@ -65,8 +82,16 @@ void OfflineControl::valueListInit()
     valueList << QObject::tr("500");
 }
 
-void OfflineControl::valueListAdd()
+/**
+*@projectName   RobotControlSystem
+*@brief         valueList为初始化、新增表中行时的数据来源
+*@parameter
+*@author        XingZhang.Wu
+*@date          20190805
+**/
+void OfflineControl::valueListUpdate()
 {
+    valueList.clear();
     valueList << ui->nameLineEdit->text();
     for(int i=0;i<NODE_NUM;i++) {
         valueList << QObject::tr("0");
@@ -74,19 +99,35 @@ void OfflineControl::valueListAdd()
     valueList << QString::number(ui->timeIntervalSpinBox->value());
 }
 
+/**
+*@projectName   RobotControlSystem
+*@brief         表中新增一行，通过重新设置model完成
+*@parameter
+*@author        XingZhang.Wu
+*@date          20190805
+**/
 void OfflineControl::addModelItemData(int row)
 {
     for(int i=0;i<valueList.length();i++) {
-        model->setItem(row,i,new QStandardItem(valueList.at(i)));
+        if(i==0)
+            model->setItem(row,i,new QStandardItem(valueList.at(i)));
+        else
+            model->setItem(row,i+1,new QStandardItem(valueList.at(i)));
     }
     //设置字符颜色
     model->item(row,0)->setForeground(QBrush(QColor(255, 0, 0)));
 }
 
+/**
+*@projectName   RobotControlSystem
+*@brief         表中新增一行widget，通过调用对应的model重新设置tableview完成
+*@parameter
+*@author        XingZhang.Wu
+*@date          20190805
+**/
 void OfflineControl::addTableviewRowWidget(int mode, int row, bool checkState, bool complete)
 {
     int column=valueList.length();
-    int btnNum=5;
 
     //为这个第2列添加下拉框
     IncompleteCombox *m_combox= new IncompleteCombox();
@@ -98,12 +139,12 @@ void OfflineControl::addTableviewRowWidget(int mode, int row, bool checkState, b
     ui->tableView->setIndexWidget(model->index(row, 1), m_combox);
     if(complete) {
         //为这个第i列添加按钮
-        QPushButton *m_button[btnNum];
+        QPushButton *m_button[ROW_BTN_NUM];
         QStringList iconPath;
         iconPath << tr(":/images/go.png") << tr(":/images/add.png")
                  << tr(":/images/delete.png") << tr(":/images/up.png")
                  << tr(":/images/down.png");
-        for(int i=0;i<btnNum;i++) {
+        for(int i=0;i<ROW_BTN_NUM;i++) {
             m_button[i] = new QPushButton();
             m_button[i]->setIcon(QIcon(iconPath[i]));
             connect(m_button[i], SIGNAL(clicked(bool)), this, SLOT(tableClickButton()));
@@ -119,17 +160,31 @@ void OfflineControl::addTableviewRowWidget(int mode, int row, bool checkState, b
     else
         m_checkBox->setChecked(false);
     m_checkBox->setProperty("row", row);  //为按钮设置row属性
-    ui->tableView->setIndexWidget(model->index(row, column+btnNum+1), m_checkBox);
+    ui->tableView->setIndexWidget(model->index(row, column+ROW_BTN_NUM+1), m_checkBox);
 }
 
-void OfflineControl::getModelRowValue(double* refValue, int row, int len)
+/**
+*@projectName   RobotControlSystem
+*@brief         获取表中某一行的数据
+*@parameter
+*@author        XingZhang.Wu
+*@date          20190805
+**/
+void OfflineControl::getModelRowValue(double* value, int row, int len)
 {
-    for(int i=2;i<len+2;i++)
+    for(int i=BEFORE_VALUE_NUM;i<len+BEFORE_VALUE_NUM;i++)
     {
-        refValue[i-2] = model->index(row,i).data().toDouble();
+        value[i-BEFORE_VALUE_NUM] = model->index(row,i).data().toDouble();
     }
 }
 
+/**
+*@projectName   RobotControlSystem
+*@brief         表中widget对应的事件函数
+*@parameter
+*@author        XingZhang.Wu
+*@date          20190805
+**/
 void OfflineControl::tableClickButton()
 {
     QPushButton *btn = (QPushButton *)sender();   //产生事件的对象
@@ -137,7 +192,7 @@ void OfflineControl::tableClickButton()
     int col = btn->property("column").toInt();  //取得按钮的列号属性
 
     switch (col) {
-    case NODE_NUM+3://run
+    case BTN_START_INDEX://run
         double value[NODE_NUM];
         double refValue[NODE_NUM];
         getModelRowValue(refValue, 0, NODE_NUM);
@@ -160,20 +215,20 @@ void OfflineControl::tableClickButton()
             Package::packOperateMulti(GlobalData::sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
         }
         break;
-    case NODE_NUM+4://add
+    case BTN_START_INDEX+1://add
         model->insertRow(row);
-        valueListAdd();
+        valueListUpdate();
         addTableviewRow(ui->spdPosSelectComboBox->currentIndex(), row, true);
         updateTablePropertyAfterLine(row,0);
         break;
-    case NODE_NUM+5://delete
+    case BTN_START_INDEX+2://delete
         model->removeRow(row);
         updateTablePropertyAfterLine(row,0);
         break;
-    case NODE_NUM+6://up
+    case BTN_START_INDEX+3://up
         if(row > 1) {
             int modeBak = qobject_cast<IncompleteCombox *>(ui->tableView->indexWidget(model->index(row,1)))->currentIndex();
-            bool checkBak = qobject_cast<QCheckBox *>(ui->tableView->indexWidget(model->index(row,20)))->isChecked();
+            bool checkBak = qobject_cast<QCheckBox *>(ui->tableView->indexWidget(model->index(row,BTN_START_INDEX+5)))->isChecked();
             QList<QStandardItem *> listItem = model->takeRow(row);
             model->insertRow(row-1,listItem);
             addTableviewRowWidget(modeBak,row-1,checkBak,true);
@@ -181,10 +236,10 @@ void OfflineControl::tableClickButton()
             updateTableRowProperty(row,row);
         }
         break;
-    case NODE_NUM+7://down
+    case BTN_START_INDEX+4://down
         if(row < model->rowCount()-1) {
             int modeBak = qobject_cast<IncompleteCombox *>(ui->tableView->indexWidget(model->index(row,1)))->currentIndex();
-            bool checkBak = qobject_cast<QCheckBox *>(ui->tableView->indexWidget(model->index(row,20)))->isChecked();
+            bool checkBak = qobject_cast<QCheckBox *>(ui->tableView->indexWidget(model->index(row,BTN_START_INDEX+5)))->isChecked();
             QList<QStandardItem *> listItem = model->takeRow(row);
             model->insertRow(row+1,listItem);
             addTableviewRowWidget(modeBak,row+1,checkBak,true);
@@ -197,6 +252,13 @@ void OfflineControl::tableClickButton()
     }
 }
 
+/**
+*@projectName   RobotControlSystem
+*@brief         更新表中对应的widget属性值
+*@parameter
+*@author        XingZhang.Wu
+*@date          20190805
+**/
 void OfflineControl::updateTableRowProperty(int row, int property)
 {
     int len=valueList.length();
@@ -216,6 +278,13 @@ void OfflineControl::updateTablePropertyAfterLine(int row, int offset)
     }
 }
 
+/**
+*@projectName   RobotControlSystem
+*@brief         表中新增一行，包括数据和widget
+*@parameter
+*@author        XingZhang.Wu
+*@date          20190805
+**/
 void OfflineControl::addTableviewRow(int mode, int row, bool hasWidget)
 {
     addModelItemData(row);
@@ -230,6 +299,6 @@ OfflineControl::~OfflineControl()
 
 void OfflineControl::on_addRecordPushButton_clicked()
 {
-    valueListAdd();
+    valueListUpdate();
     addTableviewRow(ui->spdPosSelectComboBox->currentIndex(), model->rowCount(), true);
 }

@@ -20,13 +20,13 @@ public:
 private:
     void headerDataInit();
     void valueListInit();
-    void valueListAdd();
+    void valueListUpdate();
     void modelInit();
     void tableViewInit();
     void addModelItemData(int row);
     void addTableviewRowWidget(int mode, int row, bool checkState, bool complete);
     void addTableviewRow(int mode, int row, bool hasWidget);
-    void getModelRowValue(double* refValue, int row, int len);
+    void getModelRowValue(double* value, int row, int len);
     void updateTableRowProperty(int row, int property);
     void updateTablePropertyAfterLine(int row, int offset);
 
