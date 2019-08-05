@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Terminal</class>
+ <widget class="QWidget" name="Terminal">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>667</width>
+    <height>547</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="SendFrameBox" name="sendFrameBox">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Send CAN frame</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="ReceiveFrameBox" name="receivedMessagesBox">
+     <property name="minimumSize">
+      <size>
+       <width>614</width>
+       <height>151</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Received CAN messages</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SendFrameBox</class>
+   <extends>QGroupBox</extends>
+   <header>sendframebox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ReceiveFrameBox</class>
+   <extends>QGroupBox</extends>
+   <header>receiveframebox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,75 @@
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+
+#include "connectdialog.h"
+#include "jointplot.h"
+#include "jointspeedmeas.h"
+#include "jointcontrol.h"
+#include "offlinecontrol.h"
+#include "receiveworkerthread.h"
+#include "terminal.h"
+
+#include <QTimer>
+
+#include "debug.h"
+
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+
+    //Initialize the connection window
+    m_connect_dialog = new ConnectDialog;
+    QTimer::singleShot(50, m_connect_dialog, &ConnectDialog::show);
+
+    //Initialize joint window
+    m_joint_widget = new JointPlot;
+
+    //Initialize joint speed measure window
+    m_joint_speed_meas_widget = new JointSpeedMeas;
+
+    //Initialize terminal window
+    m_terminal = new Terminal;
+
+    //Initialize joint control window
+    m_joint_control = new JointControl;
+
+    //Initialize offline control window
+    m_offline_control = new OfflineControl;
+
+    connectInit();
+}
+
+void MainWindow::canConnectEvent()
+{
+    //start receive thread
+    ReceiveWorkerThread *workerThread = new ReceiveWorkerThread(this);
+    // After the end of the thread, automatically destroy
+    connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
+    workerThread->start();
+    //set status
+    ui->statusBar->showMessage(tr("Connected"));
+}
+
+void MainWindow::connectInit()
+{
+    connect(ui->actionConnect_CAN, &QAction::triggered, m_connect_dialog, &ConnectDialog::show);
+    connect(ui->actionTerminal, &QAction::triggered, m_terminal, &Terminal::show);
+    connect(ui->actionJoint, &QAction::triggered, m_joint_widget, &JointPlot::show);
+    connect(ui->actionJoint_Speed_Meas, &QAction::triggered, m_joint_speed_meas_widget, &JointSpeedMeas::show);
+    connect(ui->actionJoint_Control, &QAction::triggered, m_joint_control, &JointControl::show);
+    connect(ui->actionOffline_Control, &QAction::triggered, m_offline_control, &OfflineControl::show);
+    connect(m_connect_dialog, &ConnectDialog::accepted, this, &MainWindow::canConnectEvent);
+}
+
+MainWindow::~MainWindow()
+{
+    delete m_connect_dialog;
+    delete m_joint_widget;
+    delete m_joint_speed_meas_widget;
+    delete m_terminal;
+    delete m_joint_control;
+    delete m_offline_control;
+    delete ui;
+}
