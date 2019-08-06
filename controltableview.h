@@ -13,6 +13,7 @@ public:
     void valueListUpdate(QString currentName, int currentPeriod, int currentType);
     void valueListUpdate(int row);
     void addTableviewRow(int mode, int row, bool hasWidget);
+    void hideTableviewData(bool is_hide);
 
     QStandardItemModel *model;
 

@@ -301,3 +301,17 @@ void ControlTableView::addTableviewRow(int mode, int row, bool hasWidget)
     if(hasWidget)
         addTableviewRowWidget(mode, row, true, true);
 }
+
+/**
+*@projectName   RobotControlSystem
+*@brief         隐藏表格中的数据
+*@parameter
+*@author        XingZhang.Wu
+*@date          20190806
+**/
+void ControlTableView::hideTableviewData(bool is_hide)
+{
+    for(int i=BEFORE_VALUE_NUM;i<BEFORE_VALUE_NUM+NODE_NUM;i++) {
+        setColumnHidden(i, !is_hide);
+    }
+}

@@ -11,6 +11,11 @@ OfflineControl::OfflineControl(QWidget *parent) :
     this->setWindowTitle(tr("Offline Control"));
 }
 
+OfflineControl::~OfflineControl()
+{
+    delete ui;
+}
+
 QString OfflineControl::getCurrentName()
 {
     return ui->nameLineEdit->text();
@@ -35,7 +40,15 @@ void OfflineControl::on_addRecordPushButton_clicked()
                                    ui->tableView->model->rowCount(), true);
 }
 
-OfflineControl::~OfflineControl()
+void OfflineControl::on_hidePushButton_clicked()
 {
-    delete ui;
+    if(ui->hidePushButton->text().contains("展开数值")) {
+        ui->hidePushButton->setText("隐藏数值");
+        ui->tableView->hideTableviewData(true);
+    }
+    else {
+        ui->hidePushButton->setText("展开数值");
+        ui->tableView->hideTableviewData(false);
+    }
+
 }

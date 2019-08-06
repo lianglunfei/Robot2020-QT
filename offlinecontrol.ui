@@ -17,7 +17,7 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_7">
      <item>
-      <widget class="QPushButton" name="synchronousPushButton_2">
+      <widget class="QPushButton" name="synchronousPushButton">
        <property name="text">
         <string>同步位置</string>
        </property>
@@ -28,7 +28,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="expandPushButton_2">
+      <widget class="QPushButton" name="hidePushButton">
        <property name="text">
         <string>隐藏数值</string>
        </property>

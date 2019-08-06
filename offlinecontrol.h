@@ -25,6 +25,7 @@ private:
 
 private slots:
     void on_addRecordPushButton_clicked();
+    void on_hidePushButton_clicked();
 };
 
 #endif // OFFLINECONTROL_H
