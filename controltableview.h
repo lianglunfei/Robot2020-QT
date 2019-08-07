@@ -18,6 +18,9 @@ public:
     int seqExec();
     void execStop();
     int reverseSeqExec();
+    void setCycleFlag(int f);
+    void setInterValue(int v);
+    void setInterPeriod(int p);
 
     QStandardItemModel *model;
 
@@ -41,6 +44,7 @@ private:
     void getModelRowValue(double* value, int row, int len);
     void updateTableRowProperty(int row, int property);
     void updateTablePropertyAfterLine(int row, int offset);
+    void runFun(int row);
 
     void eventInit();
     void setListBoundaryValue(int &up, int &down);

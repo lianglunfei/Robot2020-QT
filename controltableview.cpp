@@ -203,6 +203,31 @@ void ControlTableView::getModelRowValue(double* value, int row, int len)
     }
 }
 
+void ControlTableView::runFun(int row)
+{
+    double value[NODE_NUM];
+    double refValue[NODE_NUM];
+    getModelRowValue(refValue, 0, NODE_NUM);
+    getModelRowValue(value, row, NODE_NUM);
+
+    if(0 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex()) {
+        Package::packOperateMulti(GlobalData::sendId, value, NODE_NUM, PROTOCOL_TYPE_SPD);
+    }
+    else if(1 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex()) {
+        for(int i=0;i<NODE_NUM;i++) {
+            value[i] += refValue[i];
+        }
+        //In order to be able to reach the initial position, set this mode here.
+        Package::packOperateMulti(GlobalData::sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
+    }
+    else {//relative position mode
+        for(int i=0;i<NODE_NUM;i++) {
+            value[i] += GlobalData::currentCanAnalyticalData[i].position;
+        }
+        Package::packOperateMulti(GlobalData::sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
+    }
+}
+
 /**
 *@projectName   RobotControlSystem
 *@brief         表中widget对应的事件函数
@@ -218,27 +243,7 @@ void ControlTableView::tableClickButton()
 
     switch (col) {
     case BTN_START_INDEX://run
-        double value[NODE_NUM];
-        double refValue[NODE_NUM];
-        getModelRowValue(refValue, 0, NODE_NUM);
-        getModelRowValue(value, row, NODE_NUM);
-
-        if(0 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex()) {
-            Package::packOperateMulti(GlobalData::sendId, value, NODE_NUM, PROTOCOL_TYPE_SPD);
-        }
-        else if(1 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex()) {
-            for(int i=0;i<NODE_NUM;i++) {
-                value[i] += refValue[i];
-            }
-            //In order to be able to reach the initial position, set this mode here.
-            Package::packOperateMulti(GlobalData::sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
-        }
-        else {//relative position mode
-            for(int i=0;i<NODE_NUM;i++) {
-                value[i] += GlobalData::currentCanAnalyticalData[i].position;
-            }
-            Package::packOperateMulti(GlobalData::sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
-        }
+        runFun(row);
         break;
     case BTN_START_INDEX+1://add
         model->insertRow(row);
@@ -475,12 +480,12 @@ void ControlTableView::execSeqEvent()
     }
 
     if(row%interValue== 0 &&
-            qobject_cast<QCheckBox *>(indexWidget(model->index(row,20)))->isChecked()) {
+            qobject_cast<QCheckBox *>(indexWidget(model->index(row,BTN_START_INDEX+NODE_NUM)))->isChecked()) {
         int runTime = interPeriod;
         if(execRunOrPauseFlag/10==1) {//顺序执行,采用上一行命令的时间
             if(row>listHead) {//1-[T2-2]-[T3-3]  T1可以设置的比较小  P1-T2-P2,其中T2指的是P1转到P2的时间
                 if(runTime == 0)
-                    runTime = static_cast<int>(model->index(g_lastRow,14).data().toDouble()+0.5);
+                    runTime = static_cast<int>(model->index(g_lastRow,NODE_NUM+BEFORE_VALUE_NUM).data().toDouble()+0.5);
 
                 if(timeCnt<runTime/10) { //time must be an integer multiple of 10
                     timeCnt++;
@@ -492,10 +497,10 @@ void ControlTableView::execSeqEvent()
         } else {//逆序执行,采用上一行命令的时间
             if(row<listTail) {//3-[T3-2]-[T2-1] 其中T3代表P2转到P3的时间
                 if(runTime == 0) {
-                    runTime = static_cast<int>(model->index(lastRow[0],14).data().toDouble()+0.5);
+                    runTime = static_cast<int>(model->index(lastRow[0],NODE_NUM+BEFORE_VALUE_NUM).data().toDouble()+0.5);
                     //如果上次运行的为速度，则只间隔上次速度所需时间再执行位置
                     if(0 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(g_lastRow,1)))->currentIndex()) {
-                        runTime = static_cast<int>(model->index(g_lastRow,14).data().toDouble()+0.5);
+                        runTime = static_cast<int>(model->index(g_lastRow,NODE_NUM+BEFORE_VALUE_NUM).data().toDouble()+0.5);
                     }
                 }
 
@@ -514,55 +519,7 @@ void ControlTableView::execSeqEvent()
                                +QString(" is running"));
         timeCnt=1;
 
-        double value[12];
-        for(int col=2;col<14;col++)//2~13>data 14>time
-        {
-            value[col-2]=model->index(row,col).data().toDouble();
-        }
-        if(0 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex()) {
-            spdValueChangedFromTableClicked(value);
-            DataTransmission::instance().sendMultipleFrameData(ProtocolData::sendId,
-                                                               &readyToSendCanData[0].speed, 12, PROTOCOL_TYPE_SPD_SET);
-        }
-        else if(1 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex()) {
-            for(int i=0;i<12;i++) {
-                value[i] += refValue[i];
-                //                    qDebug() << value[i];
-            }
-            posValueChangedFromTableClicked(value);
-//            QDateTime current_date_time = QDateTime::currentDateTime();
-//            QString current_time = current_date_time.toString("hh:mm:ss.zzz ");
-//            qDebug()<<"current time: "<< current_time;
-            //导入文件第一次运行时，检测数据是否有异常
-            if(runFirstTime==127) {
-                runFirstTime=0;
-                for(int i=0;i<12;i++) {
-                    if(abs(readyToSendCanData[i].position-ReceiveWorkerThread::currentCanAnalyticalData[i].position) > 10) {
-                        taskTimer->stop();
-                        emit execStatus("数据导入异常！");
-                        execRunOrPauseFlag = 0;
-                        row=-1;
-                        lastRow[0]=-1;
-                        lastRow[1]=-1;
-                        g_lastRow=-1;
-                        emit stopThread();
-                        return;
-                    }
-                }
-            }
-            if(1 == DeviceConnectInfo::m_connect_flag
-               || 2 == DeviceConnectInfo::m_connect_flag)
-                DataTransmission::instance().sendMultipleFrameData(ProtocolData::sendId,
-                                                                   &readyToSendCanData[0].position, 12, PROTOCOL_TYPE_POS);
-            else if(3 == DeviceConnectInfo::m_connect_flag)//Use sync mode when sending cyclically
-                DataTransmission::instance().sendMultipleFrameData(ProtocolData::sendId,
-                                                                   &readyToSendCanData[0].position, 12, PROTOCOL_TYPE_INTER_POS);
-        }
-        else {//relative position mode
-            allJointRelativeMotion(value);
-            DataTransmission::instance().sendMultipleFrameData(ProtocolData::sendId,
-                                                               &readyToSendCanData[0].position, 12, PROTOCOL_TYPE_POS);
-        }
+        runFun(row);
 
         //逆向时位置控制时保留上个位置的时间间隔
         if((execRunOrPauseFlag/10==2 &&
