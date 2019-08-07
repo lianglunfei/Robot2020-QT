@@ -6,6 +6,8 @@
 
 #include <QHeaderView>
 #include <QPushButton>
+#include <QTimer>
+#include <QThread>
 #include <QCheckBox>
 
 #define BTN_START_INDEX NODE_NUM+3 //行按钮开始的位置=节点数+mode+time+name
@@ -19,6 +21,19 @@ ControlTableView::ControlTableView(QWidget *parent)
     modelInit();
     tableViewInit();
     addTableviewRow(0, 0, false);
+
+    eventInit();
+}
+
+void ControlTableView::eventInit()
+{
+    taskTimer=new QTimer;
+    taskThread=new QThread;
+    taskTimer->setTimerType(Qt::PreciseTimer);
+    taskTimer->setInterval(10);
+    taskTimer->moveToThread(taskThread);
+    connect(taskTimer, SIGNAL(timeout()), this, SLOT(execSeqEvent()), Qt::DirectConnection);
+    connect(this,SIGNAL(stopThread()), taskThread, SLOT(quit()));
 }
 
 /**
@@ -314,4 +329,266 @@ void ControlTableView::hideTableviewData(bool is_hide)
     for(int i=BEFORE_VALUE_NUM;i<BEFORE_VALUE_NUM+NODE_NUM;i++) {
         setColumnHidden(i, !is_hide);
     }
+}
+
+/**
+*@projectName   RobotControlSystem
+*@brief         返回1表示执行暂停，返回2表示执行继续
+*@parameter
+*@author        XingZhang.Wu
+*@date          20190806
+**/
+int ControlTableView::seqExec()
+{
+    if(taskThread->isRunning()) {
+        if(execRunOrPauseFlag==12) {
+            execRunOrPauseFlag = 11;
+            return 1;
+        } else {
+            execRunOrPauseFlag = 12;
+            return 2;
+        }
+    } else if(model->rowCount()>1) {//首次运行
+        execRunOrPauseFlag = 11;
+        QTimer::singleShot(0, taskTimer,SLOT(start()));
+        taskThread->start();
+        return 1;
+    }
+}
+
+void ControlTableView::execStop()
+{
+    execRunOrPauseFlag = 3;
+}
+
+int ControlTableView::reverseSeqExec()
+{
+    if(taskThread->isRunning()) {
+        if(execRunOrPauseFlag==22) {
+            execRunOrPauseFlag = 21;
+            return 1;
+        } else {
+            execRunOrPauseFlag = 22;
+            return 2;
+        }
+    } else if(model->rowCount()>1) {//首次运行
+        execRunOrPauseFlag = 21;
+        QTimer::singleShot(0, taskTimer,SLOT(start()));
+        taskThread->start();
+        return 1;
+    }
+}
+
+void ControlTableView::setListBoundaryValue(int &up, int &down)
+{
+    int column = valueList.length();
+    for(int row=1;row<model->rowCount();row++) {
+        if(qobject_cast<QCheckBox *>(indexWidget(model->index(row,column+ROW_BTN_NUM+1)))->isChecked()) {
+            up=row;
+            break;
+        }
+    }
+    for(int row=model->rowCount()-1;row>0;row--) {
+        if(qobject_cast<QCheckBox *>(indexWidget(model->index(row,column+ROW_BTN_NUM+1)))->isChecked()) {
+            down=row;
+            break;
+        }
+    }
+}
+
+void ControlTableView::execSeqEvent()
+{
+    static double refValue[NODE_NUM];
+    static int row=-1;
+    static int timeCnt=1;
+    static int lastRow[2]={-1,-1};//0:lastLast 1:last
+    static int g_lastRow=-1;
+    static int runFirstTime=0;
+    static int listHead,listHeadBak,listTail;
+    static int groupCnt=1;
+
+    if(-1==row) {//init row
+        groupCnt=1;
+        setListBoundaryValue(listHeadBak, listTail);
+        listHead=listHeadBak;
+        if(execRunOrPauseFlag/10==2)
+            row=listTail;
+        else
+            row=listHead;
+        getModelRowValue(refValue, 0, NODE_NUM);
+        runFirstTime=127;
+    }
+
+    if(row>listTail) {//顺序执行越界处理 执行完成进行方向控制 或者单独控制
+        if(row>listTail) {
+            groupCnt++;
+            runFirstTime=127;
+        }
+        if(cycleFlag) {
+            row = listHead;
+            lastRow[0]=-1;
+            lastRow[1]=-1;
+            g_lastRow=-1;
+        }
+        else {
+            taskTimer->stop();
+            row=-1;//顺序执行结束
+            lastRow[0]=-1;
+            lastRow[1]=-1;
+            g_lastRow=-1;
+            execRunOrPauseFlag=0;
+            emit stopThread();
+            return;
+        }
+    }
+
+    if(row<listHead) {//逆序执行越界处理
+        if(cycleFlag) {
+            row = listTail;
+            lastRow[0]=-1;
+            lastRow[1]=-1;
+            g_lastRow=-1;
+        }
+        else {
+            taskTimer->stop();
+            row=-1;//逆序执行结束
+            lastRow[0]=-1;
+            lastRow[1]=-1;
+            g_lastRow=-1;
+            execRunOrPauseFlag=0;
+            emit stopThread();
+            return;
+        }
+    }
+
+    if(2==execRunOrPauseFlag%10) {//手动暂停
+        return;
+    } else if(execRunOrPauseFlag%10>2) {//手动结束
+        taskTimer->stop();
+        execRunOrPauseFlag = 0;
+        row=-1;
+        lastRow[0]=-1;
+        lastRow[1]=-1;
+        g_lastRow=-1;
+        emit stopThread();
+        return;
+    }
+
+    if(row%interValue== 0 &&
+            qobject_cast<QCheckBox *>(indexWidget(model->index(row,20)))->isChecked()) {
+        int runTime = interPeriod;
+        if(execRunOrPauseFlag/10==1) {//顺序执行,采用上一行命令的时间
+            if(row>listHead) {//1-[T2-2]-[T3-3]  T1可以设置的比较小  P1-T2-P2,其中T2指的是P1转到P2的时间
+                if(runTime == 0)
+                    runTime = static_cast<int>(model->index(g_lastRow,14).data().toDouble()+0.5);
+
+                if(timeCnt<runTime/10) { //time must be an integer multiple of 10
+                    timeCnt++;
+                    return;
+                }
+            } else {
+                runTime=0;
+            }
+        } else {//逆序执行,采用上一行命令的时间
+            if(row<listTail) {//3-[T3-2]-[T2-1] 其中T3代表P2转到P3的时间
+                if(runTime == 0) {
+                    runTime = static_cast<int>(model->index(lastRow[0],14).data().toDouble()+0.5);
+                    //如果上次运行的为速度，则只间隔上次速度所需时间再执行位置
+                    if(0 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(g_lastRow,1)))->currentIndex()) {
+                        runTime = static_cast<int>(model->index(g_lastRow,14).data().toDouble()+0.5);
+                    }
+                }
+
+                if(timeCnt<runTime/10) { //time must be an integer multiple of 10
+                    timeCnt++;
+                    return;
+                }
+            } else {
+                runTime=0;
+            }
+        }
+        emit execStatus(model->index(g_lastRow,0).data().toString()
+                               +QString(" has runned for %1 ms\n")
+                               .arg(timeCnt*10)+QString("group %2: ").arg(groupCnt)
+                               +model->index(row,0).data().toString()
+                               +QString(" is running"));
+        timeCnt=1;
+
+        double value[12];
+        for(int col=2;col<14;col++)//2~13>data 14>time
+        {
+            value[col-2]=model->index(row,col).data().toDouble();
+        }
+        if(0 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex()) {
+            spdValueChangedFromTableClicked(value);
+            DataTransmission::instance().sendMultipleFrameData(ProtocolData::sendId,
+                                                               &readyToSendCanData[0].speed, 12, PROTOCOL_TYPE_SPD_SET);
+        }
+        else if(1 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex()) {
+            for(int i=0;i<12;i++) {
+                value[i] += refValue[i];
+                //                    qDebug() << value[i];
+            }
+            posValueChangedFromTableClicked(value);
+//            QDateTime current_date_time = QDateTime::currentDateTime();
+//            QString current_time = current_date_time.toString("hh:mm:ss.zzz ");
+//            qDebug()<<"current time: "<< current_time;
+            //导入文件第一次运行时，检测数据是否有异常
+            if(runFirstTime==127) {
+                runFirstTime=0;
+                for(int i=0;i<12;i++) {
+                    if(abs(readyToSendCanData[i].position-ReceiveWorkerThread::currentCanAnalyticalData[i].position) > 10) {
+                        taskTimer->stop();
+                        emit execStatus("数据导入异常！");
+                        execRunOrPauseFlag = 0;
+                        row=-1;
+                        lastRow[0]=-1;
+                        lastRow[1]=-1;
+                        g_lastRow=-1;
+                        emit stopThread();
+                        return;
+                    }
+                }
+            }
+            if(1 == DeviceConnectInfo::m_connect_flag
+               || 2 == DeviceConnectInfo::m_connect_flag)
+                DataTransmission::instance().sendMultipleFrameData(ProtocolData::sendId,
+                                                                   &readyToSendCanData[0].position, 12, PROTOCOL_TYPE_POS);
+            else if(3 == DeviceConnectInfo::m_connect_flag)//Use sync mode when sending cyclically
+                DataTransmission::instance().sendMultipleFrameData(ProtocolData::sendId,
+                                                                   &readyToSendCanData[0].position, 12, PROTOCOL_TYPE_INTER_POS);
+        }
+        else {//relative position mode
+            allJointRelativeMotion(value);
+            DataTransmission::instance().sendMultipleFrameData(ProtocolData::sendId,
+                                                               &readyToSendCanData[0].position, 12, PROTOCOL_TYPE_POS);
+        }
+
+        //逆向时位置控制时保留上个位置的时间间隔
+        if((execRunOrPauseFlag/10==2 &&
+                qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex()!=0)) {
+            lastRow[0] = lastRow[1];
+            lastRow[1] = row;
+        }
+        g_lastRow = row;
+    }
+    if(1==execRunOrPauseFlag/10)
+        row++;
+    else
+        row--;
+}
+
+void ControlTableView::setCycleFlag(int f)
+{
+    cycleFlag = f;
+}
+
+void ControlTableView::setInterValue(int v)
+{
+    interValue = v;
+}
+
+void ControlTableView::setInterPeriod(int p)
+{
+    interPeriod = p;
 }
