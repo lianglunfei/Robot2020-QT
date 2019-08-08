@@ -13,6 +13,7 @@
 #define BTN_START_INDEX NODE_NUM+3 //行按钮开始的位置=节点数+mode+time+name
 #define ROW_BTN_NUM 5 //按钮个数：上下移动、增加删除、运行
 #define BEFORE_VALUE_NUM 2 //节点数之前的数值个数：name、mode
+#define POS_LIMIT_VALUE 10
 
 ControlTableView::ControlTableView(QWidget *parent)
 {
@@ -203,7 +204,7 @@ void ControlTableView::getModelRowValue(double* value, int row, int len)
     }
 }
 
-void ControlTableView::runFun(int row)
+int ControlTableView::runFunc(int row)
 {
     double value[NODE_NUM];
     double refValue[NODE_NUM];
@@ -216,6 +217,8 @@ void ControlTableView::runFun(int row)
     else if(1 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex()) {
         for(int i=0;i<NODE_NUM;i++) {
             value[i] += refValue[i];
+            if(abs(GlobalData::currentCanAnalyticalData[i].position-value[i])>POS_LIMIT_VALUE)
+                return -1;
         }
         //In order to be able to reach the initial position, set this mode here.
         Package::packOperateMulti(GlobalData::sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
@@ -226,6 +229,7 @@ void ControlTableView::runFun(int row)
         }
         Package::packOperateMulti(GlobalData::sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
     }
+    return 0;
 }
 
 /**
@@ -243,7 +247,8 @@ void ControlTableView::tableClickButton()
 
     switch (col) {
     case BTN_START_INDEX://run
-        runFun(row);
+        if(runFunc(row)<0)
+            emit execStatus("数据异常！");
         break;
     case BTN_START_INDEX+1://add
         model->insertRow(row);
@@ -343,8 +348,12 @@ void ControlTableView::hideTableviewData(bool is_hide)
 *@author        XingZhang.Wu
 *@date          20190806
 **/
-int ControlTableView::seqExec()
+int ControlTableView::seqExec(bool cycle, int value, int period)
 {
+    cycleFlag = cycle;
+    interValue = value;
+    interPeriod = period;
+
     if(taskThread->isRunning()) {
         if(execRunOrPauseFlag==12) {
             execRunOrPauseFlag = 11;
@@ -366,8 +375,12 @@ void ControlTableView::execStop()
     execRunOrPauseFlag = 3;
 }
 
-int ControlTableView::reverseSeqExec()
+int ControlTableView::reverseSeqExec(bool cycle, int value, int period)
 {
+    cycleFlag = cycle;
+    interValue = value;
+    interPeriod = period;
+
     if(taskThread->isRunning()) {
         if(execRunOrPauseFlag==22) {
             execRunOrPauseFlag = 21;
@@ -408,7 +421,6 @@ void ControlTableView::execSeqEvent()
     static int timeCnt=1;
     static int lastRow[2]={-1,-1};//0:lastLast 1:last
     static int g_lastRow=-1;
-    static int runFirstTime=0;
     static int listHead,listHeadBak,listTail;
     static int groupCnt=1;
 
@@ -421,14 +433,10 @@ void ControlTableView::execSeqEvent()
         else
             row=listHead;
         getModelRowValue(refValue, 0, NODE_NUM);
-        runFirstTime=127;
     }
 
-    if(row>listTail) {//顺序执行越界处理 执行完成进行方向控制 或者单独控制
-        if(row>listTail) {
-            groupCnt++;
-            runFirstTime=127;
-        }
+    if(row>listTail) {//顺序执行越界处理
+        groupCnt++;
         if(cycleFlag) {
             row = listHead;
             lastRow[0]=-1;
@@ -448,6 +456,7 @@ void ControlTableView::execSeqEvent()
     }
 
     if(row<listHead) {//逆序执行越界处理
+        groupCnt++;
         if(cycleFlag) {
             row = listTail;
             lastRow[0]=-1;
@@ -480,7 +489,7 @@ void ControlTableView::execSeqEvent()
     }
 
     if(row%interValue== 0 &&
-            qobject_cast<QCheckBox *>(indexWidget(model->index(row,BTN_START_INDEX+NODE_NUM)))->isChecked()) {
+            qobject_cast<QCheckBox *>(indexWidget(model->index(row,BTN_START_INDEX+ROW_BTN_NUM)))->isChecked()) {
         int runTime = interPeriod;
         if(execRunOrPauseFlag/10==1) {//顺序执行,采用上一行命令的时间
             if(row>listHead) {//1-[T2-2]-[T3-3]  T1可以设置的比较小  P1-T2-P2,其中T2指的是P1转到P2的时间
@@ -519,7 +528,17 @@ void ControlTableView::execSeqEvent()
                                +QString(" is running"));
         timeCnt=1;
 
-        runFun(row);
+        if(runFunc(row)<0) {
+            taskTimer->stop();
+            execStatus("数据导入异常！");
+            execRunOrPauseFlag = 0;
+            row=-1;
+            lastRow[0]=-1;
+            lastRow[1]=-1;
+            g_lastRow=-1;
+            emit stopThread();
+            return;
+        }
 
         //逆向时位置控制时保留上个位置的时间间隔
         if((execRunOrPauseFlag/10==2 &&
@@ -533,19 +552,4 @@ void ControlTableView::execSeqEvent()
         row++;
     else
         row--;
-}
-
-void ControlTableView::setCycleFlag(int f)
-{
-    cycleFlag = f;
-}
-
-void ControlTableView::setInterValue(int v)
-{
-    interValue = v;
-}
-
-void ControlTableView::setInterPeriod(int p)
-{
-    interPeriod = p;
 }

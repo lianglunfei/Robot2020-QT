@@ -145,21 +145,21 @@
        <item>
         <layout class="QGridLayout" name="gridLayout_5">
          <item row="0" column="1">
-          <widget class="QPushButton" name="execSelectReverseSeqPushButton">
+          <widget class="QPushButton" name="execReverseSeqPushButton">
            <property name="text">
             <string>逆序执行所选</string>
            </property>
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QSpinBox" name="interSpinBox">
+          <widget class="QSpinBox" name="interValueSpinBox">
            <property name="minimum">
             <number>1</number>
            </property>
           </widget>
          </item>
          <item row="0" column="0">
-          <widget class="QPushButton" name="execSelectSeqPushButton">
+          <widget class="QPushButton" name="execSeqPushButton">
            <property name="text">
             <string>顺序执行所选</string>
            </property>
@@ -183,7 +183,7 @@
           </widget>
          </item>
          <item row="1" column="2">
-          <widget class="QPushButton" name="execSelectSeqStopPushButton">
+          <widget class="QPushButton" name="execSeqStopPushButton">
            <property name="text">
             <string>执行停止</string>
            </property>
@@ -221,7 +221,7 @@
           </widget>
          </item>
          <item row="1" column="2">
-          <widget class="QSpinBox" name="timeIntervalSpinBox">
+          <widget class="QSpinBox" name="interPeriodSpinBox">
            <property name="suffix">
             <string>ms</string>
            </property>

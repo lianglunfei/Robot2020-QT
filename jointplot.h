@@ -31,12 +31,17 @@ public:
 
 private:
     void initWidget();
+    void initObject();
     void addDataToUi(double key);
     void setLinesReplot(double key);
     void setLinesPausePlot(QCustomPlot *plot);
 
 private:
     Ui::JointPlot *ui;
+    QStringList posWidget, spdWidget, curWidget;
+    QStringList motorNum;
+    QList<QPen> penColor;
+    QList<int> indexs;
 };
 
 #endif // JOINTPLOT_H

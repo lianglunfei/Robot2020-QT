@@ -16,16 +16,16 @@ public:
     ~OfflineControl();
 
 private:
-    virtual QString getCurrentName();
-    virtual int getCurrentTime();
-    virtual int getCurrentModeIndex();
-
-private:
     Ui::OfflineControl *ui;
 
 private slots:
     void on_addRecordPushButton_clicked();
     void on_hidePushButton_clicked();
+    void runStatus(QString s);
+    void stopStatus();
+    void on_execSeqPushButton_clicked();
+    void on_execReverseSeqPushButton_clicked();
+    void on_execSeqStopPushButton_clicked();
 };
 
 #endif // OFFLINECONTROL_H

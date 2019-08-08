@@ -15,12 +15,9 @@ public:
 
     void addTableviewRow(int mode, int row, bool hasWidget);
     void hideTableviewData(bool is_hide);
-    int seqExec();
+    int seqExec(bool cycle, int value, int period);
     void execStop();
-    int reverseSeqExec();
-    void setCycleFlag(int f);
-    void setInterValue(int v);
-    void setInterPeriod(int p);
+    int reverseSeqExec(bool cycle, int value, int period);
 
     QStandardItemModel *model;
 
@@ -31,7 +28,7 @@ private:
     QTimer *taskTimer;
     QThread *taskThread;
     int execRunOrPauseFlag;
-    int cycleFlag;
+    bool cycleFlag;
     int interValue;
     int interPeriod;
 
@@ -44,7 +41,7 @@ private:
     void getModelRowValue(double* value, int row, int len);
     void updateTableRowProperty(int row, int property);
     void updateTablePropertyAfterLine(int row, int offset);
-    void runFun(int row);
+    int runFunc(int row);
 
     void eventInit();
     void setListBoundaryValue(int &up, int &down);
