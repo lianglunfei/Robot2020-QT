@@ -30,7 +30,7 @@ bool Package::unpackOperate()
         if((receivedCanData[1]+receivedCanData[2]+receivedCanData[3])!=0) {
             isConnected = true;
         }
-        for(int leg=0;leg<14;leg++){//New add two wheel 12+2
+        for(int leg=0;leg<NODE_NUM;leg++){//New add two wheel 12+2
             //data:26144/360=728.18
             GlobalData::currentCanAnalyticalData[leg].position = Protocol::parsePos(receivedCanData, leg);
             GlobalData::currentCanAnalyticalData[leg].speed = Protocol::parseSpeed(receivedCanData, leg);
