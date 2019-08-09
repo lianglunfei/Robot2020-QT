@@ -15,11 +15,9 @@ public:
     explicit ConnectDialog(QWidget *parent = 0);
     ~ConnectDialog();
 
-private slots:
-    void on_buttonBox_accepted();
-
 private:
     Ui::ConnectDialog *ui;
+    void accept();
 };
 
 #endif // CONNECTDIALOG_H

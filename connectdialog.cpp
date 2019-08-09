@@ -20,7 +20,7 @@ ConnectDialog::~ConnectDialog()
     delete ui;
 }
 
-void ConnectDialog::on_buttonBox_accepted()
+void ConnectDialog::accept()
 {
     int connectType=ui->pluginListBox->currentIndex()+1;
     int baud=ui->bauteComboBox->currentIndex();
@@ -53,5 +53,5 @@ void ConnectDialog::on_buttonBox_accepted()
     GlobalData::connectType = connectType;
 
     qDebug() << "Connect CAN OK!";
-    accept();
+    return QDialog::accept();
 }
