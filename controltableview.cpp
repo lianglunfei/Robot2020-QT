@@ -14,8 +14,8 @@
 #define BTN_START_INDEX NODE_NUM+3 //行按钮开始的位置=节点数+mode+time+name
 #define ROW_BTN_NUM 5 //按钮个数：上下移动、增加删除、运行
 #define BEFORE_VALUE_NUM 2 //节点数之前的数值个数：name、mode
-#define POS_LIMIT_VALUE 10
-#define SHOW_BTN_NUM 50
+#define POS_LIMIT_VALUE 10 //最大允许位置变化偏差，超过会显示数据异常
+#define SHOW_BTN_NUM 50 //表格显示按钮的行数，一般设定前50行s
 
 ControlTableView::ControlTableView(QWidget *parent)
 {
@@ -67,6 +67,13 @@ void ControlTableView::modelInit()
     }
 }
 
+/**
+*@projectName   RobotControlSystem
+*@brief         表的初始化，绑定对应的model
+*@parameter
+*@author        XingZhang.Wu
+*@date          20190809
+**/
 void ControlTableView::tableViewInit()
 {
     resizeColumnsToContents();
@@ -97,7 +104,7 @@ void ControlTableView::valueListInit()
 
 /**
 *@projectName   RobotControlSystem
-*@brief         valueList为新增表中行时的数据来源
+*@brief         从从表格或者当前获取的关节数据更新valueList当前获取的关节数据更新valueList
 *@parameter
 *@author        XingZhang.Wu
 *@date          20190805
@@ -116,6 +123,13 @@ void ControlTableView::valueListUpdate(QString currentName, int currentPeriod, i
     valueList << QString::number(currentPeriod);
 }
 
+/**
+*@projectName   RobotControlSystem
+*@brief         从表格更新valueList
+*@parameter
+*@author        XingZhang.Wu
+*@date          20190809
+**/
 void ControlTableView::valueListUpdate(int row)
 {
     valueList.clear();
@@ -399,6 +413,13 @@ int ControlTableView::reverseSeqExec(bool cycle, int value, int period)
     }
 }
 
+/**
+*@projectName   RobotControlSystem
+*@brief         查找表格的边界值，无勾选的行不算
+*@parameter
+*@author        XingZhang.Wu
+*@date          20190809
+**/
 void ControlTableView::setListBoundaryValue(int &up, int &down)
 {
     int column = valueList.length();
@@ -416,6 +437,13 @@ void ControlTableView::setListBoundaryValue(int &up, int &down)
     }
 }
 
+/**
+*@projectName   RobotControlSystem
+*@brief         导入导出csv数据至表格
+*@parameter
+*@author        XingZhang.Wu
+*@date          20190809
+**/
 void ControlTableView::exportToCsv(QString fileName)
 {
     if (fileName.isEmpty())
@@ -501,9 +529,7 @@ void ControlTableView::importCsv(QString fileName)
         return;
     }
 
-    //    qDebug() << row << col << colMin;
-
-    if(!QString(qlist[1][0]).contains("ref")) {
+    if(!QString(qlist[1][0]).contains("ref") || col!= (BTN_START_INDEX+ROW_BTN_NUM+1)) {
         QMessageBox::warning(this, tr("Import"),
                              tr("The imported file format is incorrect.\n"
                                 "You must manually modify the csv file and import it."),
@@ -544,6 +570,13 @@ void ControlTableView::importCsv(QString fileName)
     file.close();
 }
 
+/**
+*@projectName   RobotControlSystem
+*@brief         重点部分，顺序或逆序执行表格命令，也可以定时执行
+*@parameter
+*@author        XingZhang.Wu
+*@date          20190809
+**/
 void ControlTableView::execSeqEvent()
 {
     static double refValue[NODE_NUM];
