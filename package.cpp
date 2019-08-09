@@ -129,6 +129,12 @@ bool Package::packOperateMulti(unsigned int *id, double *data, int num, int type
         case PROTOCOL_TYPE_SHUTDOWN:
             Protocol::packShutDown(packData[i], data[groupNums*i]);
             break;
+        case PROTOCOL_TYPE_OPENVALVE:
+            Protocol::packOpenValve(packData[i], data[groupNums*i]);
+            break;
+        case PROTOCOL_TYPE_CLOSEVALVE:
+            Protocol::packCloseValve(packData[i], data[groupNums*i]);
+            break;
         default:
             break;
         }

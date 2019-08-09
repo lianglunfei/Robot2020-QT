@@ -10,7 +10,7 @@ class ControlTableView : public QTableView
 public:
     explicit ControlTableView(QWidget *parent = 0);
 
-    void valueListUpdate(QString currentName, int currentPeriod, int currentType);
+    void valueListSync(QString currentName, int currentPeriod);
     void valueListUpdate(int row);
 
     void addTableviewRow(int mode, int row, bool hasWidget);
@@ -20,6 +20,7 @@ public:
     int reverseSeqExec(bool cycle, int value, int period);
     void exportToCsv(QString fileName);
     void importCsv(QString fileName);
+    void syncTableviewRowData(int row);
 
     QStandardItemModel *model;
 
@@ -38,6 +39,7 @@ private:
     void valueListInit();
     void modelInit();
     void tableViewInit();
+    void valueListSync(int row);
     void addModelItemData(int row);
     void addTableviewRowWidget(int mode, int row, bool checkState, bool complete);
     void getModelRowValue(double* value, int row, int len);

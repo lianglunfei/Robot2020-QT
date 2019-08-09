@@ -2,7 +2,9 @@
 #include "ui_offlinecontrol.h"
 
 #include "debug.h"
+#include "drivers.h"
 #include <QFileDialog>
+#include <QKeyEvent>
 
 OfflineControl::OfflineControl(QWidget *parent) :
     QDialog(parent),
@@ -22,11 +24,15 @@ OfflineControl::~OfflineControl()
 
 void OfflineControl::on_addRecordPushButton_clicked()
 {
-    ui->tableView->valueListUpdate(ui->nameLineEdit->text(),
-                                   ui->interPeriodSpinBox->value(),
-                                   ui->spdPosSelectComboBox->currentIndex());
+    ui->tableView->valueListSync(ui->nameLineEdit->text(),
+                                   ui->interPeriodSpinBox->value());
     ui->tableView->addTableviewRow(ui->spdPosSelectComboBox->currentIndex(),
                                    ui->tableView->model->rowCount(), true);
+}
+
+void OfflineControl::on_synchronousPushButton_clicked()
+{
+    ui->tableView->syncTableviewRowData(ui->tableView->currentIndex().data().toInt());
 }
 
 void OfflineControl::on_hidePushButton_clicked()
@@ -109,4 +115,30 @@ void OfflineControl::on_importPushButton_clicked()
     ui->tableView->importCsv(fileName);
     g_fileDir = QFileInfo(fileName).absoluteFilePath();
     ui->fileNameLabel->setText(fileName+" opened");
+}
+
+void OfflineControl::on_initDriverPushButton_clicked()
+{
+    on_execSeqStopPushButton_clicked();
+    Drivers::initJoint();
+}
+
+void OfflineControl::on_emergencyStopPushButton_clicked()
+{
+    on_execSeqStopPushButton_clicked();
+    Drivers::stopJoint();
+}
+
+void OfflineControl::keyPressEvent(QKeyEvent *e)
+{
+    switch(e->key())
+    {
+    case Qt::Key_A:
+    {
+        if (QApplication::keyboardModifiers() == Qt::AltModifier) {
+            on_emergencyStopPushButton_clicked();
+        }
+        break;
+    }
+    }
 }

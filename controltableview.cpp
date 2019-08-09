@@ -104,21 +104,22 @@ void ControlTableView::valueListInit()
 
 /**
 *@projectName   RobotControlSystem
-*@brief         从从表格或者当前获取的关节数据更新valueList当前获取的关节数据更新valueList
+*@brief         从当前获取的关节数据更新valueList当前获取的关节数据更新valueList
 *@parameter
 *@author        XingZhang.Wu
 *@date          20190805
 **/
-void ControlTableView::valueListUpdate(QString currentName, int currentPeriod, int currentType)
+void ControlTableView::valueListSync(QString currentName, int currentPeriod)
 {
+    double value[NODE_NUM];
+    double refValue[NODE_NUM];
+    getModelRowValue(refValue, 0, NODE_NUM);
+
     valueList.clear();
     valueList << currentName;
     for(int i=0;i<NODE_NUM;i++) {
-        if(currentType>0) {
-            valueList << QString::number(GlobalData::currentCanAnalyticalData[i].position);
-        } else {
-            valueList << QString::number(GlobalData::currentCanAnalyticalData[i].speed);
-        }
+        value[i] = GlobalData::currentCanAnalyticalData[i].position-refValue[i];
+        valueList << QString::number(value[i]);
     }
     valueList << QString::number(currentPeriod);
 }
@@ -139,6 +140,27 @@ void ControlTableView::valueListUpdate(int row)
         valueList << model->index(row,i).data().toString();
     }
     valueList << model->index(row,NODE_NUM+BEFORE_VALUE_NUM).data().toString();
+}
+
+void ControlTableView::valueListSync(int row)
+{
+    double value[NODE_NUM];
+    double refValue[NODE_NUM];
+    getModelRowValue(refValue, 0, NODE_NUM);
+
+    valueList.clear();
+    valueList << model->index(row,0).data().toString();
+    for(int i=0;i<NODE_NUM;i++) {
+        value[i] = GlobalData::currentCanAnalyticalData[i].position-refValue[i];
+        valueList << QString::number(value[i]);
+    }
+    valueList << model->index(row,NODE_NUM+BEFORE_VALUE_NUM).data().toString();
+}
+
+void ControlTableView::syncTableviewRowData(int row)
+{
+    valueListSync(row);
+    addModelItemData(row);
 }
 
 /**

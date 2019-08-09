@@ -19,6 +19,8 @@ private:
     Ui::OfflineControl *ui;
     QString g_fileDir;
 
+    void keyPressEvent(QKeyEvent *e) override;
+
 private slots:
     void on_addRecordPushButton_clicked();
     void on_hidePushButton_clicked();
@@ -29,6 +31,9 @@ private slots:
     void on_execSeqStopPushButton_clicked();
     void on_exportPushButton_clicked();
     void on_importPushButton_clicked();
+    void on_initDriverPushButton_clicked();
+    void on_emergencyStopPushButton_clicked();
+    void on_synchronousPushButton_clicked();
 };
 
 #endif // OFFLINECONTROL_H

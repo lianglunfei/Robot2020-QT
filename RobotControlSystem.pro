@@ -45,7 +45,8 @@ SOURCES += \
     controls.cpp \
     offlinecontrol.cpp \
     incompletecombox.cpp \
-    controltableview.cpp
+    controltableview.cpp \
+    drivers.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -72,7 +73,8 @@ HEADERS += \
     controls.h \
     offlinecontrol.h \
     incompletecombox.h \
-    controltableview.h
+    controltableview.h \
+    drivers.h
 
 FORMS += \
         mainwindow.ui \

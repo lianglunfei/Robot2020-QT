@@ -51,6 +51,20 @@
        </property>
       </spacer>
      </item>
+     <item>
+      <widget class="QPushButton" name="initDriverPushButton">
+       <property name="text">
+        <string>初始化</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="emergencyStopPushButton">
+       <property name="text">
+        <string>急停(ALT+A)</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>

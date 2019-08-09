@@ -163,6 +163,20 @@ void Protocol::packShutDown(unsigned char data[], double value)
     data[7] = 0x02;
 }
 
+void Protocol::packOpenValve(unsigned char data[], double value)
+{
+    if(sizeof(data)/sizeof(unsigned char)<8)
+        return;
+    data[0] = 0xea;
+}
+
+void Protocol::packCloseValve(unsigned char data[], double value)
+{
+    if(sizeof(data)/sizeof(unsigned char)<8)
+        return;
+    data[0] = 0xfa;
+}
+
 void Protocol::packWheelReset(unsigned char data[], double value)
 {
     if(sizeof(data)/sizeof(unsigned char)<8)
