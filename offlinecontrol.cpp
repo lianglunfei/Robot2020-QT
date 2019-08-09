@@ -2,6 +2,7 @@
 #include "ui_offlinecontrol.h"
 
 #include "debug.h"
+#include <QFileDialog>
 
 OfflineControl::OfflineControl(QWidget *parent) :
     QDialog(parent),
@@ -54,6 +55,7 @@ void OfflineControl::stopStatus()
 
 void OfflineControl::on_execSeqPushButton_clicked()
 {
+    ui->execReverseSeqPushButton->setText("逆序执行所选");
     int ret = ui->tableView->seqExec(ui->cycleCheckBox->isChecked(),
                            ui->interValueSpinBox->value(), ui->interPeriodSpinBox->value());
     if(ret==1)
@@ -64,6 +66,7 @@ void OfflineControl::on_execSeqPushButton_clicked()
 
 void OfflineControl::on_execReverseSeqPushButton_clicked()
 {
+    ui->execSeqPushButton->setText("顺序执行所选");
     int ret = ui->tableView->reverseSeqExec(ui->cycleCheckBox->isChecked(),
                            ui->interValueSpinBox->value(), ui->interPeriodSpinBox->value());
     if(ret==1)
@@ -77,4 +80,33 @@ void OfflineControl::on_execSeqStopPushButton_clicked()
     ui->tableView->execStop();
     ui->execSeqPushButton->setText("顺序执行所选");
     ui->execReverseSeqPushButton->setText("逆序执行所选");
+}
+
+void OfflineControl::on_exportPushButton_clicked()
+{
+    QString fileName;
+    fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                                            "g_fileDir/tst.csv",
+                                            tr("Files (*.csv)"));
+    if(fileName.isEmpty())
+    {
+        return;
+    }
+    ui->tableView->exportToCsv(fileName);
+    g_fileDir = QFileInfo(fileName).absoluteFilePath();
+    ui->fileNameLabel->setText(fileName+" saved");
+}
+
+void OfflineControl::on_importPushButton_clicked()
+{
+    QString  fileName;
+    fileName = QFileDialog::getOpenFileName(this,
+                                            tr("Open Csv"), "g_fileDir/tst.csv", tr("Files (*.csv)"));
+    if(fileName.isEmpty())
+    {
+        return;
+    }
+    ui->tableView->importCsv(fileName);
+    g_fileDir = QFileInfo(fileName).absoluteFilePath();
+    ui->fileNameLabel->setText(fileName+" opened");
 }

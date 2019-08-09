@@ -18,6 +18,8 @@ public:
     int seqExec(bool cycle, int value, int period);
     void execStop();
     int reverseSeqExec(bool cycle, int value, int period);
+    void exportToCsv(QString fileName);
+    void importCsv(QString fileName);
 
     QStandardItemModel *model;
 
@@ -42,7 +44,6 @@ private:
     void updateTableRowProperty(int row, int property);
     void updateTablePropertyAfterLine(int row, int offset);
     int runFunc(int row);
-
     void eventInit();
     void setListBoundaryValue(int &up, int &down);
 

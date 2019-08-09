@@ -9,11 +9,13 @@
 #include <QTimer>
 #include <QThread>
 #include <QCheckBox>
+#include <QMessageBox>
 
 #define BTN_START_INDEX NODE_NUM+3 //行按钮开始的位置=节点数+mode+time+name
 #define ROW_BTN_NUM 5 //按钮个数：上下移动、增加删除、运行
 #define BEFORE_VALUE_NUM 2 //节点数之前的数值个数：name、mode
 #define POS_LIMIT_VALUE 10
+#define SHOW_BTN_NUM 50
 
 ControlTableView::ControlTableView(QWidget *parent)
 {
@@ -90,7 +92,7 @@ void ControlTableView::valueListInit()
     for(int i=0;i<NODE_NUM;i++) {
         valueList << QObject::tr("0");
     }
-    valueList << QObject::tr("500");
+    valueList << QObject::tr("");
 }
 
 /**
@@ -412,6 +414,134 @@ void ControlTableView::setListBoundaryValue(int &up, int &down)
             break;
         }
     }
+}
+
+void ControlTableView::exportToCsv(QString fileName)
+{
+    if (fileName.isEmpty())
+        return;
+
+    QFile file(fileName);
+
+    if (file.open(QIODevice::WriteOnly))
+    {
+        QTextStream stream(&file);
+        int columnCount=model->columnCount();
+        //        qDebug() << "cc:" << columnCount;
+
+        QStringList list;
+        for (int i=0;i<columnCount;i++)
+        {
+            list<< model->headerData(i,Qt::Horizontal,Qt::DisplayRole).toString();
+        }
+        stream<< list.join(",")<<"\r\n";
+
+        for (int i=0;i<model->rowCount();i++)
+        {
+            list.clear();
+            for (int j=0;j<columnCount;j++)
+            {
+                if(1==j&&i>0) {
+                    if(model->rowCount()<SHOW_BTN_NUM)
+                        list << QString::number(qobject_cast<IncompleteCombox *>(indexWidget(model->index(i,1)))->currentIndex());
+                    else
+                        list << "1";
+                } else if(BTN_START_INDEX+ROW_BTN_NUM==j&&i>0) {
+                    if(model->rowCount()<SHOW_BTN_NUM)
+                        list << QString::number(qobject_cast<QCheckBox *>(indexWidget(model->index(i,BTN_START_INDEX+ROW_BTN_NUM)))->isChecked());
+                    else
+                        list << "1";
+                } else if(j>NODE_NUM+BEFORE_VALUE_NUM && j<BTN_START_INDEX+ROW_BTN_NUM) {
+                    list << "1";
+                } else
+                    list<<model->index(i,j).data().toString();
+            }
+            stream<< list.join(",")<<"\r\n";
+        }
+        file.close();
+    }
+}
+
+void ControlTableView::importCsv(QString fileName)
+{
+    QFile file(fileName);
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qDebug() << "Open file failed!";
+        return;
+    }
+
+    QList<QStringList> qlist;
+    QStringList strlist;
+    QTextStream in(&file);
+    int row = 0;
+    int col = 0, colMin = 0;
+
+    while(!in.atEnd()) {
+        QString fileLine = in.readLine();
+        strlist = fileLine.split(",", QString::SkipEmptyParts);
+        //        qDebug() << strlist;
+        qlist.push_back(strlist);
+
+        // 取更大值
+        if (col == 0) {
+            col = strlist.count();
+        }
+        else {
+            col = col > strlist.count() ? col : strlist.count();
+            colMin = col < strlist.count() ? col : strlist.count();
+        }
+        row++;
+    }
+    if(0==col||0==row) {
+        QMessageBox::critical(this, tr("Import"),
+                              tr("Empty file!"),
+                              QMessageBox::Ok | QMessageBox::Cancel);
+        file.close();
+        return;
+    }
+
+    //    qDebug() << row << col << colMin;
+
+    if(!QString(qlist[1][0]).contains("ref")) {
+        QMessageBox::warning(this, tr("Import"),
+                             tr("The imported file format is incorrect.\n"
+                                "You must manually modify the csv file and import it."),
+                             QMessageBox::Ok | QMessageBox::Cancel);
+        file.close();
+        return;
+    }
+
+    model->clear();
+    model->setRowCount(row-1);
+    model->setColumnCount(col);
+
+    for(int i=0;i<headerData.length();i++) {
+        model->setHeaderData(i,Qt::Horizontal,headerData[i]);
+    }
+
+    //ref line
+    for(int j = 0; j < NODE_NUM+1; j++) {
+        QStandardItem *item = new QStandardItem(qlist[1][j]);
+        if(j == 0)
+            model->setItem(0, 0, item);
+        else
+            model->setItem(0, j+1, item);
+    }
+
+    for (int i = 1; i < row-1; i++)//Remove the first line header
+    {
+        for (int j = 0; j < col; j++)//note:21
+        {
+            if(j != 1 && j < colMin) {
+                QStandardItem *item = new QStandardItem(qlist[i+1][j]);
+                model->setItem(i, j, item);
+            }
+        }
+        addTableviewRowWidget(QString(qlist[i+1][1]).toInt(), i, QString(qlist[i+1][colMin-1]).toInt()>0, i<SHOW_BTN_NUM);
+    }
+
+    file.close();
 }
 
 void ControlTableView::execSeqEvent()
