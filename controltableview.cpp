@@ -436,8 +436,8 @@ void ControlTableView::execSeqEvent()
     }
 
     if(row>listTail) {//顺序执行越界处理
-        groupCnt++;
         if(cycleFlag) {
+            groupCnt++;
             row = listHead;
             lastRow[0]=-1;
             lastRow[1]=-1;
@@ -456,8 +456,8 @@ void ControlTableView::execSeqEvent()
     }
 
     if(row<listHead) {//逆序执行越界处理
-        groupCnt++;
         if(cycleFlag) {
+            groupCnt++;
             row = listTail;
             lastRow[0]=-1;
             lastRow[1]=-1;
@@ -492,7 +492,7 @@ void ControlTableView::execSeqEvent()
             qobject_cast<QCheckBox *>(indexWidget(model->index(row,BTN_START_INDEX+ROW_BTN_NUM)))->isChecked()) {
         int runTime = interPeriod;
         if(execRunOrPauseFlag/10==1) {//顺序执行,采用上一行命令的时间
-            if(row>listHead) {//1-[T2-2]-[T3-3]  T1可以设置的比较小  P1-T2-P2,其中T2指的是P1转到P2的时间
+            if(row>=listHead) {//1-[T2-2]-[T3-3]  T1可以设置的比较小  P1-T2-P2,其中T2指的是P1转到P2的时间
                 if(runTime == 0)
                     runTime = static_cast<int>(model->index(g_lastRow,NODE_NUM+BEFORE_VALUE_NUM).data().toDouble()+0.5);
 
@@ -504,7 +504,7 @@ void ControlTableView::execSeqEvent()
                 runTime=0;
             }
         } else {//逆序执行,采用上一行命令的时间
-            if(row<listTail) {//3-[T3-2]-[T2-1] 其中T3代表P2转到P3的时间
+            if(row<=listTail) {//3-[T3-2]-[T2-1] 其中T3代表P2转到P3的时间
                 if(runTime == 0) {
                     runTime = static_cast<int>(model->index(lastRow[0],NODE_NUM+BEFORE_VALUE_NUM).data().toDouble()+0.5);
                     //如果上次运行的为速度，则只间隔上次速度所需时间再执行位置
