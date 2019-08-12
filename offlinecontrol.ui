@@ -99,17 +99,17 @@
            </property>
            <item>
             <property name="text">
-             <string>speed mode</string>
+             <string>速度模式</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>absolute position mode</string>
+             <string>绝对位置模式</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>relative position mode</string>
+             <string>相对位置模式</string>
             </property>
            </item>
           </widget>

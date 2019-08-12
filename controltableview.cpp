@@ -14,7 +14,7 @@
 #define BTN_START_INDEX NODE_NUM+3 //行按钮开始的位置=节点数+mode+time+name
 #define ROW_BTN_NUM 5 //按钮个数：上下移动、增加删除、运行
 #define BEFORE_VALUE_NUM 2 //节点数之前的数值个数：name、mode
-#define POS_LIMIT_VALUE 10 //最大允许位置变化偏差，超过会显示数据异常
+#define POS_LIMIT_VALUE 20 //最大允许位置变化偏差，超过会显示数据异常
 #define SHOW_BTN_NUM 50 //表格显示按钮的行数，一般设定前50行s
 
 ControlTableView::ControlTableView(QWidget *parent)
@@ -195,9 +195,9 @@ void ControlTableView::addTableviewRowWidget(int mode, int row, bool checkState,
 
     //为这个第2列添加下拉框
     IncompleteCombox *m_combox= new IncompleteCombox();
-    m_combox->addItem("speed");
-    m_combox->addItem("absolute pos");
-    m_combox->addItem("relative pos");
+    m_combox->addItem("速度");
+    m_combox->addItem("绝对位置");
+    m_combox->addItem("相对位置");
     m_combox->setCurrentIndex(mode);
     m_combox->setProperty("row", row);  //为按钮设置row属性
     setIndexWidget(model->index(row, 1), m_combox);
