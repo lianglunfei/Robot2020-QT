@@ -32,7 +32,9 @@ void OfflineControl::on_addRecordPushButton_clicked()
 
 void OfflineControl::on_synchronousPushButton_clicked()
 {
-    ui->tableView->syncTableviewRowData(ui->tableView->currentIndex().data().toInt());
+    int row = ui->tableView->selectionModel()->currentIndex().row();
+    if(row>-1)
+        ui->tableView->syncTableviewRowData(row);
 }
 
 void OfflineControl::on_hidePushButton_clicked()
