@@ -133,7 +133,7 @@ int DataTransmission::CANTransmit(int connectType, unsigned char data[], int id)
         frameinfo.SendType=0;
         frameinfo.DataLen=8;
         frameinfo.ID=(DWORD2)id;
-        memset(frameinfo.Data, 0 ,sizeof(frameinfo.Data));
+        memset(&frameinfo.Data, 0 ,sizeof(frameinfo.Data));
         for(int i=0;i<8;i++) {
             frameinfo.Data[i]=data[i];
             qDebug() << data[i];
@@ -161,10 +161,13 @@ int DataTransmission::CANTransmitMulti(int connectType, unsigned char data[][8],
         for(int i=0;i<len;i++) {
             frameinfo[i].SendType=0;
             frameinfo[i].DataLen=8;
+            frameinfo[i].RemoteFlag=0;
+            frameinfo[i].ExternFlag=0;
             frameinfo[i].ID=(DWORD2)id[i];
-            memset(frameinfo[i].Data, 0 ,sizeof(frameinfo[i].Data));
-            for(int j=0;j<8;j++)
+            memset(&frameinfo[i].Data, 0 ,sizeof(frameinfo[i].Data));
+            for(int j=0;j<8;j++) {
                 frameinfo[i].Data[j]=data[i][j];
+            }
         }
         return VCI_Transmit(VCI_USBCAN1, 0, 0, frameinfo, len);
         break;
