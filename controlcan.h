@@ -3,7 +3,7 @@
 
 #include <qsystemdetection.h>
 
-#if defined(Q_OS_LINUX)
+#if defined(Q_OS_UNIX)
 ////文件版本：v2.01 20190527
 //接口卡类型定义
 

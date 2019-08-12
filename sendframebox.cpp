@@ -119,7 +119,7 @@ void SendFrameBox::sendFrameData()
     //Id=((DWORD2)FrameID[0]<<24)+((DWORD2)FrameID[1]<<16)+((DWORD2)FrameID[2]<<8)+((DWORD2)FrameID[3])
     currentId=((DWORD2)FrameID[2]<<8)+((DWORD2)FrameID[3]);
 
-    int ret = DataTransmission::CANTransmit(CONNECT_TYPE_LINUX, currentData, currentId);
+    int ret = DataTransmission::CANTransmit(CONNECT_TYPE_ALYSIST, currentData, currentId);
     if(ret==-1) {
         qDebug() << "failed- device not open\n";  //=-1表示USB-CAN设备不存在或USB掉线
         return;
@@ -136,7 +136,7 @@ void SendFrameBox::sendFrameData()
 
 void SendFrameBox::repeatSendProcess()
 {
-    int ret = DataTransmission::CANTransmit(CONNECT_TYPE_LINUX, currentData, currentId);
+    int ret = DataTransmission::CANTransmit(CONNECT_TYPE_ALYSIST, currentData, currentId);
     if(ret==-1)
         qDebug() << "failed- device not open\n";  //=-1表示USB-CAN设备不存在或USB掉线
     else if(ret==0)

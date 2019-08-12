@@ -74,7 +74,8 @@ HEADERS += \
     offlinecontrol.h \
     incompletecombox.h \
     controltableview.h \
-    drivers.h
+    drivers.h \
+    controlcanwin.h
 
 FORMS += \
         mainwindow.ui \
@@ -99,3 +100,8 @@ DISTFILES +=
 
 RESOURCES += \
     img.qrc
+
+win32: LIBS += -L$$PWD/LIB/ -lControlCAN
+
+INCLUDEPATH += $$PWD/LIB
+DEPENDPATH += $$PWD/LIB

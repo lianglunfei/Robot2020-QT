@@ -24,7 +24,7 @@ bool Package::unpackOperate()
     int dataLen[50]={0};
     int id[50]={0};
     unsigned char data[50][8]={{0}};
-    DataTransmission::CANReceive(CONNECT_TYPE_LINUX, GlobalData::currentCanData, dataLen, id, data);
+    DataTransmission::CANReceive(CONNECT_TYPE_ALYSIST, GlobalData::currentCanData, dataLen, id, data);
     for(int i=0;i<sizeof(id)/sizeof(int);i++) {
         Protocol::getRawData(data[i], receivedCanData, dataLen[i], id[i]);
         if((receivedCanData[1]+receivedCanData[2]+receivedCanData[3])!=0) {
@@ -90,7 +90,7 @@ bool Package::packOperate(unsigned int id, double data, int type)
     default:
         break;
     }
-    DataTransmission::CANTransmit(CONNECT_TYPE_LINUX, packData, id);
+    DataTransmission::CANTransmit(CONNECT_TYPE_ALYSIST, packData, id);
     return true;
 }
 
@@ -139,5 +139,5 @@ bool Package::packOperateMulti(unsigned int *id, double *data, int num, int type
             break;
         }
     }
-    DataTransmission::CANTransmitMulti(CONNECT_TYPE_LINUX, packData, (int*)id, num);
+    DataTransmission::CANTransmitMulti(CONNECT_TYPE_ALYSIST, packData, (int*)id, num);
 }

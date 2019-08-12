@@ -2,6 +2,7 @@
 #define DATATRANSMISSION_H
 
 #include "controlcan.h"
+#include "controlcanwin.h"
 #include <string.h>
 #include <QStringList>
 

@@ -25,7 +25,7 @@ DataTransmission::DataTransmission()
 int DataTransmission::CANOpenDevice(int connectType)
 {
     switch (connectType) {
-    case CONNECT_TYPE_LINUX:
+    case CONNECT_TYPE_ALYSIST:
         return VCI_OpenDevice(VCI_USBCAN1,0,0);
     default:
         break;
@@ -43,7 +43,7 @@ int DataTransmission::CANOpenDevice(int connectType)
 int DataTransmission::InitCAN(int connectType, int devIndex, int baud)
 {
     switch (connectType) {
-    case CONNECT_TYPE_LINUX:
+    case CONNECT_TYPE_ALYSIST:
         VCI_INIT_CONFIG InitInfo;  //结构体
         switch (baud) {
         case 0: //1000
@@ -110,7 +110,7 @@ int DataTransmission::InitCAN(int connectType, int devIndex, int baud)
 int DataTransmission::StartCAN(int connectType, int devIndex)
 {
     switch (connectType) {
-    case CONNECT_TYPE_LINUX:
+    case CONNECT_TYPE_ALYSIST:
         return VCI_StartCAN(VCI_USBCAN1, 0, devIndex);
     default:
         break;
@@ -128,7 +128,7 @@ int DataTransmission::StartCAN(int connectType, int devIndex)
 int DataTransmission::CANTransmit(int connectType, unsigned char data[], int id)
 {
     switch (connectType) {
-    case CONNECT_TYPE_LINUX:
+    case CONNECT_TYPE_ALYSIST:
         VCI_CAN_OBJ frameinfo;
         frameinfo.SendType=0;
         frameinfo.DataLen=8;
@@ -156,7 +156,7 @@ int DataTransmission::CANTransmit(int connectType, unsigned char data[], int id)
 int DataTransmission::CANTransmitMulti(int connectType, unsigned char data[][8], int id[], int len)
 {
     switch (connectType) {
-    case CONNECT_TYPE_LINUX:
+    case CONNECT_TYPE_ALYSIST:
         VCI_CAN_OBJ frameinfo[len];
         for(int i=0;i<len;i++) {
             frameinfo[i].SendType=0;
@@ -185,7 +185,7 @@ int DataTransmission::CANTransmitMulti(int connectType, unsigned char data[][8],
 void DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen[], int id[], unsigned char data[][8])
 {
     switch (connectType) {
-    case CONNECT_TYPE_LINUX:
+    case CONNECT_TYPE_ALYSIST:
         VCI_CAN_OBJ frameinfo[50];
         int len=1;
         len=VCI_Receive(VCI_USBCAN1,0,0,frameinfo,50,10);
