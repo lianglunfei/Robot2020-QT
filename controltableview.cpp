@@ -151,7 +151,11 @@ void ControlTableView::valueListSync(int row)
     valueList.clear();
     valueList << model->index(row,0).data().toString();
     for(int i=0;i<NODE_NUM;i++) {
-        value[i] = GlobalData::currentCanAnalyticalData[i].position-refValue[i];
+        if(row==0) {
+            value[i] = GlobalData::currentCanAnalyticalData[i].position;
+        } else {
+            value[i] = GlobalData::currentCanAnalyticalData[i].position-refValue[i];
+        }
         valueList << QString::number(value[i]);
     }
     valueList << model->index(row,NODE_NUM+BEFORE_VALUE_NUM).data().toString();
