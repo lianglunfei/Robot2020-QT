@@ -1,6 +1,9 @@
 #include "jointcontrol.h"
 #include "ui_jointcontrol.h"
 
+#include <QKeyEvent>
+
+#include "drivers.h"
 #include "debug.h"
 
 /**
@@ -75,4 +78,28 @@ void JointControl::initObject()
 JointControl::~JointControl()
 {
     delete ui;
+}
+
+void JointControl::on_initDriverPushButton_clicked()
+{
+    Drivers::initJoint();
+}
+
+void JointControl::on_emergencyStopPushButton_clicked()
+{
+    Drivers::stopJoint();
+}
+
+void JointControl::keyPressEvent(QKeyEvent *e)
+{
+    switch(e->key())
+    {
+    case Qt::Key_A:
+    {
+        if (QApplication::keyboardModifiers() == Qt::AltModifier) {
+            on_emergencyStopPushButton_clicked();
+        }
+        break;
+    }
+    }
 }

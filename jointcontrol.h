@@ -19,10 +19,17 @@ public:
     explicit JointControl();
     ~JointControl();
 
+private slots:
+    void on_initDriverPushButton_clicked();
+
+    void on_emergencyStopPushButton_clicked();
+
 private:
     Ui::JointControl *ui;
 
     void initObject();
+
+    void keyPressEvent(QKeyEvent *e) override;
 };
 
 #endif // JOINTCONTROL_H
