@@ -8,6 +8,7 @@ class JointPlot;
 class JointSpeedMeas;
 class Terminal;
 class JointControl;
+class SingleJointControl;
 class OfflineControl;
 
 namespace Ui {
@@ -30,6 +31,7 @@ private:
     JointSpeedMeas *m_joint_speed_meas_widget = nullptr;
     Terminal *m_terminal = nullptr;
     JointControl *m_joint_control = nullptr;
+    SingleJointControl *m_single_joint_control = nullptr;
     OfflineControl *m_offline_control = nullptr;
     void connectInit();
 

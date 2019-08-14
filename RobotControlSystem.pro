@@ -46,7 +46,8 @@ SOURCES += \
     offlinecontrol.cpp \
     incompletecombox.cpp \
     controltableview.cpp \
-    drivers.cpp
+    drivers.cpp \
+    singlejointcontrol.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -75,7 +76,8 @@ HEADERS += \
     incompletecombox.h \
     controltableview.h \
     drivers.h \
-    controlcanwin.h
+    controlcanwin.h \
+    singlejointcontrol.h
 
 FORMS += \
         mainwindow.ui \
@@ -86,7 +88,8 @@ FORMS += \
     receiveframebox.ui \
     sendframebox.ui \
     jointcontrol.ui \
-    offlinecontrol.ui
+    offlinecontrol.ui \
+    singlejointcontrol.ui
 
 target.path = ../
 INSTALLS += target

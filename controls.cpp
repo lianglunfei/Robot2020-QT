@@ -17,7 +17,8 @@
 *@date          20190731
 **/
 Controls::Controls(QWidget *parent) :
-    QDialog(parent)
+    QDialog(parent),
+    currentNode(-1)
 {
 }
 
@@ -109,6 +110,11 @@ void Controls::initConnection()
     }
 }
 
+void Controls::setCurrentNode(int nodeNum)
+{
+    currentNode = nodeNum>NODE_NUM-1?NODE_NUM-1:nodeNum;
+}
+
 /**
 *@projectName   RobotControlSystem
 *@brief         正转反转函数处理
@@ -120,31 +126,41 @@ void Controls::forwardReversalPushbtnClicked()
 {
     auto *btn = qobject_cast<QPushButton *>(this->sender());
     double readValue;
-    int len=forwardReversePushButton.length();
 
-    for(int i=0;i<len/6;i++) {
-        readValue = findChild<QDoubleSpinBox*>(relativeSpinBox[3*i])->text().toDouble();
-        if((i*3) < NODE_NUM && btn == findChild<QPushButton*>(forwardReversePushButton[3*i])) {
-            forwardRotation(0+3*i, readValue);
+    if(currentNode>0) {
+        readValue = findChild<QDoubleSpinBox*>(relativeSpinBox[0])->text().toDouble();
+        if(btn == findChild<QPushButton*>(forwardReversePushButton[0])) {
+            forwardRotation(currentNode, readValue);
         }
-        else if((i*3) < NODE_NUM && btn == findChild<QPushButton*>(forwardReversePushButton[(3*i)+len/2])) {
-            reverseRotation(0+3*i, readValue);
+        else if(btn == findChild<QPushButton*>(forwardReversePushButton[0])) {
+            reverseRotation(currentNode, readValue);
         }
+    } else {
+        int len=forwardReversePushButton.length();
+        for(int i=0;i<len/6;i++) {
+            readValue = findChild<QDoubleSpinBox*>(relativeSpinBox[3*i])->text().toDouble();
+            if((i*3) < NODE_NUM && btn == findChild<QPushButton*>(forwardReversePushButton[3*i])) {
+                forwardRotation(0+3*i, readValue);
+            }
+            else if((i*3) < NODE_NUM && btn == findChild<QPushButton*>(forwardReversePushButton[(3*i)+len/2])) {
+                reverseRotation(0+3*i, readValue);
+            }
 
-        readValue = findChild<QDoubleSpinBox*>(relativeSpinBox[(3*i)+1])->text().toDouble();
-        if((i*3)+1 < NODE_NUM && btn == findChild<QPushButton*>(forwardReversePushButton[(3*i)+1])) {
-            forwardRotation(1+3*i, readValue);
-        }
-        else if((i*3)+1 < NODE_NUM && btn == findChild<QPushButton*>(forwardReversePushButton[(3*i)+len/2+1])) {
-            reverseRotation(1+3*i, readValue);
-        }
+            readValue = findChild<QDoubleSpinBox*>(relativeSpinBox[(3*i)+1])->text().toDouble();
+            if((i*3)+1 < NODE_NUM && btn == findChild<QPushButton*>(forwardReversePushButton[(3*i)+1])) {
+                forwardRotation(1+3*i, readValue);
+            }
+            else if((i*3)+1 < NODE_NUM && btn == findChild<QPushButton*>(forwardReversePushButton[(3*i)+len/2+1])) {
+                reverseRotation(1+3*i, readValue);
+            }
 
-        readValue = findChild<QDoubleSpinBox*>(relativeSpinBox[(3*i)+2])->text().toDouble();
-        if((i*3)+2 < NODE_NUM && btn == findChild<QPushButton*>(forwardReversePushButton[(3*i)+2])) {
-            forwardRotation(2+3*i, readValue);
-        }
-        else if((i*3)+2 < NODE_NUM && btn == findChild<QPushButton*>(forwardReversePushButton[(3*i)+len/2+2])) {
-            reverseRotation(2+3*i, readValue);
+            readValue = findChild<QDoubleSpinBox*>(relativeSpinBox[(3*i)+2])->text().toDouble();
+            if((i*3)+2 < NODE_NUM && btn == findChild<QPushButton*>(forwardReversePushButton[(3*i)+2])) {
+                forwardRotation(2+3*i, readValue);
+            }
+            else if((i*3)+2 < NODE_NUM && btn == findChild<QPushButton*>(forwardReversePushButton[(3*i)+len/2+2])) {
+                reverseRotation(2+3*i, readValue);
+            }
         }
     }
 }
@@ -178,21 +194,29 @@ void Controls::speedValueChanged()
     auto *Spin = qobject_cast<QDoubleSpinBox *>(this->sender());
     auto *Slider = qobject_cast<DoubleSlider *>(this->sender());
 
-    for(int i=0;i<speedSpinBox.length()/3;i++) {//4 parts
-        if((i*3) < NODE_NUM && Spin == findChild<QDoubleSpinBox*>(speedSpinBox[i*3])
-                || Slider == findChild<DoubleSlider*>(speedSlider[i*3])) {
-            readyToSendCanData[i*3].speed =
-                    findChild<QDoubleSpinBox*>(speedSpinBox[i*3])->text().toDouble();
+    if(currentNode>0) {
+        if(Spin == findChild<QDoubleSpinBox*>(speedSpinBox[0])
+                || Slider == findChild<DoubleSlider*>(speedSlider[0])) {
+            readyToSendCanData[currentNode].speed =
+                    findChild<QDoubleSpinBox*>(speedSpinBox[0])->text().toDouble();
         }
-        else if((i*3)+1 < NODE_NUM && Spin == findChild<QDoubleSpinBox*>(speedSpinBox[(i*3)+1])
-                || Slider == findChild<DoubleSlider*>(speedSlider[(i*3)+1])) {
-            readyToSendCanData[(i*3)+1].speed =
-                    findChild<QDoubleSpinBox*>(speedSpinBox[(i*3)+1])->text().toDouble();
-        }
-        else if((i*3)+2 < NODE_NUM && Spin == findChild<QDoubleSpinBox*>(speedSpinBox[(i*3)+2])
-                || Slider == findChild<DoubleSlider*>(speedSlider[(i*3)+2])) {
-            readyToSendCanData[(i*3)+2].speed =
-                    findChild<QDoubleSpinBox*>(speedSpinBox[(i*3)+2])->text().toDouble();
+    } else {
+        for(int i=0;i<speedSpinBox.length()/3;i++) {//4 parts
+            if((i*3) < NODE_NUM && Spin == findChild<QDoubleSpinBox*>(speedSpinBox[i*3])
+                    || Slider == findChild<DoubleSlider*>(speedSlider[i*3])) {
+                readyToSendCanData[i*3].speed =
+                        findChild<QDoubleSpinBox*>(speedSpinBox[i*3])->text().toDouble();
+            }
+            else if((i*3)+1 < NODE_NUM && Spin == findChild<QDoubleSpinBox*>(speedSpinBox[(i*3)+1])
+                    || Slider == findChild<DoubleSlider*>(speedSlider[(i*3)+1])) {
+                readyToSendCanData[(i*3)+1].speed =
+                        findChild<QDoubleSpinBox*>(speedSpinBox[(i*3)+1])->text().toDouble();
+            }
+            else if((i*3)+2 < NODE_NUM && Spin == findChild<QDoubleSpinBox*>(speedSpinBox[(i*3)+2])
+                    || Slider == findChild<DoubleSlider*>(speedSlider[(i*3)+2])) {
+                readyToSendCanData[(i*3)+2].speed =
+                        findChild<QDoubleSpinBox*>(speedSpinBox[(i*3)+2])->text().toDouble();
+            }
         }
     }
 }
@@ -202,21 +226,29 @@ void Controls::posValueChanged()
     auto *Spin = qobject_cast<QDoubleSpinBox *>(this->sender());
     auto *Slider = qobject_cast<DoubleSlider *>(this->sender());
 
-    for(int i=0;i<positionSpinBox.length()/3;i++) {//4 parts
-        if((i*3) < NODE_NUM && Spin ==  findChild<QDoubleSpinBox*>(positionSpinBox[i*3])
-                || Slider == findChild<DoubleSlider*>(positionSlider[i*3])) {
-            readyToSendCanData[i*3].position =
-                    findChild<QDoubleSpinBox*>(positionSpinBox[i*3])->text().toDouble();
+    if(currentNode>0) {
+        if(Spin ==  findChild<QDoubleSpinBox*>(positionSpinBox[0])
+                || Slider == findChild<DoubleSlider*>(positionSlider[0])) {
+            readyToSendCanData[currentNode].position =
+                    findChild<QDoubleSpinBox*>(positionSpinBox[0])->text().toDouble();
         }
-        else if((i*3)+1 < NODE_NUM && Spin ==  findChild<QDoubleSpinBox*>(positionSpinBox[(i*3)+1])
-                || Slider == findChild<DoubleSlider*>(positionSlider[(i*3)+1])) {
-            readyToSendCanData[(i*3)+1].position =
-                    findChild<QDoubleSpinBox*>(positionSpinBox[(i*3)+1])->text().toDouble();
-        }
-        else if((i*3)+2 < NODE_NUM && Spin ==  findChild<QDoubleSpinBox*>(positionSpinBox[(i*3)+2])
-                || Slider == findChild<DoubleSlider*>(positionSlider[(i*3)+2])) {
-            readyToSendCanData[(i*3)+2].position =
-                    findChild<QDoubleSpinBox*>(positionSpinBox[(i*3)+2])->text().toDouble();
+    } else {
+        for(int i=0;i<positionSpinBox.length()/3;i++) {//4 parts
+            if((i*3) < NODE_NUM && Spin ==  findChild<QDoubleSpinBox*>(positionSpinBox[i*3])
+                    || Slider == findChild<DoubleSlider*>(positionSlider[i*3])) {
+                readyToSendCanData[i*3].position =
+                        findChild<QDoubleSpinBox*>(positionSpinBox[i*3])->text().toDouble();
+            }
+            else if((i*3)+1 < NODE_NUM && Spin ==  findChild<QDoubleSpinBox*>(positionSpinBox[(i*3)+1])
+                    || Slider == findChild<DoubleSlider*>(positionSlider[(i*3)+1])) {
+                readyToSendCanData[(i*3)+1].position =
+                        findChild<QDoubleSpinBox*>(positionSpinBox[(i*3)+1])->text().toDouble();
+            }
+            else if((i*3)+2 < NODE_NUM && Spin ==  findChild<QDoubleSpinBox*>(positionSpinBox[(i*3)+2])
+                    || Slider == findChild<DoubleSlider*>(positionSlider[(i*3)+2])) {
+                readyToSendCanData[(i*3)+2].position =
+                        findChild<QDoubleSpinBox*>(positionSpinBox[(i*3)+2])->text().toDouble();
+            }
         }
     }
 }
@@ -232,18 +264,25 @@ void Controls::setPosButtonClicked()
 {
     auto *btn = qobject_cast<QPushButton *>(this->sender());
 
-    for(int i=0;i<positionSetButton.length()/3;i++) {//4 parts
-        if((i*3) < NODE_NUM && btn == findChild<QPushButton*>(positionSetButton[i*3])) {
-            Package::packOperate(GlobalData::sendId[(i*3)], readyToSendCanData[(i*3)].position,
+    if(currentNode>0) {
+        if(btn == findChild<QPushButton*>(positionSetButton[0])) {
+            Package::packOperate(GlobalData::sendId[(currentNode)], readyToSendCanData[(currentNode)].position,
                     PROTOCOL_TYPE_POS);
         }
-        else if((i*3)+1 < NODE_NUM && btn == findChild<QPushButton*>(positionSetButton[(i*3)+1])) {
-            Package::packOperate(GlobalData::sendId[(i*3)+1], readyToSendCanData[(i*3)+1].position,
-                    PROTOCOL_TYPE_POS);
-        }
-        else if((i*3)+2 < NODE_NUM && btn == findChild<QPushButton*>(positionSetButton[(i*3)+2])) {
-            Package::packOperate(GlobalData::sendId[(i*3)+2], readyToSendCanData[(i*3)+2].position,
-                    PROTOCOL_TYPE_POS);
+    } else {
+        for(int i=0;i<positionSetButton.length()/3;i++) {//4 parts
+            if((i*3) < NODE_NUM && btn == findChild<QPushButton*>(positionSetButton[i*3])) {
+                Package::packOperate(GlobalData::sendId[(i*3)], readyToSendCanData[(i*3)].position,
+                        PROTOCOL_TYPE_POS);
+            }
+            else if((i*3)+1 < NODE_NUM && btn == findChild<QPushButton*>(positionSetButton[(i*3)+1])) {
+                Package::packOperate(GlobalData::sendId[(i*3)+1], readyToSendCanData[(i*3)+1].position,
+                        PROTOCOL_TYPE_POS);
+            }
+            else if((i*3)+2 < NODE_NUM && btn == findChild<QPushButton*>(positionSetButton[(i*3)+2])) {
+                Package::packOperate(GlobalData::sendId[(i*3)+2], readyToSendCanData[(i*3)+2].position,
+                        PROTOCOL_TYPE_POS);
+            }
         }
     }
 }
@@ -252,18 +291,25 @@ void Controls::setSpeedButtonClicked()
 {
     auto *btn = qobject_cast<QPushButton *>(this->sender());
 
-    for(int i=0;i<speedSetButton.length()/3;i++) {//4 parts
-        if((i*3) < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[i*3])) {
-            Package::packOperate(GlobalData::sendId[(i*3)], readyToSendCanData[(i*3)].speed,
+    if(currentNode>0) {
+        if(btn == findChild<QPushButton*>(speedSetButton[0])) {
+            Package::packOperate(GlobalData::sendId[currentNode], readyToSendCanData[currentNode].speed,
                     PROTOCOL_TYPE_SPD);
         }
-        else if((i*3)+1 < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[(i*3)+1])) {
-            Package::packOperate(GlobalData::sendId[(i*3)+1], readyToSendCanData[(i*3)+1].speed,
-                    PROTOCOL_TYPE_SPD);
-        }
-        else if((i*3)+2 < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[(i*3)+2])) {
-            Package::packOperate(GlobalData::sendId[(i*3)+2], readyToSendCanData[(i*3)+2].speed,
-                    PROTOCOL_TYPE_SPD);
+    } else {
+        for(int i=0;i<speedSetButton.length()/3;i++) {//4 parts
+            if((i*3) < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[i*3])) {
+                Package::packOperate(GlobalData::sendId[(i*3)], readyToSendCanData[(i*3)].speed,
+                        PROTOCOL_TYPE_SPD);
+            }
+            else if((i*3)+1 < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[(i*3)+1])) {
+                Package::packOperate(GlobalData::sendId[(i*3)+1], readyToSendCanData[(i*3)+1].speed,
+                        PROTOCOL_TYPE_SPD);
+            }
+            else if((i*3)+2 < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[(i*3)+2])) {
+                Package::packOperate(GlobalData::sendId[(i*3)+2], readyToSendCanData[(i*3)+2].speed,
+                        PROTOCOL_TYPE_SPD);
+            }
         }
     }
 }
@@ -279,18 +325,25 @@ void Controls::setSpeedButtonReleased()
 {
     auto *btn = qobject_cast<QPushButton *>(this->sender());
 
-    for(int i=0;i<speedSetButton.length()/3;i++) {//4 parts
-        if((i*3) < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[i*3])) {
-            Package::packOperate(GlobalData::sendId[(i*3)], 0,
+    if(currentNode>0) {
+        if(btn == findChild<QPushButton*>(speedSetButton[0])) {
+            Package::packOperate(GlobalData::sendId[(currentNode)], 0,
                     PROTOCOL_TYPE_SPD);
         }
-        else if((i*3)+1 < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[(i*3)+1])) {
-            Package::packOperate(GlobalData::sendId[(i*3)+1], 0,
-                    PROTOCOL_TYPE_SPD);
-        }
-        else if((i*3)+2 < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[(i*3)+2])) {
-            Package::packOperate(GlobalData::sendId[(i*3)+2], 0,
-                    PROTOCOL_TYPE_SPD);
+    } else {
+        for(int i=0;i<speedSetButton.length()/3;i++) {//4 parts
+            if((i*3) < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[i*3])) {
+                Package::packOperate(GlobalData::sendId[(i*3)], 0,
+                        PROTOCOL_TYPE_SPD);
+            }
+            else if((i*3)+1 < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[(i*3)+1])) {
+                Package::packOperate(GlobalData::sendId[(i*3)+1], 0,
+                        PROTOCOL_TYPE_SPD);
+            }
+            else if((i*3)+2 < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[(i*3)+2])) {
+                Package::packOperate(GlobalData::sendId[(i*3)+2], 0,
+                        PROTOCOL_TYPE_SPD);
+            }
         }
     }
 }

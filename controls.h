@@ -20,6 +20,7 @@ public:
     void initConnection();
     void controlWidgetInit();
     bool initUiObject();
+    void setCurrentNode(int nodeNum);
 
     void setSpeedSlider(const QList<QString>& l);
     void setPositionSlider(const QList<QString>& l);
@@ -40,6 +41,7 @@ private:
     QStringList positionSetButton;
     QStringList forwardReversePushButton;
     QStringList relativeSpinBox;
+    int currentNode;
 
     void forwardRotation(int idIndex, double readValue);
     void reverseRotation(int idIndex, double readValue);

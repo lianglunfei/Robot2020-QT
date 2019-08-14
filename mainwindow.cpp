@@ -5,6 +5,7 @@
 #include "jointplot.h"
 #include "jointspeedmeas.h"
 #include "jointcontrol.h"
+#include "singlejointcontrol.h"
 #include "offlinecontrol.h"
 #include "receiveworkerthread.h"
 #include "terminal.h"
@@ -35,6 +36,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //Initialize joint control window
     m_joint_control = new JointControl;
 
+    //Initialize joint control window
+    m_single_joint_control = new SingleJointControl;
+
     //Initialize offline control window
     m_offline_control = new OfflineControl;
 
@@ -59,6 +63,7 @@ void MainWindow::connectInit()
     connect(ui->actionJoint, &QAction::triggered, m_joint_widget, &JointPlot::show);
     connect(ui->actionJoint_Speed_Meas, &QAction::triggered, m_joint_speed_meas_widget, &JointSpeedMeas::show);
     connect(ui->actionJoint_Control, &QAction::triggered, m_joint_control, &JointControl::show);
+    connect(ui->actionSingle_Joint_Control, &QAction::triggered, m_single_joint_control, &SingleJointControl::show);
     connect(ui->actionOffline_Control, &QAction::triggered, m_offline_control, &OfflineControl::show);
     connect(m_connect_dialog, &ConnectDialog::accepted, this, &MainWindow::canConnectEvent);
 }
@@ -70,6 +75,7 @@ MainWindow::~MainWindow()
     delete m_joint_speed_meas_widget;
     delete m_terminal;
     delete m_joint_control;
+    delete m_single_joint_control;
     delete m_offline_control;
     delete ui;
 }

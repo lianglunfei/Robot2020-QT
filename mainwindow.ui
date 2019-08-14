@@ -26,7 +26,7 @@
      <x>0</x>
      <y>0</y>
      <width>1095</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTool">
@@ -47,6 +47,7 @@
     <property name="title">
      <string>Control</string>
     </property>
+    <addaction name="actionSingle_Joint_Control"/>
     <addaction name="actionJoint_Control"/>
     <addaction name="actionOffline_Control"/>
    </widget>
@@ -91,6 +92,11 @@
   <action name="actionOffline_Control">
    <property name="text">
     <string>Offline Control</string>
+   </property>
+  </action>
+  <action name="actionSingle_Joint_Control">
+   <property name="text">
+    <string>Single Joint Control</string>
    </property>
   </action>
  </widget>
