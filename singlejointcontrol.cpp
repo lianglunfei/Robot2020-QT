@@ -4,6 +4,7 @@
 #include <QKeyEvent>
 
 #include "drivers.h"
+#include "qdebug.h"
 
 SingleJointControl::SingleJointControl() :
     ui(new Ui::SingleJointControl)
