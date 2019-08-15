@@ -15,6 +15,7 @@ public:
     virtual void addDataToUi(double key);
     virtual void setLinesReplot(double key);
     virtual void setLinesPausePlot(QCustomPlot *plot);
+    virtual void showStatus(QString s);
 
     void plotPartWidget(QCustomPlot* part, int rangeMin, int rangeMax, int num);
     void setPlotPen(QCustomPlot* part, const QPen p, const QString name, int index);

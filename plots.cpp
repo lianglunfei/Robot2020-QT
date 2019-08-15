@@ -83,7 +83,7 @@ void Plots::graphClicked(QCPAbstractPlottable *plottable, int dataIndex)
     // usually it's better to first check whether interface1D() returns non-zero, and only then use it.
     double dataValue = plottable->interface1D()->dataMainValue(dataIndex);
     QString message = QString("Clicked on graph '%1' at data point #%2 with value %3.").arg(plottable->name()).arg(dataIndex).arg(dataValue);
-//    ui->statusLabel->setText(message);
+    showStatus(message);
 }
 
 void Plots::mouseDoubleClick(QMouseEvent*)
@@ -152,6 +152,11 @@ void Plots::setLinesReplot(double key)
 *@date          20190724
 **/
 void Plots::setLinesPausePlot(QCustomPlot *plot)
+{
+
+}
+
+void Plots::showStatus(QString s)
 {
 
 }

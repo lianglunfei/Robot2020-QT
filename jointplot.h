@@ -32,9 +32,10 @@ public:
 private:
     void initWidget();
     void initObject();
-    void addDataToUi(double key);
-    void setLinesReplot(double key);
-    void setLinesPausePlot(QCustomPlot *plot);
+    void addDataToUi(double key) override;
+    void setLinesReplot(double key) override;
+    void setLinesPausePlot(QCustomPlot *plot) override;
+    void showStatus(QString s) override;
 
 private:
     Ui::JointPlot *ui;

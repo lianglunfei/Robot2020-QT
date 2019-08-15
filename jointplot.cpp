@@ -92,6 +92,11 @@ void JointPlot::setLinesPausePlot(QCustomPlot *plot)
     }
 }
 
+void JointPlot::showStatus(QString s)
+{
+    ui->statusLabel->setText(s);
+}
+
 JointPlot::~JointPlot()
 {
     delete ui;
