@@ -106,34 +106,31 @@ bool Package::packOperateMulti(unsigned int *id, double *data, int num, int type
     if(!GlobalData::connectType)
         return false;
     unsigned char packData[num][8]={0};
-    int groupNums=1;
-    if(num>10)//Separate motors and wheels
-        groupNums=3;
     for(int i=0;i<num;i++) {
         switch (type) {
         case PROTOCOL_TYPE_POS:
-            Protocol::packPos(packData[i], data[groupNums*i]);
+            Protocol::packPos(packData[i], data[i]);
             break;
         case PROTOCOL_TYPE_SPD:
-            Protocol::packSpeed(packData[i], data[groupNums*i]);
+            Protocol::packSpeed(packData[i], data[i]);
             break;
         case PROTOCOL_TYPE_SPD_SET:
-            Protocol::packSpeedSet(packData[i], data[groupNums*i]);
+            Protocol::packSpeedSet(packData[i], data[i]);
             break;
         case PROTOCOL_TYPE_START:
-            Protocol::packStart(packData[i], data[groupNums*i]);
+            Protocol::packStart(packData[i], data[i]);
             break;
         case PROTOCOL_TYPE_PAUSE:
-            Protocol::packPause(packData[i], data[groupNums*i]);
+            Protocol::packPause(packData[i], data[i]);
             break;
         case PROTOCOL_TYPE_SHUTDOWN:
-            Protocol::packShutDown(packData[i], data[groupNums*i]);
+            Protocol::packShutDown(packData[i], data[i]);
             break;
         case PROTOCOL_TYPE_OPENVALVE:
-            Protocol::packOpenValve(packData[i], data[groupNums*i]);
+            Protocol::packOpenValve(packData[i], data[i]);
             break;
         case PROTOCOL_TYPE_CLOSEVALVE:
-            Protocol::packCloseValve(packData[i], data[groupNums*i]);
+            Protocol::packCloseValve(packData[i], data[i]);
             break;
         default:
             break;
