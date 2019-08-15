@@ -204,11 +204,6 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
                 else
                     tmpstr=QString("%1     ").arg(frameinfo[i].TimeStamp);
                 str+=tmpstr;
-                if(frameinfo[i].ID%16 != 1) //If the ID is not equal to 0x31..0xd1, it is considered as data that is sent down
-                    tmpstr="Write   ";
-                else
-                    tmpstr="Read    ";
-                str+=tmpstr;
                 if(frameinfo[i].RemoteFlag==0) //Format
                     tmpstr="Data     ";
                 else
@@ -219,7 +214,7 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
                 else
                     tmpstr="Exten    ";
                 str+=tmpstr;
-                tmpstr=QString("%1    ").arg(frameinfo[i].ID,2,16,QLatin1Char('0'));
+                tmpstr=QString("%1       ").arg(frameinfo[i].ID,2,16,QLatin1Char('0'));
                 str+=tmpstr;
 
                 id[i] = frameinfo[i].ID;
@@ -231,7 +226,7 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
                     dataLen[i]=frameinfo[i].DataLen;
 
                     for(int j=0;j<frameinfo[i].DataLen;j++) {
-                        str+=QString("%1    ").arg(frameinfo[i].Data[j],2,16,QLatin1Char('0'));
+                        str+=QString("%1   ").arg(frameinfo[i].Data[j],2,16,QLatin1Char('0'));
                         data[i][j]=frameinfo[i].Data[j];
                     }
                 }
