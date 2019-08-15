@@ -3,7 +3,6 @@
 
 #include <qsystemdetection.h>
 
-#if defined(Q_OS_UNIX)
 ////文件版本：v2.01 20190527
 //接口卡类型定义
 
@@ -109,7 +108,5 @@ EXTERN_C ULONG VCI_Receive(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd,PVCI_CA
 
 EXTERN_C DWORD  VCI_UsbDeviceReset(DWORD DevType,DWORD DevIndex,DWORD Reserved);
 EXTERN_C DWORD  VCI_FindUsbDevice2(PVCI_BOARD_INFO pInfo);
-
-#endif
 
 #endif

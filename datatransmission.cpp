@@ -132,7 +132,10 @@ int DataTransmission::CANTransmit(int connectType, unsigned char data[], int id)
         VCI_CAN_OBJ frameinfo;
         frameinfo.SendType=0;
         frameinfo.DataLen=8;
+        frameinfo.RemoteFlag=0;
+        frameinfo.ExternFlag=0;
         frameinfo.ID=(DWORD2)id;
+        qDebug() << "id: " << id;
         memset(&frameinfo.Data, 0 ,sizeof(frameinfo.Data));
         for(int i=0;i<8;i++) {
             frameinfo.Data[i]=data[i];

@@ -76,7 +76,6 @@ HEADERS += \
     incompletecombox.h \
     controltableview.h \
     drivers.h \
-    controlcanwin.h \
     singlejointcontrol.h
 
 FORMS += \
