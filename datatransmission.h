@@ -16,7 +16,7 @@ public:
     static int StartCAN(int connectType, int devIndex);
     static int CANTransmit(int connectType, unsigned char *data, int id);
     static int CANTransmitMulti(int connectType, unsigned char data[][8], int id[], int len);
-    static void CANReceive(int connectType, QStringList &list, int dataLen[], int id[], unsigned char data[][8]);
+    static int CANReceive(int connectType, QStringList &list, int dataLen[], int id[], unsigned char data[][8]);
 };
 
 #endif // DATATRANSMISSION_H

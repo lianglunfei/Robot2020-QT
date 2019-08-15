@@ -24,8 +24,8 @@ bool Package::unpackOperate()
     int dataLen[50]={0};
     int id[50]={0};
     unsigned char data[50][8]={{0}};
-    DataTransmission::CANReceive(CONNECT_TYPE_ALYSIST, GlobalData::currentCanData, dataLen, id, data);
-    for(int i=0;i<sizeof(id)/sizeof(int);i++) {
+    int len = DataTransmission::CANReceive(CONNECT_TYPE_ALYSIST, GlobalData::currentCanData, dataLen, id, data);
+    for(int i=0;i<len;i++) {
         Protocol::getRawData(data[i], receivedCanData, dataLen[i], id[i]);
         if((receivedCanData[1]+receivedCanData[2]+receivedCanData[3])!=0) {
             isConnected = true;

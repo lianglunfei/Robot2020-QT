@@ -185,7 +185,7 @@ int DataTransmission::CANTransmitMulti(int connectType, unsigned char data[][8],
 *@author        XingZhang.Wu
 *@date          20190712
 **/
-void DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen[], int id[], unsigned char data[][8])
+int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen[], int id[], unsigned char data[][8])
 {
     switch (connectType) {
     case CONNECT_TYPE_ALYSIST:
@@ -241,6 +241,6 @@ void DataTransmission::CANReceive(int connectType, QStringList &list, int dataLe
                 list.append(str);
             }
         }
-        break;
+        return len;
     }
 }
