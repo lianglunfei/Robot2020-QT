@@ -34,6 +34,7 @@ private slots:
     void on_initDriverPushButton_clicked();
     void on_emergencyStopPushButton_clicked();
     void on_synchronousPushButton_clicked();
+    void on_caliPushButton_clicked();
 };
 
 #endif // OFFLINECONTROL_H

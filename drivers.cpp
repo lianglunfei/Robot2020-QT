@@ -29,6 +29,14 @@ void Drivers::stopJoint(int nodeNum)
 #endif
 }
 
+void Drivers::calJoint(int nodeNum)
+{
+    if(nodeNum<0 || nodeNum>NODE_NUM-1)
+        return;
+    double value=0;
+    Package::packOperate(GlobalData::sendId[nodeNum], value, PROTOCOL_TYPE_CAL);
+}
+
 void Drivers::initJoint()
 {
     double value[NODE_NUM]={0};
@@ -45,4 +53,10 @@ void Drivers::stopJoint()
 #if DRIVE_NEW
     Package::packOperateMulti(GlobalData::sendId, value, NODE_NUM, PROTOCOL_TYPE_CLOSEVALVE);
 #endif
+}
+
+void Drivers::calJoint()
+{
+    double value[NODE_NUM]={0};
+    Package::packOperateMulti(GlobalData::sendId, value, NODE_NUM, PROTOCOL_TYPE_CAL);
 }

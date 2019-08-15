@@ -131,6 +131,12 @@ void OfflineControl::on_emergencyStopPushButton_clicked()
     Drivers::stopJoint();
 }
 
+void OfflineControl::on_caliPushButton_clicked()
+{
+    on_execSeqStopPushButton_clicked();
+    Drivers::calJoint();
+}
+
 void OfflineControl::keyPressEvent(QKeyEvent *e)
 {
     switch(e->key())

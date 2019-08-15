@@ -26,6 +26,8 @@ private slots:
 
     void on_comboBox_currentIndexChanged(int index);
 
+    void on_caliPushButton_clicked();
+
 private:
     Ui::SingleJointControl *ui;
 

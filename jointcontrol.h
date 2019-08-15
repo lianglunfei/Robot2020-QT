@@ -24,6 +24,8 @@ private slots:
 
     void on_emergencyStopPushButton_clicked();
 
+    void on_caliPushButton_clicked();
+
 private:
     Ui::JointControl *ui;
 

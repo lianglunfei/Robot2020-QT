@@ -90,6 +90,11 @@ void JointControl::on_emergencyStopPushButton_clicked()
     Drivers::stopJoint();
 }
 
+void JointControl::on_caliPushButton_clicked()
+{
+    Drivers::calJoint();
+}
+
 void JointControl::keyPressEvent(QKeyEvent *e)
 {
     switch(e->key())

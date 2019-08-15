@@ -42,6 +42,11 @@ void SingleJointControl::on_emergencyStopPushButton_clicked()
     Drivers::stopJoint(ui->comboBox->currentIndex());
 }
 
+void SingleJointControl::on_caliPushButton_clicked()
+{
+    Drivers::calJoint(ui->comboBox->currentIndex());
+}
+
 void SingleJointControl::keyPressEvent(QKeyEvent *e)
 {
     switch(e->key())
