@@ -13,11 +13,11 @@ SingleJointControl::SingleJointControl() :
     this->setWindowTitle(tr("Single Joint Control"));
 
     initObject();
-    setCurrentNode(ui->comboBox->currentIndex());
     if(initUiObject()) {
         initConnection();
         controlWidgetInit();
     }
+    setCurrentNode(0);
 }
 
 void SingleJointControl::initObject()

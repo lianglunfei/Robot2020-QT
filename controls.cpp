@@ -127,7 +127,7 @@ void Controls::forwardReversalPushbtnClicked()
     auto *btn = qobject_cast<QPushButton *>(this->sender());
     double readValue;
 
-    if(currentNode>0) {
+    if(currentNode>-1) {
         readValue = findChild<QDoubleSpinBox*>(relativeSpinBox[0])->text().toDouble();
         if(btn == findChild<QPushButton*>(forwardReversePushButton[0])) {
             forwardRotation(currentNode, readValue);
@@ -172,7 +172,7 @@ void Controls::forwardRotation(int idIndex, double readValue)
     double sendValue=0;
 
     //Temporarily annotate this feature
-    if(currentNode>0)
+    if(currentNode>-1)
         sendValue = GlobalData::currentCanAnalyticalData[0].position
                 + readValue;
     else
@@ -188,7 +188,7 @@ void Controls::reverseRotation(int idIndex, double readValue)
     double sendValue=0;
 
     //Temporarily annotate this feature
-    if(currentNode>0)
+    if(currentNode>-1)
         sendValue = GlobalData::currentCanAnalyticalData[0].position
             - readValue;
     else
@@ -202,7 +202,7 @@ void Controls::speedValueChanged()
     auto *Spin = qobject_cast<QDoubleSpinBox *>(this->sender());
     auto *Slider = qobject_cast<DoubleSlider *>(this->sender());
 
-    if(currentNode>0) {
+    if(currentNode>-1) {
         if(Spin == findChild<QDoubleSpinBox*>(speedSpinBox[0])
                 || Slider == findChild<DoubleSlider*>(speedSlider[0])) {
             readyToSendCanData[0].speed =
@@ -234,7 +234,7 @@ void Controls::posValueChanged()
     auto *Spin = qobject_cast<QDoubleSpinBox *>(this->sender());
     auto *Slider = qobject_cast<DoubleSlider *>(this->sender());
 
-    if(currentNode>0) {
+    if(currentNode>-1) {
         if(Spin ==  findChild<QDoubleSpinBox*>(positionSpinBox[0])
                 || Slider == findChild<DoubleSlider*>(positionSlider[0])) {
             readyToSendCanData[0].position =
@@ -272,7 +272,7 @@ void Controls::setPosButtonClicked()
 {
     auto *btn = qobject_cast<QPushButton *>(this->sender());
 
-    if(currentNode>0) {
+    if(currentNode>-1) {
         if(btn == findChild<QPushButton*>(positionSetButton[0])) {
             Package::packOperate(GlobalData::sendId[(currentNode)], readyToSendCanData[0].position,
                     PROTOCOL_TYPE_POS);
@@ -299,7 +299,7 @@ void Controls::setSpeedButtonClicked()
 {
     auto *btn = qobject_cast<QPushButton *>(this->sender());
 
-    if(currentNode>0) {
+    if(currentNode>-1) {
         if(btn == findChild<QPushButton*>(speedSetButton[0])) {
             Package::packOperate(GlobalData::sendId[currentNode], readyToSendCanData[0].speed,
                     PROTOCOL_TYPE_SPD);
@@ -333,7 +333,7 @@ void Controls::setSpeedButtonReleased()
 {
     auto *btn = qobject_cast<QPushButton *>(this->sender());
 
-    if(currentNode>0) {
+    if(currentNode>-1) {
         if(btn == findChild<QPushButton*>(speedSetButton[0])) {
             Package::packOperate(GlobalData::sendId[(currentNode)], 0,
                     PROTOCOL_TYPE_SPD);
