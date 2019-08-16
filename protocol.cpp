@@ -57,6 +57,11 @@ double Protocol::parseCurrent(unsigned char data[], int index)
     return (data[index*8+4]*256 + data[index*8+5])/10.0;
 }
 
+int Protocol::parseStatus(unsigned char data[], int index)
+{
+    return data[index*8];
+}
+
 /**
 *@projectName   RobotControlSystem
 *@brief         将位置信息封装成字节数组，用于CAN信息封装

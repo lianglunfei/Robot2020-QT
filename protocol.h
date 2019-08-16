@@ -11,6 +11,7 @@ public:
     static double parsePos(unsigned char data[], int index);
     static double parseSpeed(unsigned char data[], int index);
     static double parseCurrent(unsigned char data[], int index);
+    static int parseStatus(unsigned char data[], int index);
     static void packPos(unsigned char data[], double value);
     static void packPosRF(unsigned char data[], double value);
     static void packSpeed(unsigned char data[], double value);
