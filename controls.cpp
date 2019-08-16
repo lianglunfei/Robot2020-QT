@@ -132,7 +132,7 @@ void Controls::forwardReversalPushbtnClicked()
         if(btn == findChild<QPushButton*>(forwardReversePushButton[0])) {
             forwardRotation(currentNode, readValue);
         }
-        else if(btn == findChild<QPushButton*>(forwardReversePushButton[0])) {
+        else if(btn == findChild<QPushButton*>(forwardReversePushButton[1])) {
             reverseRotation(currentNode, readValue);
         }
     } else {
@@ -172,11 +172,7 @@ void Controls::forwardRotation(int idIndex, double readValue)
     double sendValue=0;
 
     //Temporarily annotate this feature
-    if(currentNode>-1)
-        sendValue = GlobalData::currentCanAnalyticalData[0].position
-                + readValue;
-    else
-        sendValue = GlobalData::currentCanAnalyticalData[idIndex].position
+    sendValue = GlobalData::currentCanAnalyticalData[idIndex].position
                 + readValue;
     Package::packOperate(GlobalData::sendId[idIndex], sendValue, PROTOCOL_TYPE_POS);
 }
@@ -188,11 +184,7 @@ void Controls::reverseRotation(int idIndex, double readValue)
     double sendValue=0;
 
     //Temporarily annotate this feature
-    if(currentNode>-1)
-        sendValue = GlobalData::currentCanAnalyticalData[0].position
-            - readValue;
-    else
-        sendValue = GlobalData::currentCanAnalyticalData[idIndex].position
+    sendValue = GlobalData::currentCanAnalyticalData[idIndex].position
             - readValue;
     Package::packOperate(GlobalData::sendId[idIndex], sendValue, PROTOCOL_TYPE_POS);
 }
