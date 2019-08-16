@@ -141,8 +141,12 @@ void Protocol::packCal(unsigned char data[], double value)
 {
     if(sizeof(data)/sizeof(unsigned char)<8)
         return;
+#ifdef DRIVE_NEW
     data[0] = 0xda;
+    data[7] = 0x01;
+#else
     data[7] = 0x06;
+#endif
 }
 
 void Protocol::packStart(unsigned char data[], double value)
