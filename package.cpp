@@ -52,7 +52,6 @@ bool Package::packOperate(unsigned int id, double data, int type)
     if(!GlobalData::connectType)
         return false;
     unsigned char packData[8]={0};
-    qDebug() << "data: " << data;
     switch (type) {
     case PROTOCOL_TYPE_POS:
         Protocol::packPos(packData, data);
@@ -86,6 +85,12 @@ bool Package::packOperate(unsigned int id, double data, int type)
         break;
     case PROTOCOL_TYPE_SPD_PAW:
         Protocol::packSpdPaw(packData, data);
+        break;
+    case PROTOCOL_TYPE_OPENVALVE:
+        Protocol::packOpenValve(packData, data);
+        break;
+    case PROTOCOL_TYPE_CLOSEVALVE:
+        Protocol::packCloseValve(packData, data);
         break;
     default:
         break;

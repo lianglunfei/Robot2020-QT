@@ -4,7 +4,7 @@
 #include "debug.h"
 #include "globaldata.h"
 
-#define ECODER_MAX 262144//2^19
+#define ECODER_MAX (DRIVE_NEW>0?524288:262144)//2^19
 #define POS_MAX (ECODER_MAX/360.0)
 #define SPEED_COEFFICIENT (65536.0/4000.0)
 
