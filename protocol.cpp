@@ -75,6 +75,8 @@ void Protocol::packPos(unsigned char data[], double value)
     if(sizeof(data)/sizeof(unsigned char)<8)
         return;
     int readValue;
+    if(value>360)
+        value -= 360;
     readValue = static_cast<int>(value*POS_MAX+0.5);
     readValue = (readValue>ECODER_MAX)?(readValue-ECODER_MAX):readValue;
     readValue = readValue<0?(readValue+ECODER_MAX):readValue;

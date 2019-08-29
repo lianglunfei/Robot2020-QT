@@ -24,8 +24,8 @@ enum {
     CONNECT_TYPE_ALYSIST=1
 };
 
-#define NODE_NUM 12
-#define DRIVE_NEW 1
+#define NODE_NUM 3
+#define DRIVE_NEW 0
 
 class GlobalData
 {
