@@ -35,7 +35,6 @@ void ReceiveFrameBox::update()
             ui->receivedMessagesEdit->append(tmp[i]);
         }
     }
-    GlobalData::currentCanData.clear();
 }
 
 ReceiveFrameBox::~ReceiveFrameBox()

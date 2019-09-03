@@ -93,13 +93,14 @@ void OfflineControl::on_execSeqStopPushButton_clicked()
 void OfflineControl::on_exportPushButton_clicked()
 {
     QString fileName;
-    fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
-                                            "g_fileDir/tst.csv",
-                                            tr("Files (*.csv)"));
-    if(fileName.isEmpty())
-    {
-        return;
-    }
+    // fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+    //                                         "g_fileDir/tst.csv",
+    //                                         tr("Files (*.csv)"));
+    // if(fileName.isEmpty())
+    // {
+    //     return;
+    // }
+    fileName = "/home/robot/桌面/tst_out.csv";
     ui->tableView->exportToCsv(fileName);
     g_fileDir = QFileInfo(fileName).absoluteFilePath();
     ui->fileNameLabel->setText(fileName+" saved");
@@ -108,12 +109,13 @@ void OfflineControl::on_exportPushButton_clicked()
 void OfflineControl::on_importPushButton_clicked()
 {
     QString  fileName;
-    fileName = QFileDialog::getOpenFileName(this,
-                                            tr("Open Csv"), "g_fileDir/tst.csv", tr("Files (*.csv)"));
-    if(fileName.isEmpty())
-    {
-        return;
-    }
+    // fileName = QFileDialog::getOpenFileName(this,
+    //                                         tr("Open Csv"), "g_fileDir/tst.csv", tr("Files (*.csv)"));
+    // if(fileName.isEmpty())
+    // {
+    //     return;
+    // }
+    fileName = "/home/robot/桌面/tst.csv";
     ui->tableView->importCsv(fileName);
     g_fileDir = QFileInfo(fileName).absoluteFilePath();
     ui->fileNameLabel->setText(fileName+" opened");

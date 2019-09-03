@@ -27,15 +27,17 @@ bool Package::unpackOperate()
     int len = DataTransmission::CANReceive(CONNECT_TYPE_ALYSIST, GlobalData::currentCanData, dataLen, id, data);
     for(int i=0;i<len;i++) {
         Protocol::getRawData(data[i], receivedCanData, dataLen[i], id[i]);
-        if((receivedCanData[1]+receivedCanData[2]+receivedCanData[3])!=0) {
-            isConnected = true;
-        }
-        for(int leg=0;leg<NODE_NUM;leg++){//New add two wheel 12+2
-            //data:26144/360=728.18
-            GlobalData::currentCanAnalyticalData[leg].position = Protocol::parsePos(receivedCanData, leg);
-            GlobalData::currentCanAnalyticalData[leg].speed = Protocol::parseSpeed(receivedCanData, leg);
-            GlobalData::currentCanAnalyticalData[leg].current = Protocol::parseCurrent(receivedCanData, leg);
-        }
+    }
+    for (int leg = 0; leg < NODE_NUM; leg++)
+    { //New add two wheel 12+2
+        //data:26144/360=728.18
+        GlobalData::currentCanAnalyticalData[leg].position = Protocol::parsePos(receivedCanData, leg);
+        GlobalData::currentCanAnalyticalData[leg].speed = Protocol::parseSpeed(receivedCanData, leg);
+        GlobalData::currentCanAnalyticalData[leg].current = Protocol::parseCurrent(receivedCanData, leg);
+    }
+    if ((receivedCanData[1] + receivedCanData[2] + receivedCanData[3]) != 0)
+    {
+        isConnected = true;
     }
     return isConnected;
 }
