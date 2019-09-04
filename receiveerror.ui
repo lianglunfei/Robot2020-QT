@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>364</width>
-    <height>100</height>
+    <width>579</width>
+    <height>246</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,7 +38,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QLCDNumber" name="lcdNumber"/>
+      <widget class="QLCDNumber" name="lcdNumber">
+       <property name="styleSheet">
+        <string notr="true">color: rgb(255, 0, 0);</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

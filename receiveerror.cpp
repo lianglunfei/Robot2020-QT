@@ -14,12 +14,12 @@ ReceiveError::ReceiveError(QWidget *parent) :
 void ReceiveError::init()
 {
     for(int i=0;i<NODE_NUM;i++) {
-        ui->comboBox->addItem(QString::number(i));
+        ui->comboBox->addItem(QString::number(i+1));
     }
     ui->comboBox->addItem(tr("all"));
     time = new QTimer(this);
     connect(time, SIGNAL(timeout()), this, SLOT(update()));
-    time->start();
+    time->start(0);
 }
 
 void ReceiveError::update()
