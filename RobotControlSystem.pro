@@ -47,7 +47,8 @@ SOURCES += \
     incompletecombox.cpp \
     controltableview.cpp \
     drivers.cpp \
-    singlejointcontrol.cpp
+    singlejointcontrol.cpp \
+    receiveerror.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -76,7 +77,8 @@ HEADERS += \
     incompletecombox.h \
     controltableview.h \
     drivers.h \
-    singlejointcontrol.h
+    singlejointcontrol.h \
+    receiveerror.h
 
 FORMS += \
         mainwindow.ui \
@@ -88,7 +90,8 @@ FORMS += \
     sendframebox.ui \
     jointcontrol.ui \
     offlinecontrol.ui \
-    singlejointcontrol.ui
+    singlejointcontrol.ui \
+    receiveerror.ui
 
 target.path = ../
 INSTALLS += target

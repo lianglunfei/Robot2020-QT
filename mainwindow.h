@@ -10,6 +10,7 @@ class Terminal;
 class JointControl;
 class SingleJointControl;
 class OfflineControl;
+class ReceiveError;
 
 namespace Ui {
 class MainWindow;
@@ -33,6 +34,7 @@ private:
     JointControl *m_joint_control = nullptr;
     SingleJointControl *m_single_joint_control = nullptr;
     OfflineControl *m_offline_control = nullptr;
+    ReceiveError *m_receive_error = nullptr;
     void connectInit();
 
 private slots:

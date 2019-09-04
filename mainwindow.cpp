@@ -9,6 +9,7 @@
 #include "offlinecontrol.h"
 #include "receiveworkerthread.h"
 #include "terminal.h"
+#include "receiveerror.h"
 
 #include <QTimer>
 
@@ -42,6 +43,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //Initialize offline control window
     m_offline_control = new OfflineControl;
 
+    //Initialize test window
+    m_receive_error = new ReceiveError;
+
     connectInit();
 }
 
@@ -66,6 +70,7 @@ void MainWindow::connectInit()
     connect(ui->actionSingle_Joint_Control, &QAction::triggered, m_single_joint_control, &SingleJointControl::show);
     connect(ui->actionOffline_Control, &QAction::triggered, m_offline_control, &OfflineControl::show);
     connect(m_connect_dialog, &ConnectDialog::accepted, this, &MainWindow::canConnectEvent);
+    connect(ui->actionReceive_Error, &QAction::triggered, m_receive_error, &ReceiveError::show);
 }
 
 MainWindow::~MainWindow()
@@ -77,5 +82,6 @@ MainWindow::~MainWindow()
     delete m_joint_control;
     delete m_single_joint_control;
     delete m_offline_control;
+    delete m_receive_error;
     delete ui;
 }
