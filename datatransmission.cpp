@@ -44,9 +44,11 @@ int DataTransmission::CANOpenDevice(int connectType)
 **/
 int DataTransmission::InitCANHelper(int connectType, int devIndex, int baud)
 {
-    INIT_CONFIG InitInfo;  //结构体
     switch (connectType) {
+
     case CONNECT_TYPE_ALYSIST:
+    case CONNECT_TYPE_GC:
+        INIT_CONFIG InitInfo;  //结构体
         switch (baud) {
         case 0: //1000
             InitInfo.Timing0 = 0;
@@ -97,59 +99,10 @@ int DataTransmission::InitCANHelper(int connectType, int devIndex, int baud)
         InitInfo.AccCode=0x80000000;    //验收码
         InitInfo.AccMask=0xFFFFFFFF;  //屏蔽码-->全部接收
         InitInfo.Mode=NORMAL;   //自发自收模式
-        return VCI_InitCAN(USBCAN1, 0, devIndex, &InitInfo);
-    case CONNECT_TYPE_GC:
-        switch (baud) {
-        case 0: //1000
-            InitInfo.Timing0 = 0;
-            InitInfo.Timing1 =0x14;
-            break;
-        case 1: //800
-            InitInfo.Timing0 = 0;
-            InitInfo.Timing1 = 0x16;
-            break;
-        case 2: //666
-            InitInfo.Timing0 = 0x80;
-            InitInfo.Timing1 = 0xb6;
-            break;
-        case 3: //500
-            InitInfo.Timing0 = 0;
-            InitInfo.Timing1 = 0x1c;
-            break;
-        case 4://400
-            InitInfo.Timing0 = 0x80;
-            InitInfo.Timing1 = 0xfa;
-            break;
-        case 5://250
-            InitInfo.Timing0 = 0x01;
-            InitInfo.Timing1 = 0x1c;
-            break;
-        case 6://200
-            InitInfo.Timing0 = 0x81;
-            InitInfo.Timing1 = 0xfa;
-            break;
-        case 7://125
-            InitInfo.Timing0 = 0x03;
-            InitInfo.Timing1 = 0x1c;
-            break;
-        case 8://100
-            InitInfo.Timing0 = 0x04;
-            InitInfo.Timing1 = 0x1c;
-            break;
-        case 9://80
-            InitInfo.Timing0 = 0x83;
-            InitInfo.Timing1 = 0xff;
-            break;
-        case 10://50
-            InitInfo.Timing0 = 0x09;
-            InitInfo.Timing1 = 0x1c;
-            break;
-        }
-        InitInfo.Filter=0;         //滤波模式-->同时对标准帧和拓展帧过滤
-        InitInfo.AccCode=0;    //验收码
-        InitInfo.AccMask=0xffffff;  //屏蔽码-->全部接收
-        InitInfo.Mode=NORMAL;   //自发自收模式
-        return InitCAN(USBCAN1, 0, devIndex, &InitInfo);
+        if(connectType==CONNECT_TYPE_ALYSIST)
+            return VCI_InitCAN(USBCAN1, 0, devIndex, &InitInfo);
+        else if(connectType==CONNECT_TYPE_GC)
+            return InitCAN(USBCAN1, 0, devIndex, &InitInfo);
     }
     return 0;
 }
@@ -183,9 +136,10 @@ int DataTransmission::StartCANHelper(int connectType, int devIndex)
 **/
 int DataTransmission::CANTransmit(int connectType, unsigned char data[], int id)
 {
-    CAN_OBJ frameinfo;
     switch (connectType) {
     case CONNECT_TYPE_ALYSIST:
+    case CONNECT_TYPE_GC:
+        CAN_OBJ frameinfo;
         frameinfo.SendType=0;
         frameinfo.DataLen=8;
         frameinfo.RemoteFlag=0;
@@ -197,20 +151,10 @@ int DataTransmission::CANTransmit(int connectType, unsigned char data[], int id)
             frameinfo.Data[i]=data[i];
             qDebug() << data[i];
         }
-        return VCI_Transmit(USBCAN1, 0, 0, &frameinfo, 1);
-    case CONNECT_TYPE_GC:
-        frameinfo.SendType=0;
-        frameinfo.DataLen=8;
-        frameinfo.RemoteFlag=0;
-        frameinfo.ExternFlag=0;
-        frameinfo.ID=(DWORD)id;
-        qDebug() << "gcid: " << id;
-        memset(&frameinfo.Data, 0 ,sizeof(frameinfo.Data));
-        for(int i=0;i<8;i++) {
-            frameinfo.Data[i]=data[i];
-            qDebug() << data[i];
-        }
-        return Transmit(USBCAN1, 0, 0, &frameinfo, 1);
+        if(connectType==CONNECT_TYPE_ALYSIST)
+            return VCI_Transmit(USBCAN1, 0, 0, &frameinfo, 1);
+        else if(connectType==CONNECT_TYPE_GC)
+            return Transmit(USBCAN1, 0, 0, &frameinfo, 1);
     default:
         break;
     }
@@ -226,22 +170,10 @@ int DataTransmission::CANTransmit(int connectType, unsigned char data[], int id)
 **/
 int DataTransmission::CANTransmitMulti(int connectType, unsigned char data[][8], int id[], int len)
 {
-    CAN_OBJ frameinfo[len];
     switch (connectType) {
     case CONNECT_TYPE_ALYSIST:
-        for(int i=0;i<len;i++) {
-            frameinfo[i].SendType=0;
-            frameinfo[i].DataLen=8;
-            frameinfo[i].RemoteFlag=0;
-            frameinfo[i].ExternFlag=0;
-            frameinfo[i].ID=(DWORD)id[i];
-            memset(&frameinfo[i].Data, 0 ,sizeof(frameinfo[i].Data));
-            for(int j=0;j<8;j++) {
-                frameinfo[i].Data[j]=data[i][j];
-            }
-        }
-        return VCI_Transmit(USBCAN1, 0, 0, frameinfo, len);
     case CONNECT_TYPE_GC:
+        CAN_OBJ frameinfo[len];
         for(int i=0;i<len;i++) {
             frameinfo[i].SendType=0;
             frameinfo[i].DataLen=8;
@@ -253,7 +185,10 @@ int DataTransmission::CANTransmitMulti(int connectType, unsigned char data[][8],
                 frameinfo[i].Data[j]=data[i][j];
             }
         }
-        return Transmit(USBCAN1, 0, 0, frameinfo, len);
+        if(connectType == CONNECT_TYPE_ALYSIST)
+            return VCI_Transmit(USBCAN1, 0, 0, frameinfo, len);
+        else if(connectType == CONNECT_TYPE_GC)
+            return Transmit(USBCAN1, 0, 0, frameinfo, len);
     }
     return 0;
 }
@@ -267,60 +202,18 @@ int DataTransmission::CANTransmitMulti(int connectType, unsigned char data[][8],
 **/
 int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen[], int id[], unsigned char data[][8])
 {
-    CAN_OBJ frameinfo[50];
-    int len=1;
-    QString str;
-    QString tmpstr;
-    QStringList tmplist;
-
     switch (connectType) {
     case CONNECT_TYPE_ALYSIST:
-        len=VCI_Receive(USBCAN1,0,0,frameinfo,50,10);
-        if(len>0)
-        {
-            for(int i=0;i<len;i++) {
-                str = "";
-                if(frameinfo[i].TimeFlag==0)
-                    tmpstr=" ";
-                else
-                    tmpstr=QString("%1     ").arg(frameinfo[i].TimeStamp);
-                str+=tmpstr;
-                if(frameinfo[i].RemoteFlag==0) //Format
-                    tmpstr="Data     ";
-                else
-                    tmpstr="Remote   ";
-                str+=tmpstr;
-                if(frameinfo[i].ExternFlag==0) //Type
-                    tmpstr="Stand    ";
-                else
-                    tmpstr="Exten    ";
-                str+=tmpstr;
-                tmpstr=QString("%1       ").arg(frameinfo[i].ID,2,16,QLatin1Char('0'));
-                str+=tmpstr;
-
-                id[i] = frameinfo[i].ID;
-
-                 //Data
-                if(frameinfo[i].RemoteFlag==0) {
-                    if(frameinfo[i].DataLen>8)
-                        frameinfo[i].DataLen=8;
-                    dataLen[i]=frameinfo[i].DataLen;
-
-                    for(int j=0;j<frameinfo[i].DataLen;j++) {
-                        str+=QString("%1   ").arg(frameinfo[i].Data[j],2,16,QLatin1Char('0'));
-                        data[i][j]=frameinfo[i].Data[j];
-                    }
-                }
-#ifdef OPEN_DEBUG
-//                qDebug() << str;
-#endif
-                tmplist.append(str);
-            }
-            list = tmplist;
-        }
-        return len;
     case CONNECT_TYPE_GC:
-        len=Receive(USBCAN1,0,0,frameinfo,50,10);
+        CAN_OBJ frameinfo[50];
+        int len=1;
+        QString str;
+        QString tmpstr;
+        QStringList tmplist;
+        if(connectType==CONNECT_TYPE_ALYSIST)
+            len=VCI_Receive(USBCAN1,0,0,frameinfo,50,10);
+        else if(connectType==CONNECT_TYPE_GC)
+            len=Receive(USBCAN1,0,0,frameinfo,50,10);
         if(len>0)
         {
             for(int i=0;i<len;i++) {
