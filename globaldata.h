@@ -21,7 +21,7 @@ enum {
 };
 
 enum {
-    CONNECT_TYPE_ALYSIST=1
+    CONNECT_TYPE_ALYSIST=1, CONNECT_TYPE_GC
 };
 
 #define NODE_NUM 12

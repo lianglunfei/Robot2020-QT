@@ -10,6 +10,7 @@ ReceiveFrameBox::ReceiveFrameBox(QWidget *parent) :
     ui(new Ui::ReceiveFrameBox)
 {
     ui->setupUi(this);
+    ui->receivedMessagesEdit->document()->setMaximumBlockCount(1000);
     initEvent();
 }
 

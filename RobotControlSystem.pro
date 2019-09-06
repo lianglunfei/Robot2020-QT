@@ -78,7 +78,9 @@ HEADERS += \
     controltableview.h \
     drivers.h \
     singlejointcontrol.h \
-    receiveerror.h
+    receiveerror.h \
+    ecanvci.h \
+    cantypes.h
 
 FORMS += \
         mainwindow.ui \
@@ -107,6 +109,11 @@ RESOURCES += \
     img.qrc
 
 win32: LIBS += -L$$PWD/LIB/ -lControlCAN
+
+INCLUDEPATH += $$PWD/LIB
+DEPENDPATH += $$PWD/LIB
+
+win32: LIBS += -L$$PWD/LIB/ -lECanVci64
 
 INCLUDEPATH += $$PWD/LIB
 DEPENDPATH += $$PWD/LIB
