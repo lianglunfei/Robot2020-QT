@@ -22,17 +22,19 @@ DataTransmission::DataTransmission()
 *@author        XingZhang.Wu
 *@date          20190801
 **/
-int DataTransmission::CANOpenDevice(int connectType)
+int DataTransmission::CANOpenDevice()
 {
-    switch (connectType) {
-    case CONNECT_TYPE_ALYSIST:
-        return VCI_OpenDevice(USBCAN1,0,0);
-    case CONNECT_TYPE_GC:
-        return OpenDevice(USBCAN1,0,0);
-    default:
-        break;
+    if(VCI_OpenDevice(USBCAN1,0,0)==1) {
+        return CONNECT_TYPE_ALYSIST;
     }
-    return 0;
+#ifdef Q_OS_WIN
+    else if(OpenDevice(USBCAN1,0,0)==1) {
+        return CONNECT_TYPE_GC;
+    }
+#endif
+    else {
+        return 0;
+    }
 }
 
 /**
@@ -101,8 +103,10 @@ int DataTransmission::InitCANHelper(int connectType, int devIndex, int baud)
         InitInfo.Mode=NORMAL;   //自发自收模式
         if(connectType==CONNECT_TYPE_ALYSIST)
             return VCI_InitCAN(USBCAN1, 0, devIndex, &InitInfo);
+#ifdef Q_OS_WIN
         else if(connectType==CONNECT_TYPE_GC)
             return InitCAN(USBCAN1, 0, devIndex, &InitInfo);
+#endif
     }
     return 0;
 }
@@ -119,8 +123,10 @@ int DataTransmission::StartCANHelper(int connectType, int devIndex)
     switch (connectType) {
     case CONNECT_TYPE_ALYSIST:
         return VCI_StartCAN(USBCAN1, 0, devIndex);
+#ifdef Q_OS_WIN
     case CONNECT_TYPE_GC:
         return StartCAN(USBCAN1, 0, devIndex);
+#endif
     default:
         break;
     }
@@ -153,8 +159,10 @@ int DataTransmission::CANTransmit(int connectType, unsigned char data[], int id)
         }
         if(connectType==CONNECT_TYPE_ALYSIST)
             return VCI_Transmit(USBCAN1, 0, 0, &frameinfo, 1);
+#ifdef Q_OS_WIN
         else if(connectType==CONNECT_TYPE_GC)
             return Transmit(USBCAN1, 0, 0, &frameinfo, 1);
+#endif
     default:
         break;
     }
@@ -187,8 +195,10 @@ int DataTransmission::CANTransmitMulti(int connectType, unsigned char data[][8],
         }
         if(connectType == CONNECT_TYPE_ALYSIST)
             return VCI_Transmit(USBCAN1, 0, 0, frameinfo, len);
+#ifdef Q_OS_WIN
         else if(connectType == CONNECT_TYPE_GC)
             return Transmit(USBCAN1, 0, 0, frameinfo, len);
+#endif
     }
     return 0;
 }
@@ -212,8 +222,10 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
         QStringList tmplist;
         if(connectType==CONNECT_TYPE_ALYSIST)
             len=VCI_Receive(USBCAN1,0,0,frameinfo,50,10);
+#ifdef Q_OS_WIN
         else if(connectType==CONNECT_TYPE_GC)
             len=Receive(USBCAN1,0,0,frameinfo,50,10);
+#endif
         if(len>0)
         {
             for(int i=0;i<len;i++) {

@@ -12,7 +12,7 @@ private:
     DataTransmission();
 
 public:
-    static int CANOpenDevice(int connectType);
+    static int CANOpenDevice();
     static int InitCANHelper(int connectType, int devIndex, int baud);
     static int StartCANHelper(int connectType, int devIndex);
     static int CANTransmit(int connectType, unsigned char *data, int id);
