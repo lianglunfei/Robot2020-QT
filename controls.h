@@ -16,6 +16,7 @@ class Controls : public QDialog
 
 public:
     explicit Controls(QWidget *parent = 0);
+    virtual ~Controls(){}
 
     void initConnection();
     void controlWidgetInit();

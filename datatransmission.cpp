@@ -15,6 +15,36 @@ DataTransmission::DataTransmission()
 
 }
 
+int DataTransmission::connectToCan(int& connectType, int baud)
+{
+    if((connectType=CANOpenDevice())==0) {
+        qDebug() << "open failed";
+        return -1;
+    }
+
+    if(InitCANHelper(connectType, 0, baud)!=1) {
+        qDebug() << "Init-CAN Channel 0 failed!";
+        return -1;
+    }
+
+    if(StartCANHelper(connectType, 0)!=1) {
+        qDebug() << "Start-CAN Channel 0 failed!";
+        return -1;
+    }
+
+    if(InitCANHelper(connectType, 1, baud)!=1) {
+        qDebug() << "Init-CAN Channel 1 failed!";
+        return -1;
+    }
+
+    if(StartCANHelper(connectType, 1)!=1) {
+        qDebug() << "Start-CAN Channel 1 failed!";
+        return -1;
+    }
+
+    return 0;
+}
+
 /**
 *@projectName   RobotControlSystem
 *@brief         使用CAN第一步，打开CAN
