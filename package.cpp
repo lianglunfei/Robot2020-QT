@@ -19,7 +19,7 @@ Package::Package()
 **/
 bool Package::unpackOperate()
 {
-    unsigned char receivedCanData[NODE_NUM*8]={0};//96+16
+    static unsigned char receivedCanData[NODE_NUM*8]={0};//96+16
     bool isConnected=false;
     int dataLen[50]={0};
     int id[50]={0};

@@ -22,6 +22,8 @@ Protocol::Protocol()
 **/
 void Protocol::getRawData(unsigned char rawData[], unsigned char outData[], int len, int id)
 {
+    if(id==0)
+        return;
     int k=0;
     k = (id-GlobalData::sendId[0])*8;
     for(int j=0;j<8;j++) {

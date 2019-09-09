@@ -17,6 +17,7 @@ void ReceiveError::init()
         ui->comboBox->addItem(QString::number(i+1));
     }
     ui->comboBox->addItem(tr("all"));
+    ui->comboBox->setCurrentIndex(NODE_NUM);
     time = new QTimer(this);
     connect(time, SIGNAL(timeout()), this, SLOT(update()));
     time->start(0);

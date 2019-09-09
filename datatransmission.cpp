@@ -216,7 +216,7 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
     case CONNECT_TYPE_ALYSIST:
     case CONNECT_TYPE_GC:
         CAN_OBJ frameinfo[50];
-        int len=1;
+        int len=0;
         QString str;
         QString tmpstr;
         QStringList tmplist;
