@@ -35,7 +35,7 @@ bool Package::unpackOperate()
         GlobalData::currentCanAnalyticalData[leg].speed = Protocol::parseSpeed(receivedCanData, leg);
         GlobalData::currentCanAnalyticalData[leg].current = Protocol::parseCurrent(receivedCanData, leg);
     }
-    if ((receivedCanData[1] + receivedCanData[2] + receivedCanData[3]) != 0)
+    if ((data[0][1] + data[1][2] + data[2][3]) != 0)
     {
         isConnected = true;
     }
