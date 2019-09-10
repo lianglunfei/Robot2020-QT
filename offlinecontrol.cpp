@@ -100,7 +100,11 @@ void OfflineControl::on_exportPushButton_clicked()
     // {
     //     return;
     // }
-    fileName = "/home/robot/桌面/tst_out.csv";
+    if(ui->fileNameLineEdit->text().isEmpty()){
+        ui->fileNameLabel->setText("file name is empty!");
+        return;
+    }
+    fileName = QDir::currentPath()+"/"+ui->fileNameLineEdit->text()+".csv";
     ui->tableView->exportToCsv(fileName);
     g_fileDir = QFileInfo(fileName).absoluteFilePath();
     ui->fileNameLabel->setText(fileName+" saved");
@@ -115,7 +119,11 @@ void OfflineControl::on_importPushButton_clicked()
     // {
     //     return;
     // }
-    fileName = "/home/robot/桌面/tst.csv";
+    if(ui->fileNameLineEdit->text().isEmpty()){
+        ui->fileNameLabel->setText("file name is empty!");
+        return;
+    }
+    fileName = QDir::currentPath()+"/"+ui->fileNameLineEdit->text()+".csv";
     ui->tableView->importCsv(fileName);
     g_fileDir = QFileInfo(fileName).absoluteFilePath();
     ui->fileNameLabel->setText(fileName+" opened");
