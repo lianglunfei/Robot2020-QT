@@ -21,7 +21,7 @@ public:
 private:
     Ui::ReceiveError *ui;
     int cout=0;
-    double lastJointPos[NODE_NUM]={0};
+    double lastRunningJoint[NODE_NUM]={0};
     QTimer *time=nullptr;
 
     void init();

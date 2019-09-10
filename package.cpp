@@ -28,16 +28,22 @@ bool Package::unpackOperate()
     for(int i=0;i<len;i++) {
         Protocol::getRawData(data[i], receivedCanData, dataLen[i], id[i]);
     }
-    for (int leg = 0; leg < NODE_NUM; leg++)
-    { //New add two wheel 12+2
+    for (int leg = 0; leg < NODE_NUM; leg++) { //New add two wheel 12+2
         //data:26144/360=728.18
         GlobalData::currentCanAnalyticalData[leg].position = Protocol::parsePos(receivedCanData, leg);
         GlobalData::currentCanAnalyticalData[leg].speed = Protocol::parseSpeed(receivedCanData, leg);
         GlobalData::currentCanAnalyticalData[leg].current = Protocol::parseCurrent(receivedCanData, leg);
     }
-    if ((data[0][1] + data[1][2] + data[2][3]) != 0)
-    {
+    if ((data[0][1] + data[1][2] + data[2][3]) != 0) {
         isConnected = true;
+    }
+    int nodeId[NODE_NUM]={0};
+    for(int i=0;i<50;i++) {
+        if(id[i]>0)
+            nodeId[id[i] - GlobalData::sendId[0]] = 1;
+    }
+    for(int i=0;i<NODE_NUM;i++) {
+        GlobalData::runningId[i] = nodeId[i];
     }
     return isConnected;
 }

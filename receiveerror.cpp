@@ -26,18 +26,18 @@ void ReceiveError::init()
 void ReceiveError::update()
 {
     if(ui->comboBox->currentIndex()<12) {
-        if(lastJointPos[ui->comboBox->currentIndex()]
-                && !GlobalData::currentCanAnalyticalData[ui->comboBox->currentIndex()].position) {
+        if(lastRunningJoint[ui->comboBox->currentIndex()]
+                && !GlobalData::runningId[ui->comboBox->currentIndex()]) {
             ui->lcdNumber->display(++cout);
         }
-        lastJointPos[ui->comboBox->currentIndex()] = GlobalData::currentCanAnalyticalData[ui->comboBox->currentIndex()].position;
+        lastRunningJoint[ui->comboBox->currentIndex()] = GlobalData::runningId[ui->comboBox->currentIndex()];
     } else {
         for(int i=0;i<NODE_NUM;i++) {
-            if(lastJointPos[i]
-                    && !GlobalData::currentCanAnalyticalData[i].position) {
+            if(lastRunningJoint[i]
+                    && !GlobalData::runningId[i]) {
                 ui->lcdNumber->display(++cout);
             }
-            lastJointPos[i] = GlobalData::currentCanAnalyticalData[i].position;
+            lastRunningJoint[i] = GlobalData::runningId[i];
         }
     }
 }
