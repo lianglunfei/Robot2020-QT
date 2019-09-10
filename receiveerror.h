@@ -3,8 +3,11 @@
 
 #include <QDialog>
 #include <QTimer>
+#include <QElapsedTimer>
 
 #include "globaldata.h"
+
+class QLabel;
 
 namespace Ui {
 class ReceiveError;
@@ -21,8 +24,13 @@ public:
 private:
     Ui::ReceiveError *ui;
     int cout=0;
-    double lastRunningJoint[NODE_NUM]={0};
+    int coutId[NODE_NUM]={0};
+    int lastRunningJoint[NODE_NUM]={0};
     QTimer *time=nullptr;
+    QLabel *nodeNum[NODE_NUM+1];
+    QLabel *nodeMaxTime[NODE_NUM+1];
+    int maxTime[NODE_NUM]={0};
+    QElapsedTimer start[NODE_NUM];
 
     void init();
 

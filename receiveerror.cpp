@@ -1,13 +1,15 @@
 #include "receiveerror.h"
 #include "ui_receiveerror.h"
 
+#include "qdebug.h"
+#include <QDateTime>
+
 ReceiveError::ReceiveError(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ReceiveError)
 {
     ui->setupUi(this);
     this->setWindowTitle(tr("Receive Error"));
-
     init();
 }
 
@@ -18,17 +20,72 @@ void ReceiveError::init()
     }
     ui->comboBox->addItem(tr("all"));
     ui->comboBox->setCurrentIndex(NODE_NUM);
+
+    QVBoxLayout *vLayout = new QVBoxLayout();
+    QHBoxLayout *hLayout1 = new QHBoxLayout();
+    QLabel *nodeName[NODE_NUM+1];
+    for(int i=0;i<NODE_NUM;i++) {
+        nodeName[i] = new QLabel();
+        nodeName[i]->setText("J"+QString::number(i+1));
+    }
+    nodeName[NODE_NUM] = new QLabel();
+    nodeName[NODE_NUM]->setText("");
+
+    QHBoxLayout *hLayout2 = new QHBoxLayout();
+    for(int i=0;i<NODE_NUM;i++) {
+        nodeNum[i] = new QLabel();
+        nodeNum[i]->setNum(0);
+    }
+    nodeNum[NODE_NUM] = new QLabel();
+    nodeNum[NODE_NUM]->setText("丢失数");
+
+    QHBoxLayout *hLayout3 = new QHBoxLayout();
+    for(int i=0;i<NODE_NUM;i++) {
+        nodeMaxTime[i] = new QLabel();
+        nodeMaxTime[i]->setNum(0);
+    }
+    nodeMaxTime[NODE_NUM] = new QLabel();
+    nodeMaxTime[NODE_NUM]->setText("最大时");
+
+    hLayout1->addWidget(nodeName[NODE_NUM]);
+    hLayout2->addWidget(nodeNum[NODE_NUM]);
+    hLayout3->addWidget(nodeMaxTime[NODE_NUM]);
+    for(int i=0;i<NODE_NUM;i++) {
+        hLayout1->addWidget(nodeName[i]);
+        hLayout2->addWidget(nodeNum[i]);
+        hLayout3->addWidget(nodeMaxTime[i]);
+    }
+
+    vLayout->addLayout(hLayout1);
+    vLayout->addLayout(hLayout2);
+    vLayout->addLayout(hLayout3);
+    ui->frame->setLayout(vLayout);
+
+    ui->pushButton->setText("重置@"+QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+
     time = new QTimer(this);
     connect(time, SIGNAL(timeout()), this, SLOT(update()));
     time->start(0);
+
+    for(int i=0;i<NODE_NUM;i++)
+        start[i].start();
 }
 
 void ReceiveError::update()
 {
-    if(ui->comboBox->currentIndex()<12) {
-        if(lastRunningJoint[ui->comboBox->currentIndex()]
-                && !GlobalData::runningId[ui->comboBox->currentIndex()]) {
+    if(ui->comboBox->currentIndex()<NODE_NUM) {
+        int j=ui->comboBox->currentIndex();
+        if(lastRunningJoint[j]
+                && !GlobalData::runningId[j]) {
             ui->lcdNumber->display(++cout);
+            nodeNum[ui->comboBox->currentIndex()]->setNum(++coutId[j]);
+            start[j].start(); //begin cal time
+        } else if(!lastRunningJoint[j]
+                  && GlobalData::runningId[j]
+                  && coutId[j]) {
+            int elapsedTime = start[j].elapsed();
+            maxTime[j] = elapsedTime>maxTime[j]?elapsedTime:maxTime[j];
+            nodeMaxTime[j]->setNum(maxTime[j]);
         }
         lastRunningJoint[ui->comboBox->currentIndex()] = GlobalData::runningId[ui->comboBox->currentIndex()];
     } else {
@@ -36,6 +93,14 @@ void ReceiveError::update()
             if(lastRunningJoint[i]
                     && !GlobalData::runningId[i]) {
                 ui->lcdNumber->display(++cout);
+                nodeNum[i]->setNum(++coutId[i]);
+                start[i].start();
+            } else if(!lastRunningJoint[i]
+                      && GlobalData::runningId[i]
+                      && coutId[i]) {
+                int elapsedTime = start[i].elapsed();
+                maxTime[i] = elapsedTime>maxTime[i]?elapsedTime:maxTime[i];
+                nodeMaxTime[i]->setNum(maxTime[i]);
             }
             lastRunningJoint[i] = GlobalData::runningId[i];
         }
@@ -50,5 +115,12 @@ ReceiveError::~ReceiveError()
 void ReceiveError::on_pushButton_clicked()
 {
     cout=0;
+    for(int i=0;i<NODE_NUM;i++) {
+        coutId[i]=0;
+        maxTime[i]=0;
+        nodeNum[i]->setNum(0);
+        nodeMaxTime[i]->setNum(0);
+    }
     ui->lcdNumber->display(cout);
+    ui->pushButton->setText("重置@"+QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
 }
