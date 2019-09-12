@@ -23,7 +23,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //Initialize the connection window
     m_connect_dialog = new ConnectDialog;
+#if SIMULATE_CONNECT==NONE_CONNECT
     QTimer::singleShot(50, m_connect_dialog, &ConnectDialog::show);
+#else
+    canConnectEvent();
+#endif
 
     //Initialize joint window
     m_joint_widget = new JointPlot;

@@ -20,12 +20,13 @@ enum {
     PROTOCOL_TYPE_WHELL_SPD, PROTOCOL_TYPE_WHELL_REF, PROTOCOL_TYPE_SPD_PAW
 };
 
-enum {
-    CONNECT_TYPE_ALYSIST=1, CONNECT_TYPE_GC
-};
+#define NONE_CONNECT            0
+#define CONNECT_TYPE_ALYSIST    1
+#define CONNECT_TYPE_GC         2
 
 #define NODE_NUM 12
 #define DRIVE_NEW 1
+#define SIMULATE_CONNECT        CONNECT_TYPE_ALYSIST
 
 class GlobalData
 {

@@ -1,6 +1,7 @@
 #include "datatransmission.h"
 #include "globaldata.h"
 
+#include <QDateTime>
 #include "debug.h"
 
 /**
@@ -245,6 +246,7 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
     switch (connectType) {
     case CONNECT_TYPE_ALYSIST:
     case CONNECT_TYPE_GC:
+    {
         CAN_OBJ frameinfo[50];
         int len=0;
         QString str;
@@ -280,7 +282,7 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
 
                 id[i] = frameinfo[i].ID;
 
-                 //Data
+                //Data
                 if(frameinfo[i].RemoteFlag==0) {
                     if(frameinfo[i].DataLen>8)
                         frameinfo[i].DataLen=8;
@@ -292,13 +294,42 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
                     }
                 }
 #ifdef OPEN_DEBUG
-//                qDebug() << str;
+                //                qDebug() << str;
 #endif
                 tmplist.append(str);
             }
             list = tmplist;
         }
         return len;
+    }
+    case NONE_CONNECT:
+    {
+        if(SIMULATE_CONNECT!=NONE_CONNECT) {
+            QStringList tmpList;
+            QString str;
+            int len = 20;
+            for(int i=0;i<len;i++) {//test 20
+                int randId=qrand()%NODE_NUM;
+                str="";
+                str += QString("%1     ").arg(QDateTime::currentDateTime().toTime_t());
+                str += "Data     ";
+                str += "Stand    ";
+                str += QString("%1       ").arg(randId,2,16,QLatin1Char('0'));
+                id[i] = randId;
+                dataLen[i]=8;
+                for (int j = 0; j < 8; j++)
+                {
+                    unsigned char randData = qrand()%255;
+                    str += QString("%1   ").arg(randData, 2, 16, QLatin1Char('0'));
+                    data[i][j] = randData;
+                }
+                tmpList.append(str);
+            }
+            list=tmpList;
+            return len;
+        }
+        return 0;
+    }
     }
     return 0;
 }

@@ -1,7 +1,7 @@
 #include "globaldata.h"
 // 直接初始化静态成员变量
 CanAnalysis GlobalData::currentCanAnalyticalData[NODE_NUM];
-int GlobalData::connectType=0;
+int GlobalData::connectType=NONE_CONNECT;
 QStringList GlobalData::currentCanData;
 bool GlobalData::showDebugInfo=false;
 int GlobalData::runningId[NODE_NUM]={0};

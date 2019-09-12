@@ -30,7 +30,7 @@ void ReceiveFrameBox::initEvent()
 **/
 void ReceiveFrameBox::update()
 {
-    if(GlobalData::connectType && GlobalData::showDebugInfo) {
+    if((GlobalData::connectType || SIMULATE_CONNECT!=NONE_CONNECT) && GlobalData::showDebugInfo) {
         QStringList tmp=GlobalData::currentCanData;
         for(int i=0;i<tmp.length();i++) {
             ui->receivedMessagesEdit->append(tmp[i]);
