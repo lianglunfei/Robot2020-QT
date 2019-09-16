@@ -298,7 +298,6 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
 #endif
                 tmplist.append(str);
             }
-            list = tmplist;
         }
         return len;
     }
