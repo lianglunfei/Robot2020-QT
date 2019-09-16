@@ -1,10 +1,13 @@
 #include "mainwindow.h"
 #include <QApplication>
+#ifdef Q_OS_WIN
 #include <windows.h>
+#include <dbghelp.h>
+#endif
 #include <QMessageBox>
 #include <QTime>
-#include <dbghelp.h>
 
+#ifdef Q_OS_WIN
 LONG ApplicationCrashHandler(EXCEPTION_POINTERS *pException){//程式异常捕获
     //创建 Dump 文件
     QDateTime CurDTime = QDateTime::currentDateTime();
@@ -32,11 +35,14 @@ LONG ApplicationCrashHandler(EXCEPTION_POINTERS *pException){//程式异常捕�
                          QMessageBox::Ok);
     return EXCEPTION_EXECUTE_HANDLER;
 }
+#endif
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+#ifdef Q_OS_WIN
     SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)ApplicationCrashHandler);//注冊异常捕获函数
+#endif
     MainWindow w;
     w.show();
 

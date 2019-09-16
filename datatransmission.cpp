@@ -309,7 +309,7 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
             QString str;
             int len = 20;
             for(int i=0;i<len;i++) {//test 20
-                int randId=qrand()%NODE_NUM;
+                int randId=(qrand()%NODE_NUM)+1;
                 str="";
                 str += QString("%1     ").arg(QDateTime::currentDateTime().toTime_t());
                 str += "Data     ";
@@ -317,9 +317,8 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
                 str += QString("%1       ").arg(randId,2,16,QLatin1Char('0'));
                 id[i] = randId;
                 dataLen[i]=8;
-                for (int j = 0; j < 8; j++)
-                {
-                    unsigned char randData = qrand()%255;
+                for (int j = 0; j < 8; j++){
+                    unsigned char randData = qrand()%256;
                     str += QString("%1   ").arg(randData, 2, 16, QLatin1Char('0'));
                     data[i][j] = randData;
                 }
