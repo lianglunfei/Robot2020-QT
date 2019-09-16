@@ -98,6 +98,12 @@ FORMS += \
 target.path = ../
 INSTALLS += target
 
+LIBS += -lDbgHelp
+
+#QMAKE_LFLAGS_RELEASE += /MAP
+#QMAKE_CFLAGS_RELEASE += /Zi
+#QMAKE_LFLAGS_RELEASE += /debug /opt:ref
+
 unix:!macx: LIBS += -L$$PWD/LIB/ -lcontrolcan
 
 INCLUDEPATH += $$PWD/LIB
