@@ -26,7 +26,7 @@ enum {
 
 #define NODE_NUM 12
 #define DRIVE_NEW 1
-#define SIMULATE_CONNECT        CONNECT_TYPE_ALYSIST
+#define SIMULATE_CONNECT        NONE_CONNECT//CONNECT_TYPE_ALYSIST
 
 class GlobalData
 {
