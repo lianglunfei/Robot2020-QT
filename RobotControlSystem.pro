@@ -110,7 +110,7 @@ QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_LFLAGS_RELEASE -= -Wl,-s
 QMAKE_LFLAGS_RELEASE += -Wl,-Map,RobotControlSystem.map
 
-unix:!macx: LIBS += -L$$PWD/LIB/ -lcontrolcan
+!macx: LIBS += -L$$PWD/LIB/ -lControlCAN64
 
 INCLUDEPATH += $$PWD/LIB
 DEPENDPATH += $$PWD/LIB
@@ -119,11 +119,6 @@ DISTFILES +=
 
 RESOURCES += \
     img.qrc
-
-win32: LIBS += -L$$PWD/LIB/ -lControlCAN
-
-INCLUDEPATH += $$PWD/LIB
-DEPENDPATH += $$PWD/LIB
 
 win32: LIBS += -L$$PWD/LIB/ -lECanVci64
 
