@@ -8,6 +8,8 @@
 #include "globaldata.h"
 
 class QLabel;
+class QVBoxLayout;
+class QHBoxLayout;
 
 namespace Ui {
 class ReceiveError;
@@ -28,9 +30,14 @@ private:
     int lastRunningJoint[NODE_NUM]={0};
     QTimer *time=nullptr;
     QLabel *nodeNum[NODE_NUM+1];
+    QLabel *nodeName[NODE_NUM+1];
     QLabel *nodeMaxTime[NODE_NUM+1];
     int maxTime[NODE_NUM]={0};
     QElapsedTimer start[NODE_NUM];
+    QVBoxLayout *vLayout;
+    QHBoxLayout *hLayout1;
+    QHBoxLayout *hLayout2;
+    QHBoxLayout *hLayout3;
 
     void init();
     void errorHandle(int i);

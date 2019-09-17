@@ -9,6 +9,7 @@ class ControlTableView : public QTableView
     Q_OBJECT
 public:
     explicit ControlTableView(QWidget *parent = 0);
+    ~ControlTableView();
 
     void valueListSync(QString currentName, int currentPeriod);
     void valueListUpdate(int row);

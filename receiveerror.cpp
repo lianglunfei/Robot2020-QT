@@ -21,9 +21,8 @@ void ReceiveError::init()
     ui->comboBox->addItem(tr("all"));
     ui->comboBox->setCurrentIndex(NODE_NUM);
 
-    QVBoxLayout *vLayout = new QVBoxLayout();
-    QHBoxLayout *hLayout1 = new QHBoxLayout();
-    QLabel *nodeName[NODE_NUM+1];
+    vLayout = new QVBoxLayout();
+    hLayout1 = new QHBoxLayout();
     for(int i=0;i<NODE_NUM;i++) {
         nodeName[i] = new QLabel();
         nodeName[i]->setText("J"+QString::number(i+1));
@@ -31,7 +30,7 @@ void ReceiveError::init()
     nodeName[NODE_NUM] = new QLabel();
     nodeName[NODE_NUM]->setText("");
 
-    QHBoxLayout *hLayout2 = new QHBoxLayout();
+    hLayout2 = new QHBoxLayout();
     for(int i=0;i<NODE_NUM;i++) {
         nodeNum[i] = new QLabel();
         nodeNum[i]->setNum(0);
@@ -39,7 +38,7 @@ void ReceiveError::init()
     nodeNum[NODE_NUM] = new QLabel();
     nodeNum[NODE_NUM]->setText("丢失数");
 
-    QHBoxLayout *hLayout3 = new QHBoxLayout();
+    hLayout3 = new QHBoxLayout();
     for(int i=0;i<NODE_NUM;i++) {
         nodeMaxTime[i] = new QLabel();
         nodeMaxTime[i]->setNum(0);
@@ -110,8 +109,12 @@ ReceiveError::~ReceiveError()
     delete time;
     for(int i=0;i<NODE_NUM+1;i++) {
         delete nodeNum[i];
+        delete nodeName[i];
         delete nodeMaxTime[i];
     }
+    delete hLayout1;
+    delete hLayout2;
+    delete hLayout3;
     delete ui;
 }
 

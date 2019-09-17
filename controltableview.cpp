@@ -28,6 +28,13 @@ ControlTableView::ControlTableView(QWidget *parent)
     eventInit();
 }
 
+ControlTableView::~ControlTableView()
+{
+    delete taskTimer;
+    delete taskThread;
+    delete model;
+}
+
 void ControlTableView::eventInit()
 {
     taskTimer=new QTimer;
