@@ -46,6 +46,21 @@ int DataTransmission::connectToCan(int& connectType, int baud)
     return 0;
 }
 
+int DataTransmission::CANCloseDevice(int connectType)
+{
+    switch (connectType) {
+    case CONNECT_TYPE_ALYSIST:
+        return VCI_CloseDevice(USBCAN1,0);
+#ifdef Q_OS_WIN
+    case CONNECT_TYPE_GC:
+        return CloseDevice(USBCAN1,0);
+#endif
+    default:
+        break;
+    }
+    return -1;
+}
+
 /**
 *@projectName   RobotControlSystem
 *@brief         使用CAN第一步，打开CAN

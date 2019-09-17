@@ -26,6 +26,8 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
 
 ConnectDialog::~ConnectDialog()
 {
+    if(DataTransmission::CANCloseDevice(GlobalData::connectType)!=-1)
+        qDebug() << "Disconnect CAN OK!";
     delete ui;
 }
 
