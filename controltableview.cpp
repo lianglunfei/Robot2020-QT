@@ -695,6 +695,10 @@ void ControlTableView::execSeqEvent()
         return;
     }
 
+    if(-1 == g_lastRow) {
+        g_lastRow = row;
+    }
+
     if(row%interValue== 0 &&
             qobject_cast<QCheckBox *>(indexWidget(model->index(row,BTN_START_INDEX+ROW_BTN_NUM)))->isChecked()) {
         int runTime = interPeriod;
