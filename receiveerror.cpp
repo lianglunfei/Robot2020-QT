@@ -107,6 +107,11 @@ void ReceiveError::update()
 
 ReceiveError::~ReceiveError()
 {
+    delete time;
+    for(int i=0;i<NODE_NUM+1;i++) {
+        delete nodeNum[i];
+        delete nodeMaxTime[i];
+    }
     delete ui;
 }
 

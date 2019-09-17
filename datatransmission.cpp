@@ -309,7 +309,7 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
                     }
                 }
 #ifdef OPEN_DEBUG
-                //                qDebug() << str;
+                // qDebug() << str;
 #endif
                 tmpList.append(str);
             }

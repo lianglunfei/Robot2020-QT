@@ -11,7 +11,7 @@ class Plots : public QWidget
     Q_OBJECT
 public:
     explicit Plots(QWidget *parent = 0);
-    virtual ~Plots(){}
+    virtual ~Plots();
 
     virtual void addDataToUi(double key);
     virtual void setLinesReplot(double key);

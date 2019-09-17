@@ -11,6 +11,11 @@ Plots::Plots(QWidget *parent) :
     plotDataTimer->start(0);
 }
 
+Plots::~Plots()
+{
+    delete plotDataTimer;
+}
+
 /**
 *@projectName   RobotControlSystem
 *@brief         设置波形线的名称和颜色
