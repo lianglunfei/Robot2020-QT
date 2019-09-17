@@ -33,7 +33,7 @@ void ConnectDialog::accept()
 {
     int baud=ui->bauteComboBox->currentIndex();
 
-    if(DataTransmission::connectToCan(GlobalData::connectType, baud)!=1)
+    if(DataTransmission::connectToCan(GlobalData::connectType, baud)==-1)
         return;
 
     qDebug() << "Connect CAN OK!";

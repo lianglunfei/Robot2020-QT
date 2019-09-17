@@ -110,7 +110,8 @@ QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_LFLAGS_RELEASE -= -Wl,-s
 QMAKE_LFLAGS_RELEASE += -Wl,-Map,RobotControlSystem.map
 
-!macx: LIBS += -L$$PWD/LIB/ -lControlCAN64
+unix:!macx: LIBS += -L$$PWD/LIB/ -lcontrolcan
+win:32: LIBS += -L$$PWD/LIB/ -lControlCAN
 
 INCLUDEPATH += $$PWD/LIB
 DEPENDPATH += $$PWD/LIB

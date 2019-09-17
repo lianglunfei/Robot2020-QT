@@ -251,7 +251,7 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
         int len=0;
         QString str;
         QString tmpstr;
-        QStringList tmplist;
+        QStringList tmpList;
         if(connectType==CONNECT_TYPE_ALYSIST)
             len=VCI_Receive(USBCAN1,0,0,frameinfo,50,10);
 #ifdef Q_OS_WIN
@@ -296,8 +296,9 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
 #ifdef OPEN_DEBUG
                 //                qDebug() << str;
 #endif
-                tmplist.append(str);
+                tmpList.append(str);
             }
+            list=tmpList;
         }
         return len;
     }
