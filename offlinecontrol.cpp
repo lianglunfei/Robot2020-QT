@@ -104,10 +104,18 @@ void OfflineControl::on_exportPushButton_clicked()
         ui->fileNameLabel->setText("file name is empty!");
         return;
     }
-    fileName = QDir::currentPath()+"/"+ui->fileNameLineEdit->text()+".csv";
-    ui->tableView->exportToCsv(fileName);
-    g_fileDir = QFileInfo(fileName).absoluteFilePath();
-    ui->fileNameLabel->setText(fileName+" saved");
+#ifdef Q_OS_WIN
+    fileName = QDir::currentPath() + "/" + ui->fileNameLineEdit->text() + ".csv";
+#else
+    char *path = getenv("HOME");
+    fileName = QString(path)+"/csv/" + ui->fileNameLineEdit->text() + ".csv";
+#endif
+    if (ui->tableView->exportToCsv(fileName) != -1) {
+        g_fileDir = QFileInfo(fileName).absoluteFilePath();
+        ui->fileNameLabel->setText(fileName + " saved");
+    } else {
+        ui->fileNameLabel->setText("export "+fileName+" failed!");
+    }
 }
 
 void OfflineControl::on_importPushButton_clicked()
@@ -123,10 +131,18 @@ void OfflineControl::on_importPushButton_clicked()
         ui->fileNameLabel->setText("file name is empty!");
         return;
     }
-    fileName = QDir::currentPath()+"/"+ui->fileNameLineEdit->text()+".csv";
-    ui->tableView->importCsv(fileName);
-    g_fileDir = QFileInfo(fileName).absoluteFilePath();
-    ui->fileNameLabel->setText(fileName+" opened");
+#ifdef Q_OS_WIN
+    fileName = QDir::currentPath() + "/" + ui->fileNameLineEdit->text() + ".csv";
+#else
+    char *path = getenv("HOME");
+    fileName = QString(path)+"/csv/" + ui->fileNameLineEdit->text() + ".csv";
+#endif
+    if(ui->tableView->importCsv(fileName) != -1) {
+        g_fileDir = QFileInfo(fileName).absoluteFilePath();
+        ui->fileNameLabel->setText(fileName + " opened");
+    } else {
+        ui->fileNameLabel->setText("import "+fileName+" failed!");
+    }
 }
 
 void OfflineControl::on_initDriverPushButton_clicked()

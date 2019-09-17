@@ -475,10 +475,10 @@ void ControlTableView::setListBoundaryValue(int &up, int &down)
 *@author        XingZhang.Wu
 *@date          20190809
 **/
-void ControlTableView::exportToCsv(QString fileName)
+int ControlTableView::exportToCsv(QString fileName)
 {
     if (fileName.isEmpty())
-        return;
+        return -1;
 
     QFile file(fileName);
 
@@ -518,16 +518,20 @@ void ControlTableView::exportToCsv(QString fileName)
             stream<< list.join(",")<<"\r\n";
         }
         file.close();
+    } else {
+        return -1;
     }
+
+    return 0;
 }
 
-void ControlTableView::importCsv(QString fileName)
+int ControlTableView::importCsv(QString fileName)
 {
     QFile file(fileName);
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         qDebug() << "Open file failed!";
-        return;
+        return -1;
     }
 
     QList<QStringList> qlist;
@@ -557,7 +561,7 @@ void ControlTableView::importCsv(QString fileName)
                               tr("Empty file!"),
                               QMessageBox::Ok | QMessageBox::Cancel);
         file.close();
-        return;
+        return -1;
     }
 
     if(!QString(qlist[1][0]).contains("ref") || col!= (BTN_START_INDEX+ROW_BTN_NUM+1)) {
@@ -566,7 +570,7 @@ void ControlTableView::importCsv(QString fileName)
                                 "You must manually modify the csv file and import it."),
                              QMessageBox::Ok | QMessageBox::Cancel);
         file.close();
-        return;
+        return -1;
     }
 
     model->clear();
@@ -599,6 +603,8 @@ void ControlTableView::importCsv(QString fileName)
     }
 
     file.close();
+    
+    return 0;
 }
 
 /**

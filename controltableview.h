@@ -18,8 +18,8 @@ public:
     int seqExec(bool cycle, int value, int period);
     void execStop();
     int reverseSeqExec(bool cycle, int value, int period);
-    void exportToCsv(QString fileName);
-    void importCsv(QString fileName);
+    int exportToCsv(QString fileName);
+    int importCsv(QString fileName);
     void syncTableviewRowData(int row);
 
     QStandardItemModel *model;

@@ -10,6 +10,7 @@
 #include "receiveworkerthread.h"
 #include "terminal.h"
 #include "receiveerror.h"
+#include "globaldata.h"
 
 #include <QTimer>
 
@@ -61,7 +62,10 @@ void MainWindow::canConnectEvent()
     connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
     workerThread->start();
     //set status
-    ui->statusBar->showMessage(tr("Connected"));
+    if (GlobalData::connectType)
+        ui->statusBar->showMessage(tr("Connected"));
+    else if (SIMULATE_CONNECT != NONE_CONNECT)
+        ui->statusBar->showMessage(tr("Simulate"));
 }
 
 void MainWindow::connectInit()
