@@ -71,38 +71,36 @@ void ReceiveError::init()
         start[i].start();
 }
 
+void ReceiveError::errorHandle(int i)
+{
+    if(lastRunningJoint[i]
+            && !GlobalData::runningId[i]) {
+        ui->lcdNumber->display(++cout);
+        nodeNum[i]->setNum(++coutId[i]);
+        start[i].start();
+    } else if(!lastRunningJoint[i]
+              && GlobalData::runningId[i]
+              && coutId[i]) {
+        int elapsedTime = start[i].elapsed();
+        maxTime[i] = elapsedTime>maxTime[i]?elapsedTime:maxTime[i];
+        nodeMaxTime[i]->setNum(maxTime[i]);
+    }
+    if(GlobalData::runningId[i]) {
+        nodeMaxTime[i]->setStyleSheet("color:black;");
+    } else {
+        nodeMaxTime[i]->setStyleSheet("color:red;");
+    }
+    lastRunningJoint[i] = GlobalData::runningId[i];
+}
+
 void ReceiveError::update()
 {
     if(ui->comboBox->currentIndex()<NODE_NUM) {
         int j=ui->comboBox->currentIndex();
-        if(lastRunningJoint[j]
-                && !GlobalData::runningId[j]) {
-            ui->lcdNumber->display(++cout);
-            nodeNum[ui->comboBox->currentIndex()]->setNum(++coutId[j]);
-            start[j].start(); //begin cal time
-        } else if(!lastRunningJoint[j]
-                  && GlobalData::runningId[j]
-                  && coutId[j]) {
-            int elapsedTime = start[j].elapsed();
-            maxTime[j] = elapsedTime>maxTime[j]?elapsedTime:maxTime[j];
-            nodeMaxTime[j]->setNum(maxTime[j]);
-        }
-        lastRunningJoint[ui->comboBox->currentIndex()] = GlobalData::runningId[ui->comboBox->currentIndex()];
+        errorHandle(j);
     } else {
         for(int i=0;i<NODE_NUM;i++) {
-            if(lastRunningJoint[i]
-                    && !GlobalData::runningId[i]) {
-                ui->lcdNumber->display(++cout);
-                nodeNum[i]->setNum(++coutId[i]);
-                start[i].start();
-            } else if(!lastRunningJoint[i]
-                      && GlobalData::runningId[i]
-                      && coutId[i]) {
-                int elapsedTime = start[i].elapsed();
-                maxTime[i] = elapsedTime>maxTime[i]?elapsedTime:maxTime[i];
-                nodeMaxTime[i]->setNum(maxTime[i]);
-            }
-            lastRunningJoint[i] = GlobalData::runningId[i];
+            errorHandle(i);
         }
     }
 }

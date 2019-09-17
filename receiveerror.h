@@ -33,6 +33,7 @@ private:
     QElapsedTimer start[NODE_NUM];
 
     void init();
+    void errorHandle(int i);
 
 private slots:
     void update();
