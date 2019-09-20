@@ -40,6 +40,7 @@ public:
     static bool showDebugInfo;
     static unsigned int sendId[NODE_NUM];
     static int runningId[NODE_NUM];
+    static int statusId[NODE_NUM];
 };
 
 #endif // GLOBALDATA_H
