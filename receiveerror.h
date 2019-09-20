@@ -25,9 +25,11 @@ public:
 
 private:
     Ui::ReceiveError *ui;
-    int cout=0;
-    int coutId[NODE_NUM]={0};
+    int countLostAll=0;
+    int countLostId[NODE_NUM]={0};
+    int countErrorId[NODE_NUM]={0};
     int lastRunningJoint[NODE_NUM]={0};
+    int lastStatusId[NODE_NUM]={0};
     QTimer *time=nullptr;
     QLabel *nodeNum[NODE_NUM+1];
     QLabel *nodeName[NODE_NUM+1];

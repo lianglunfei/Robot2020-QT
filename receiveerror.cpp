@@ -85,12 +85,12 @@ void ReceiveError::errorHandle(int i)
 {
     if(lastRunningJoint[i]
             && !GlobalData::runningId[i]) {
-        ui->lcdNumber->display(++cout);
-        nodeNum[i]->setNum(++coutId[i]);
+        ui->lcdNumber->display(++countLostAll);
+        nodeNum[i]->setNum(++countLostId[i]);
         start[i].start();
     } else if(!lastRunningJoint[i]
               && GlobalData::runningId[i]
-              && coutId[i]) {
+              && countLostId[i]) {
         int elapsedTime = start[i].elapsed();
         maxTime[i] = elapsedTime>maxTime[i]?elapsedTime:maxTime[i];
         nodeMaxTime[i]->setNum(maxTime[i]);
@@ -100,12 +100,14 @@ void ReceiveError::errorHandle(int i)
     } else {
         nodeMaxTime[i]->setStyleSheet("color:red;");
     }
+    if(lastStatusId[i]!=0x0b && GlobalData::statusId[i]==0x0b)
+        countErrorId[i]++;
     lastRunningJoint[i] = GlobalData::runningId[i];
+    lastStatusId[i] = GlobalData::statusId[i];
+    nodeStatus[i]->setText(QString::number(GlobalData::statusId[i])+"("+QString::number(countErrorId[i])+")");
     if(GlobalData::statusId[i]==0x0b) {
-        nodeStatus[i]->setNum(GlobalData::statusId[i]);
         nodeStatus[i]->setStyleSheet("color:red;");
     } else {
-        nodeStatus[i]->setNum(GlobalData::statusId[i]);
         nodeStatus[i]->setStyleSheet("color:black;");
     }
 }
@@ -140,13 +142,14 @@ ReceiveError::~ReceiveError()
 
 void ReceiveError::on_pushButton_clicked()
 {
-    cout=0;
+    countLostAll=0;
     for(int i=0;i<NODE_NUM;i++) {
-        coutId[i]=0;
+        countLostId[i]=0;
+        countErrorId[i]=0;
         maxTime[i]=0;
         nodeNum[i]->setNum(0);
         nodeMaxTime[i]->setNum(0);
     }
-    ui->lcdNumber->display(cout);
+    ui->lcdNumber->display(countLostAll);
     ui->pushButton->setText("重置@"+QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
 }
