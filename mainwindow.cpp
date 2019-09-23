@@ -57,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::canConnectEvent()
 {
     //start receive thread
-    ReceiveWorkerThread *workerThread = new ReceiveWorkerThread(this);
+    workerThread = new ReceiveWorkerThread(this);
     // After the end of the thread, automatically destroy
     connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
     workerThread->start();
@@ -91,5 +91,6 @@ MainWindow::~MainWindow()
     delete m_single_joint_control;
     delete m_offline_control;
     delete m_receive_error;
+    delete workerThread;
     delete ui;
 }

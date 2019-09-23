@@ -11,6 +11,7 @@ class JointControl;
 class SingleJointControl;
 class OfflineControl;
 class ReceiveError;
+class ReceiveWorkerThread;
 
 namespace Ui {
 class MainWindow;
@@ -35,6 +36,7 @@ private:
     SingleJointControl *m_single_joint_control = nullptr;
     OfflineControl *m_offline_control = nullptr;
     ReceiveError *m_receive_error = nullptr;
+    ReceiveWorkerThread *workerThread = nullptr;
     void connectInit();
 
 private slots:
