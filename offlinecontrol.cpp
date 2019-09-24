@@ -110,6 +110,7 @@ void OfflineControl::on_exportPushButton_clicked()
     char *path = getenv("HOME");
     fileName = QString(path)+"/csv/" + ui->fileNameLineEdit->text() + ".csv";
 #endif
+    ui->fileNameLabel->setText(fileName + " opening");
     if (ui->tableView->exportToCsv(fileName) != -1) {
         g_fileDir = QFileInfo(fileName).absoluteFilePath();
         ui->fileNameLabel->setText(fileName + " saved");
@@ -137,6 +138,7 @@ void OfflineControl::on_importPushButton_clicked()
     char *path = getenv("HOME");
     fileName = QString(path)+"/csv/" + ui->fileNameLineEdit->text() + ".csv";
 #endif
+    ui->fileNameLabel->setText(fileName + " opening");
     if(ui->tableView->importCsv(fileName) != -1) {
         g_fileDir = QFileInfo(fileName).absoluteFilePath();
         ui->fileNameLabel->setText(fileName + " opened");

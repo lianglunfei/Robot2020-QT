@@ -10,6 +10,7 @@
 #include <QThread>
 #include <QCheckBox>
 #include <QMessageBox>
+#include <QCoreApplication>
 
 #define BTN_START_INDEX NODE_NUM+3 //行按钮开始的位置=节点数+mode+time+name
 #define ROW_BTN_NUM 5 //按钮个数：上下移动、增加删除、运行
@@ -607,10 +608,12 @@ int ControlTableView::importCsv(QString fileName)
             }
         }
         addTableviewRowWidget(QString(qlist[i+1][1]).toInt(), i, QString(qlist[i+1][colMin-1]).toInt()>0, i<SHOW_BTN_NUM);
+        if(i%1000 == 0) { //防止页面假死
+            QCoreApplication::processEvents();
+        }
     }
 
     file.close();
-    
     return 0;
 }
 
