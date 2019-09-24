@@ -212,6 +212,7 @@ void ControlTableView::addTableviewRowWidget(int mode, int row, bool checkState,
     m_combox->addItem("相对位置");
     m_combox->setCurrentIndex(mode);
     m_combox->setProperty("row", row);  //为按钮设置row属性
+    m_combox->setParent(this);
     setIndexWidget(model->index(row, 1), m_combox);
     if(complete) {
         //为这个第i列添加按钮
@@ -226,6 +227,7 @@ void ControlTableView::addTableviewRowWidget(int mode, int row, bool checkState,
             connect(m_button[i], SIGNAL(clicked(bool)), this, SLOT(tableClickButton()));
             m_button[i]->setProperty("row", row);  //为按钮设置row属性
             m_button[i]->setProperty("column", column+i+1);  //为按钮设置column属性
+            m_button[i]->setParent(this);
             setIndexWidget(model->index(row, column+i+1), m_button[i]);
         }
     }
@@ -236,6 +238,7 @@ void ControlTableView::addTableviewRowWidget(int mode, int row, bool checkState,
     else
         m_checkBox->setChecked(false);
     m_checkBox->setProperty("row", row);  //为按钮设置row属性
+    m_checkBox->setParent(this);
     setIndexWidget(model->index(row, column+ROW_BTN_NUM+1), m_checkBox);
 }
 
@@ -592,6 +595,7 @@ int ControlTableView::importCsv(QString fileName)
     //ref line
     for(int j = 0; j < NODE_NUM+1; j++) {
         QStandardItem *item = new QStandardItem(qlist[1][j]);
+        //这里的指针会在QStandardItemModel中的析构函数里面被释放掉 qDeleteAll(d->rowHeaderItems);
         if(j == 0)
             model->setItem(0, 0, item);
         else
@@ -604,6 +608,7 @@ int ControlTableView::importCsv(QString fileName)
         {
             if(j != 1 && j < colMin) {
                 QStandardItem *item = new QStandardItem(qlist[i+1][j]);
+                //这里的指针会在QStandardItemModel中的析构函数里面被释放掉 qDeleteAll(d->rowHeaderItems);
                 model->setItem(i, j, item);
             }
         }
