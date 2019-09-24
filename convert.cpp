@@ -37,7 +37,7 @@ int Convert::strToData(unsigned char *str, unsigned char *data,int len,int flag)
 //-----------------------------------------------------
 int Convert::charToInt(unsigned char chr, unsigned char *cint)
 {
-    unsigned char cTmp;
+    char cTmp;
     cTmp=chr-48;
     if(cTmp>=0&&cTmp<=9) {
         *cint=cTmp;

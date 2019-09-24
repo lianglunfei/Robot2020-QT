@@ -38,12 +38,18 @@ bool Package::unpackOperate()
         isConnected = true;
     }
     int nodeId[NODE_NUM]={0};
+    int nodeStatus[NODE_NUM]={0};
     for(int i=0;i<50;i++) {
-        if(id[i]>0)
+        if (id[i] > 0)
+        {
             nodeId[id[i] - GlobalData::sendId[0]] = 1;
+            if (data[i][0] == 0x06 || data[i][0] == 0x0b)
+                nodeStatus[id[i] - GlobalData::sendId[0]] = data[i][0];
+        }
     }
     for(int i=0;i<NODE_NUM;i++) {
         GlobalData::runningId[i] = nodeId[i];
+        GlobalData::statusId[i] = nodeStatus[i];
     }
     return isConnected;
 }

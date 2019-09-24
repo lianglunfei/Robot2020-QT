@@ -10,6 +10,7 @@
 #include <QThread>
 #include <QCheckBox>
 #include <QMessageBox>
+#include <QCoreApplication>
 
 #define BTN_START_INDEX NODE_NUM+3 //行按钮开始的位置=节点数+mode+time+name
 #define ROW_BTN_NUM 5 //按钮个数：上下移动、增加删除、运行
@@ -17,7 +18,8 @@
 #define POS_LIMIT_VALUE 100 //最大允许位置变化偏差，超过会显示数据异常
 #define SHOW_BTN_NUM 50 //表格显示按钮的行数，一般设定前50行s
 
-ControlTableView::ControlTableView(QWidget *parent)
+ControlTableView::ControlTableView(QWidget *parent):
+    QTableView(parent)
 {
     headerDataInit();
     valueListInit();
@@ -211,6 +213,7 @@ void ControlTableView::addTableviewRowWidget(int mode, int row, bool checkState,
     m_combox->addItem("相对位置");
     m_combox->setCurrentIndex(mode);
     m_combox->setProperty("row", row);  //为按钮设置row属性
+    m_combox->setParent(this);
     setIndexWidget(model->index(row, 1), m_combox);
     if(complete) {
         //为这个第i列添加按钮
@@ -225,6 +228,7 @@ void ControlTableView::addTableviewRowWidget(int mode, int row, bool checkState,
             connect(m_button[i], SIGNAL(clicked(bool)), this, SLOT(tableClickButton()));
             m_button[i]->setProperty("row", row);  //为按钮设置row属性
             m_button[i]->setProperty("column", column+i+1);  //为按钮设置column属性
+            m_button[i]->setParent(this);
             setIndexWidget(model->index(row, column+i+1), m_button[i]);
         }
     }
@@ -235,6 +239,7 @@ void ControlTableView::addTableviewRowWidget(int mode, int row, bool checkState,
     else
         m_checkBox->setChecked(false);
     m_checkBox->setProperty("row", row);  //为按钮设置row属性
+    m_checkBox->setParent(this);
     setIndexWidget(model->index(row, column+ROW_BTN_NUM+1), m_checkBox);
 }
 
@@ -267,10 +272,10 @@ int ControlTableView::runFunc(int row)
         for(int i=0;i<NODE_NUM;i++) {
             value[i] += refValue[i];
             double realVal=0;
-            if(abs(GlobalData::currentCanAnalyticalData[i].position-value[i]) > 180)
-                realVal = 360 - abs(GlobalData::currentCanAnalyticalData[i].position-value[i]);
+            if(std::abs(GlobalData::currentCanAnalyticalData[i].position-value[i]) > 180)
+                realVal = 360 - std::abs(GlobalData::currentCanAnalyticalData[i].position-value[i]);
             else
-                realVal = abs(GlobalData::currentCanAnalyticalData[i].position-value[i]);
+                realVal = std::abs(GlobalData::currentCanAnalyticalData[i].position-value[i]);
             if(realVal>POS_LIMIT_VALUE)
                 return -1;
         }
@@ -422,6 +427,7 @@ int ControlTableView::seqExec(bool cycle, int value, int period)
         taskThread->start();
         return 1;
     }
+    return 0;
 }
 
 void ControlTableView::execStop()
@@ -449,6 +455,7 @@ int ControlTableView::reverseSeqExec(bool cycle, int value, int period)
         taskThread->start();
         return 1;
     }
+    return 0;
 }
 
 /**
@@ -591,6 +598,7 @@ int ControlTableView::importCsv(QString fileName)
     //ref line
     for(int j = 0; j < NODE_NUM+1; j++) {
         QStandardItem *item = new QStandardItem(qlist[1][j]);
+        //这里的指针会在QStandardItemModel中的析构函数里面被释放掉 qDeleteAll(d->rowHeaderItems);
         if(j == 0)
             model->setItem(0, 0, item);
         else
@@ -603,14 +611,17 @@ int ControlTableView::importCsv(QString fileName)
         {
             if(j != 1 && j < colMin) {
                 QStandardItem *item = new QStandardItem(qlist[i+1][j]);
+                //这里的指针会在QStandardItemModel中的析构函数里面被释放掉 qDeleteAll(d->rowHeaderItems);
                 model->setItem(i, j, item);
             }
         }
         addTableviewRowWidget(QString(qlist[i+1][1]).toInt(), i, QString(qlist[i+1][colMin-1]).toInt()>0, i<SHOW_BTN_NUM);
+        if(i%1000 == 0) { //防止页面假死
+            QCoreApplication::processEvents();
+        }
     }
 
     file.close();
-    
     return 0;
 }
 

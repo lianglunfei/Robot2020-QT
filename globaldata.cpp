@@ -6,6 +6,7 @@ QStringList GlobalData::currentCanData;
 bool GlobalData::showDebugInfo=false;
 int GlobalData::runningId[NODE_NUM]={0};
 unsigned int GlobalData::sendId[NODE_NUM] = {0};
+int GlobalData::statusId[NODE_NUM]={0};
 
 GlobalData::GlobalData()
 {
