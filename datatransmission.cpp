@@ -313,7 +313,7 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
 #endif
                 tmpList.append(str);
             }
-//            list=tmpList;
+            list=tmpList;
         }
         return len;
     }
@@ -339,7 +339,7 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
                 }
                 tmpList.append(str);
             }
-//            list=tmpList;
+            list=tmpList;
             return len;
         }
         return 0;
