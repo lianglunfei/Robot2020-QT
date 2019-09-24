@@ -202,18 +202,18 @@ void Controls::speedValueChanged()
         }
     } else {
         for(int i=0;i<speedSpinBox.length()/3;i++) {//4 parts
-            if((i*3) < NODE_NUM && Spin == findChild<QDoubleSpinBox*>(speedSpinBox[i*3])
-                    || Slider == findChild<DoubleSlider*>(speedSlider[i*3])) {
+            if((i*3) < NODE_NUM && (Spin == findChild<QDoubleSpinBox*>(speedSpinBox[i*3])
+                    || Slider == findChild<DoubleSlider*>(speedSlider[i*3]))) {
                 readyToSendCanData[i*3].speed =
                         findChild<QDoubleSpinBox*>(speedSpinBox[i*3])->text().toDouble();
             }
-            else if((i*3)+1 < NODE_NUM && Spin == findChild<QDoubleSpinBox*>(speedSpinBox[(i*3)+1])
-                    || Slider == findChild<DoubleSlider*>(speedSlider[(i*3)+1])) {
+            else if((i*3)+1 < NODE_NUM && (Spin == findChild<QDoubleSpinBox*>(speedSpinBox[(i*3)+1])
+                    || Slider == findChild<DoubleSlider*>(speedSlider[(i*3)+1]))) {
                 readyToSendCanData[(i*3)+1].speed =
                         findChild<QDoubleSpinBox*>(speedSpinBox[(i*3)+1])->text().toDouble();
             }
-            else if((i*3)+2 < NODE_NUM && Spin == findChild<QDoubleSpinBox*>(speedSpinBox[(i*3)+2])
-                    || Slider == findChild<DoubleSlider*>(speedSlider[(i*3)+2])) {
+            else if((i*3)+2 < NODE_NUM && (Spin == findChild<QDoubleSpinBox*>(speedSpinBox[(i*3)+2])
+                    || Slider == findChild<DoubleSlider*>(speedSlider[(i*3)+2]))) {
                 readyToSendCanData[(i*3)+2].speed =
                         findChild<QDoubleSpinBox*>(speedSpinBox[(i*3)+2])->text().toDouble();
             }
@@ -234,18 +234,18 @@ void Controls::posValueChanged()
         }
     } else {
         for(int i=0;i<positionSpinBox.length()/3;i++) {//4 parts
-            if((i*3) < NODE_NUM && Spin ==  findChild<QDoubleSpinBox*>(positionSpinBox[i*3])
-                    || Slider == findChild<DoubleSlider*>(positionSlider[i*3])) {
+            if((i*3) < NODE_NUM && (Spin ==  findChild<QDoubleSpinBox*>(positionSpinBox[i*3])
+                    || Slider == findChild<DoubleSlider*>(positionSlider[i*3]))) {
                 readyToSendCanData[i*3].position =
                         findChild<QDoubleSpinBox*>(positionSpinBox[i*3])->text().toDouble();
             }
-            else if((i*3)+1 < NODE_NUM && Spin ==  findChild<QDoubleSpinBox*>(positionSpinBox[(i*3)+1])
-                    || Slider == findChild<DoubleSlider*>(positionSlider[(i*3)+1])) {
+            else if((i*3)+1 < NODE_NUM && (Spin ==  findChild<QDoubleSpinBox*>(positionSpinBox[(i*3)+1])
+                    || Slider == findChild<DoubleSlider*>(positionSlider[(i*3)+1]))) {
                 readyToSendCanData[(i*3)+1].position =
                         findChild<QDoubleSpinBox*>(positionSpinBox[(i*3)+1])->text().toDouble();
             }
-            else if((i*3)+2 < NODE_NUM && Spin ==  findChild<QDoubleSpinBox*>(positionSpinBox[(i*3)+2])
-                    || Slider == findChild<DoubleSlider*>(positionSlider[(i*3)+2])) {
+            else if((i*3)+2 < NODE_NUM && (Spin ==  findChild<QDoubleSpinBox*>(positionSpinBox[(i*3)+2])
+                    || Slider == findChild<DoubleSlider*>(positionSlider[(i*3)+2]))) {
                 readyToSendCanData[(i*3)+2].position =
                         findChild<QDoubleSpinBox*>(positionSpinBox[(i*3)+2])->text().toDouble();
             }

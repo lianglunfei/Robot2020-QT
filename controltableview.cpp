@@ -18,7 +18,8 @@
 #define POS_LIMIT_VALUE 100 //最大允许位置变化偏差，超过会显示数据异常
 #define SHOW_BTN_NUM 50 //表格显示按钮的行数，一般设定前50行s
 
-ControlTableView::ControlTableView(QWidget *parent)
+ControlTableView::ControlTableView(QWidget *parent):
+    QTableView(parent)
 {
     headerDataInit();
     valueListInit();
@@ -271,10 +272,10 @@ int ControlTableView::runFunc(int row)
         for(int i=0;i<NODE_NUM;i++) {
             value[i] += refValue[i];
             double realVal=0;
-            if(abs(GlobalData::currentCanAnalyticalData[i].position-value[i]) > 180)
-                realVal = 360 - abs(GlobalData::currentCanAnalyticalData[i].position-value[i]);
+            if(std::abs(GlobalData::currentCanAnalyticalData[i].position-value[i]) > 180)
+                realVal = 360 - std::abs(GlobalData::currentCanAnalyticalData[i].position-value[i]);
             else
-                realVal = abs(GlobalData::currentCanAnalyticalData[i].position-value[i]);
+                realVal = std::abs(GlobalData::currentCanAnalyticalData[i].position-value[i]);
             if(realVal>POS_LIMIT_VALUE)
                 return -1;
         }
@@ -426,6 +427,7 @@ int ControlTableView::seqExec(bool cycle, int value, int period)
         taskThread->start();
         return 1;
     }
+    return 0;
 }
 
 void ControlTableView::execStop()
@@ -453,6 +455,7 @@ int ControlTableView::reverseSeqExec(bool cycle, int value, int period)
         taskThread->start();
         return 1;
     }
+    return 0;
 }
 
 /**

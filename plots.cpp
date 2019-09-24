@@ -134,7 +134,7 @@ void Plots::widgetAddData(QCustomPlot *plot, int num, double key, double value)
 **/
 void Plots::addDataToUi(double key)
 {
-
+    (void)key;
 }
 
 /**
@@ -146,7 +146,7 @@ void Plots::addDataToUi(double key)
 **/
 void Plots::setLinesReplot(double key)
 {
-
+    (void)key;
 }
 
 /**
@@ -158,10 +158,10 @@ void Plots::setLinesReplot(double key)
 **/
 void Plots::setLinesPausePlot(QCustomPlot *plot)
 {
-
+    (void)plot;
 }
 
 void Plots::showStatus(QString s)
 {
-
+    (void)s;
 }

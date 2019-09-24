@@ -22,6 +22,7 @@ Protocol::Protocol()
 **/
 void Protocol::getRawData(unsigned char rawData[], unsigned char outData[], int len, int id)
 {
+    (void)len;
     if(id==0)
         return;
     int k=0;
@@ -74,8 +75,6 @@ int Protocol::parseStatus(unsigned char data[], int index)
 void Protocol::packPos(unsigned char data[], double value)
 {
     //{0x8a,0x00,0x00,0x00,0x00,0x00,0x00,0x01}; //default position mode
-    if(sizeof(data)/sizeof(unsigned char)<8)
-        return;
     int readValue;
     if(value>360)
         value -= 360;
@@ -92,8 +91,6 @@ void Protocol::packPos(unsigned char data[], double value)
 void Protocol::packPosRF(unsigned char data[], double value)
 {
     //{0x8a,0x00,0x00,0x00,0x00,0x00,0x00,0x01}; //default position mode
-    if(sizeof(data)/sizeof(unsigned char)<8)
-        return;
     int readValue;
     readValue = static_cast<int>(value+0.5);
     readValue = readValue<0?(readValue+255):readValue;
@@ -106,8 +103,6 @@ void Protocol::packPosRF(unsigned char data[], double value)
 void Protocol::packSpeed(unsigned char data[], double value)
 {
     //data:65536~4000RPM 65536/4000=16.384
-    if(sizeof(data)/sizeof(unsigned char)<8)
-        return;
     int readValue;
     readValue = static_cast<int>(value*SPEED_COEFFICIENT+0.5);
     data[0] = 0x9a;
@@ -125,8 +120,6 @@ void Protocol::packSpeed(unsigned char data[], double value)
 void Protocol::packSpeedSet(unsigned char data[], double value)
 {
     //data:65536~4000RPM 65536/4000=16.384
-    if(sizeof(data)/sizeof(unsigned char)<8)
-        return;
     int readValue;
     readValue = static_cast<int>(value*SPEED_COEFFICIENT+0.5);
     data[0] = 0xca;
@@ -143,8 +136,7 @@ void Protocol::packSpeedSet(unsigned char data[], double value)
 
 void Protocol::packCal(unsigned char data[], double value)
 {
-    if(sizeof(data)/sizeof(unsigned char)<8)
-        return;
+    (void)value;
 #ifdef DRIVE_NEW
     data[0] = 0xda;
     data[7] = 0x01;
@@ -155,46 +147,40 @@ void Protocol::packCal(unsigned char data[], double value)
 
 void Protocol::packStart(unsigned char data[], double value)
 {
-    if(sizeof(data)/sizeof(unsigned char)<8)
-        return;
+    (void)value;
     data[0] = 0xaa;
     data[7] = 0x01;
 }
 
 void Protocol::packPause(unsigned char data[], double value)
 {
-    if(sizeof(data)/sizeof(unsigned char)<8)
-        return;
+    (void)value;
     data[0] = 0xaa;
     data[7] = 0x01;
 }
 
 void Protocol::packShutDown(unsigned char data[], double value)
 {
-    if(sizeof(data)/sizeof(unsigned char)<8)
-        return;
+    (void)value;
     data[0] = 0xaa;
     data[7] = 0x02;
 }
 
 void Protocol::packOpenValve(unsigned char data[], double value)
 {
-    if(sizeof(data)/sizeof(unsigned char)<8)
-        return;
+    (void)value;
     data[0] = 0xea;
 }
 
 void Protocol::packCloseValve(unsigned char data[], double value)
 {
-    if(sizeof(data)/sizeof(unsigned char)<8)
-        return;
+    (void)value;
     data[0] = 0xfa;
 }
 
 void Protocol::packWheelReset(unsigned char data[], double value)
 {
-    if(sizeof(data)/sizeof(unsigned char)<8)
-        return;
+    (void)value;
     data[0] = 0x55;
     data[1] = 0x55;
     data[2] = 0x55;
@@ -207,8 +193,7 @@ void Protocol::packWheelReset(unsigned char data[], double value)
 
 void Protocol::packWheelSelect(unsigned char data[], double value)
 {
-    if(sizeof(data)/sizeof(unsigned char)<8)
-        return;
+    (void)value;
     data[0] = 0x01;
     data[1] = 0x55;
     data[2] = 0x55;
@@ -221,8 +206,6 @@ void Protocol::packWheelSelect(unsigned char data[], double value)
 
 void Protocol::packWheelSpeed(unsigned char data[], double value)
 {
-    if(sizeof(data)/sizeof(unsigned char)<8)
-        return;
     int readValue;
     readValue = static_cast<int>(value+0.5);
     data[0] = (unsigned char)(readValue>>8)&0xff;
@@ -237,8 +220,7 @@ void Protocol::packWheelSpeed(unsigned char data[], double value)
 
 void Protocol::packWheelRef(unsigned char data[], double value)
 {
-    if(sizeof(data)/sizeof(unsigned char)<8)
-        return;
+    (void)value;
     data[0] = 0x8a;
     data[1] = 0x00;
     data[2] = 0x55;
@@ -247,8 +229,6 @@ void Protocol::packWheelRef(unsigned char data[], double value)
 
 void Protocol::packSpdPaw(unsigned char data[], double value)
 {
-    if(sizeof(data)/sizeof(unsigned char)<8)
-        return;
     data[0] = 0x9a;
     if(value>0) {
         data[1] = 0x00;
