@@ -10,6 +10,10 @@ int GlobalData::statusId[NODE_NUM]={0};
 
 GlobalData::GlobalData()
 {
+}
+
+void GlobalData::init()
+{
     for(int i=0;i<NODE_NUM;i++) {
         sendId[i] = 0x01+static_cast<unsigned int>(i);
     }

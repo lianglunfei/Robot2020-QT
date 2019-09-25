@@ -26,7 +26,7 @@ enum {
 
 #define NODE_NUM 12
 #define DRIVE_NEW 1
-#define SIMULATE_CONNECT        NONE_CONNECT//CONNECT_TYPE_ALYSIST
+#define SIMULATE_CONNECT        /*NONE_CONNECT//*/CONNECT_TYPE_ALYSIST
 
 class GlobalData
 {
@@ -41,6 +41,8 @@ public:
     static unsigned int sendId[NODE_NUM];
     static int runningId[NODE_NUM];
     static int statusId[NODE_NUM];
+
+    static void init();
 };
 
 #endif // GLOBALDATA_H

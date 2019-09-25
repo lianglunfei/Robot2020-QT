@@ -22,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    GlobalData::init();
+
     //Initialize the connection window
     m_connect_dialog = new ConnectDialog;
 #if SIMULATE_CONNECT==NONE_CONNECT

@@ -333,7 +333,7 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
                 id[i] = randId;
                 dataLen[i]=8;
                 for (int j = 0; j < 8; j++){
-                    unsigned char randData = qrand()%256;
+                    unsigned char randData = static_cast<unsigned char>(qrand()%256);
                     str += QString("%1   ").arg(randData, 2, 16, QLatin1Char('0'));
                     data[i][j] = randData;
                 }
