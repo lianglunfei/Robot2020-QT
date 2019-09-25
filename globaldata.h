@@ -2,6 +2,7 @@
 #define GLOBALDATA_H
 
 #include <QStringList>
+#include <QMutex>
 
 typedef struct
 {
@@ -28,21 +29,47 @@ enum {
 #define DRIVE_NEW 1
 #define SIMULATE_CONNECT        /*NONE_CONNECT//*/CONNECT_TYPE_ALYSIST
 
+#define global GlobalData::getInstance()
+
 class GlobalData
 {
 private:
     GlobalData();
 
-public:
-    static CanAnalysis currentCanAnalyticalData[NODE_NUM];//12+2
-    static int connectType;
-    static QStringList currentCanData;
-    static bool showDebugInfo;
-    static unsigned int sendId[NODE_NUM];
-    static int runningId[NODE_NUM];
-    static int statusId[NODE_NUM];
+    static GlobalData* instance;
+    static QMutex mutex;
 
-    static void init();
+public:
+    CanAnalysis currentCanAnalyticalData[NODE_NUM];
+    QStringList currentCanData;
+    int runningId[NODE_NUM]={0};
+    int statusId[NODE_NUM]={0};
+    int connectType=0;
+    unsigned int sendId[NODE_NUM]={0};
+    bool showDebugInfo=false;
+
+    class Garbo
+    {
+    public:
+        ~Garbo() {
+            if(GlobalData::instance) {
+                delete GlobalData::instance;
+                GlobalData::instance=nullptr;
+            }
+        }
+    };
+
+    static GlobalData* getInstance() {
+        if(instance==nullptr) {
+            mutex.lock();
+            if(instance==nullptr) {
+                instance = new GlobalData();
+                static Garbo gb;
+            }
+            mutex.unlock();
+        }
+        return instance;
+    }
 };
 
 #endif // GLOBALDATA_H

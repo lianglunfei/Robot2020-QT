@@ -22,8 +22,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    GlobalData::init();
-
     //Initialize the connection window
     m_connect_dialog = new ConnectDialog;
 #if SIMULATE_CONNECT==NONE_CONNECT
@@ -64,7 +62,7 @@ void MainWindow::canConnectEvent()
     connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
     workerThread->start();
     //set status
-    if (GlobalData::connectType)
+    if (global->connectType)
         ui->statusBar->showMessage(tr("Connected"));
     else if (SIMULATE_CONNECT != NONE_CONNECT)
         ui->statusBar->showMessage(tr("Simulate"));

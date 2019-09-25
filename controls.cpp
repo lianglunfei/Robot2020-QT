@@ -172,9 +172,9 @@ void Controls::forwardRotation(int idIndex, double readValue)
     double sendValue=0;
 
     //Temporarily annotate this feature
-    sendValue = GlobalData::currentCanAnalyticalData[idIndex].position
+    sendValue = global->currentCanAnalyticalData[idIndex].position
                 + readValue;
-    Package::packOperate(GlobalData::sendId[idIndex], sendValue, PROTOCOL_TYPE_POS);
+    Package::packOperate(global->sendId[idIndex], sendValue, PROTOCOL_TYPE_POS);
 }
 
 void Controls::reverseRotation(int idIndex, double readValue)
@@ -184,9 +184,9 @@ void Controls::reverseRotation(int idIndex, double readValue)
     double sendValue=0;
 
     //Temporarily annotate this feature
-    sendValue = GlobalData::currentCanAnalyticalData[idIndex].position
+    sendValue = global->currentCanAnalyticalData[idIndex].position
             - readValue;
-    Package::packOperate(GlobalData::sendId[idIndex], sendValue, PROTOCOL_TYPE_POS);
+    Package::packOperate(global->sendId[idIndex], sendValue, PROTOCOL_TYPE_POS);
 }
 
 void Controls::speedValueChanged()
@@ -266,21 +266,21 @@ void Controls::setPosButtonClicked()
 
     if(currentNode>-1) {
         if(btn == findChild<QPushButton*>(positionSetButton[0])) {
-            Package::packOperate(GlobalData::sendId[(currentNode)], readyToSendCanData[0].position,
+            Package::packOperate(global->sendId[(currentNode)], readyToSendCanData[0].position,
                     PROTOCOL_TYPE_POS);
         }
     } else {
         for(int i=0;i<positionSetButton.length()/3;i++) {//4 parts
             if((i*3) < NODE_NUM && btn == findChild<QPushButton*>(positionSetButton[i*3])) {
-                Package::packOperate(GlobalData::sendId[(i*3)], readyToSendCanData[(i*3)].position,
+                Package::packOperate(global->sendId[(i*3)], readyToSendCanData[(i*3)].position,
                         PROTOCOL_TYPE_POS);
             }
             else if((i*3)+1 < NODE_NUM && btn == findChild<QPushButton*>(positionSetButton[(i*3)+1])) {
-                Package::packOperate(GlobalData::sendId[(i*3)+1], readyToSendCanData[(i*3)+1].position,
+                Package::packOperate(global->sendId[(i*3)+1], readyToSendCanData[(i*3)+1].position,
                         PROTOCOL_TYPE_POS);
             }
             else if((i*3)+2 < NODE_NUM && btn == findChild<QPushButton*>(positionSetButton[(i*3)+2])) {
-                Package::packOperate(GlobalData::sendId[(i*3)+2], readyToSendCanData[(i*3)+2].position,
+                Package::packOperate(global->sendId[(i*3)+2], readyToSendCanData[(i*3)+2].position,
                         PROTOCOL_TYPE_POS);
             }
         }
@@ -293,21 +293,21 @@ void Controls::setSpeedButtonClicked()
 
     if(currentNode>-1) {
         if(btn == findChild<QPushButton*>(speedSetButton[0])) {
-            Package::packOperate(GlobalData::sendId[currentNode], readyToSendCanData[0].speed,
+            Package::packOperate(global->sendId[currentNode], readyToSendCanData[0].speed,
                     PROTOCOL_TYPE_SPD);
         }
     } else {
         for(int i=0;i<speedSetButton.length()/3;i++) {//4 parts
             if((i*3) < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[i*3])) {
-                Package::packOperate(GlobalData::sendId[(i*3)], readyToSendCanData[(i*3)].speed,
+                Package::packOperate(global->sendId[(i*3)], readyToSendCanData[(i*3)].speed,
                         PROTOCOL_TYPE_SPD);
             }
             else if((i*3)+1 < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[(i*3)+1])) {
-                Package::packOperate(GlobalData::sendId[(i*3)+1], readyToSendCanData[(i*3)+1].speed,
+                Package::packOperate(global->sendId[(i*3)+1], readyToSendCanData[(i*3)+1].speed,
                         PROTOCOL_TYPE_SPD);
             }
             else if((i*3)+2 < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[(i*3)+2])) {
-                Package::packOperate(GlobalData::sendId[(i*3)+2], readyToSendCanData[(i*3)+2].speed,
+                Package::packOperate(global->sendId[(i*3)+2], readyToSendCanData[(i*3)+2].speed,
                         PROTOCOL_TYPE_SPD);
             }
         }
@@ -327,21 +327,21 @@ void Controls::setSpeedButtonReleased()
 
     if(currentNode>-1) {
         if(btn == findChild<QPushButton*>(speedSetButton[0])) {
-            Package::packOperate(GlobalData::sendId[(currentNode)], 0,
+            Package::packOperate(global->sendId[(currentNode)], 0,
                     PROTOCOL_TYPE_SPD);
         }
     } else {
         for(int i=0;i<speedSetButton.length()/3;i++) {//4 parts
             if((i*3) < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[i*3])) {
-                Package::packOperate(GlobalData::sendId[(i*3)], 0,
+                Package::packOperate(global->sendId[(i*3)], 0,
                         PROTOCOL_TYPE_SPD);
             }
             else if((i*3)+1 < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[(i*3)+1])) {
-                Package::packOperate(GlobalData::sendId[(i*3)+1], 0,
+                Package::packOperate(global->sendId[(i*3)+1], 0,
                         PROTOCOL_TYPE_SPD);
             }
             else if((i*3)+2 < NODE_NUM && btn == findChild<QPushButton*>(speedSetButton[(i*3)+2])) {
-                Package::packOperate(GlobalData::sendId[(i*3)+2], 0,
+                Package::packOperate(global->sendId[(i*3)+2], 0,
                         PROTOCOL_TYPE_SPD);
             }
         }

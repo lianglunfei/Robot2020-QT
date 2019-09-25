@@ -22,7 +22,7 @@ void ReceiveWorkerThread:: run() {
     while(!isInterruptionRequested())
     {
         QThread::msleep(50);//Time is too long, data will be delayed
-        if(GlobalData::connectType!=NONE_CONNECT || SIMULATE_CONNECT!=NONE_CONNECT)
+        if(global->connectType!=NONE_CONNECT || SIMULATE_CONNECT!=NONE_CONNECT)
             Package::unpackOperate();
     }
 }

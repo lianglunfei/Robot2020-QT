@@ -26,7 +26,7 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
 
 ConnectDialog::~ConnectDialog()
 {
-    if(DataTransmission::CANCloseDevice(GlobalData::connectType)!=-1)
+    if(DataTransmission::CANCloseDevice(global->connectType)!=-1)
         qDebug() << "Disconnect CAN OK!";
     delete ui;
 }
@@ -35,7 +35,7 @@ void ConnectDialog::accept()
 {
     int baud=ui->bauteComboBox->currentIndex();
 
-    if(DataTransmission::connectToCan(GlobalData::connectType, baud)==-1)
+    if(DataTransmission::connectToCan(global->connectType, baud)==-1)
         return;
 
     qDebug() << "Connect CAN OK!";

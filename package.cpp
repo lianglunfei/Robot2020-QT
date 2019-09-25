@@ -24,15 +24,15 @@ bool Package::unpackOperate()
     int dataLen[50]={0};
     int id[50]={0};
     unsigned char data[50][8]={{0}};
-    int len = DataTransmission::CANReceive(GlobalData::connectType, GlobalData::currentCanData, dataLen, id, data);
+    int len = DataTransmission::CANReceive(global->connectType, global->currentCanData, dataLen, id, data);
     for(int i=0;i<len;i++) {
         Protocol::getRawData(data[i], receivedCanData, dataLen[i], id[i]);
     }
     for (int leg = 0; leg < NODE_NUM; leg++) { //New add two wheel 12+2
         //data:26144/360=728.18
-        GlobalData::currentCanAnalyticalData[leg].position = Protocol::parsePos(receivedCanData, leg);
-        GlobalData::currentCanAnalyticalData[leg].speed = Protocol::parseSpeed(receivedCanData, leg);
-        GlobalData::currentCanAnalyticalData[leg].current = Protocol::parseCurrent(receivedCanData, leg);
+        global->currentCanAnalyticalData[leg].position = Protocol::parsePos(receivedCanData, leg);
+        global->currentCanAnalyticalData[leg].speed = Protocol::parseSpeed(receivedCanData, leg);
+        global->currentCanAnalyticalData[leg].current = Protocol::parseCurrent(receivedCanData, leg);
     }
     if ((data[0][1] + data[1][2] + data[2][3]) != 0) {
         isConnected = true;
@@ -42,14 +42,14 @@ bool Package::unpackOperate()
     for(int i=0;i<50;i++) {
         if (id[i] > 0)
         {
-            nodeId[id[i] - GlobalData::sendId[0]] = 1;
+            nodeId[id[i] - global->sendId[0]] = 1;
             if (data[i][0] == 0x06 || data[i][0] == 0x0b)
-                nodeStatus[id[i] - GlobalData::sendId[0]] = data[i][0];
+                nodeStatus[id[i] - global->sendId[0]] = data[i][0];
         }
     }
     for(int i=0;i<NODE_NUM;i++) {
-        GlobalData::runningId[i] = nodeId[i];
-        GlobalData::statusId[i] = nodeStatus[i];
+        global->runningId[i] = nodeId[i];
+        global->statusId[i] = nodeStatus[i];
     }
     return isConnected;
 }
@@ -63,7 +63,7 @@ bool Package::unpackOperate()
 **/
 bool Package::packOperate(unsigned int id, double data, int type)
 {
-    if(!GlobalData::connectType)
+    if(!global->connectType)
         return false;
     unsigned char packData[8]={0};
     switch (type) {
@@ -109,7 +109,7 @@ bool Package::packOperate(unsigned int id, double data, int type)
     default:
         break;
     }
-    DataTransmission::CANTransmit(GlobalData::connectType, packData, id);
+    DataTransmission::CANTransmit(global->connectType, packData, id);
     return true;
 }
 
@@ -122,7 +122,7 @@ bool Package::packOperate(unsigned int id, double data, int type)
 **/
 bool Package::packOperateMulti(unsigned int *id, double *data, int num, int type)
 {
-    if(!GlobalData::connectType)
+    if(!global->connectType)
         return false;
     unsigned char packData[num][8]={0};
     for(int i=0;i<num;i++) {
@@ -155,5 +155,5 @@ bool Package::packOperateMulti(unsigned int *id, double *data, int num, int type
             break;
         }
     }
-    return DataTransmission::CANTransmitMulti(GlobalData::connectType, packData, (int*)id, num);
+    return DataTransmission::CANTransmitMulti(global->connectType, packData, (int*)id, num);
 }

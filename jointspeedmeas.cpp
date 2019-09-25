@@ -23,8 +23,8 @@ void JointSpeedMeas::initWidget()
 void JointSpeedMeas::addDataToUi(double key)
 {
     int index=ui->comboBox->currentIndex()>NODE_NUM-1?NODE_NUM-1:ui->comboBox->currentIndex();
-    widgetAddData(ui->rpmWidget, 0, key, GlobalData::currentCanAnalyticalData[index].speed);
-    ui->speedLcdNumber->display(GlobalData::currentCanAnalyticalData[index].speed);
+    widgetAddData(ui->rpmWidget, 0, key, global->currentCanAnalyticalData[index].speed);
+    ui->speedLcdNumber->display(global->currentCanAnalyticalData[index].speed);
 }
 
 void JointSpeedMeas::setLinesReplot(double key)

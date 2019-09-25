@@ -127,7 +127,7 @@ void ControlTableView::valueListSync(QString currentName, int currentPeriod)
     valueList.clear();
     valueList << currentName;
     for(int i=0;i<NODE_NUM;i++) {
-        value[i] = GlobalData::currentCanAnalyticalData[i].position-refValue[i];
+        value[i] = global->currentCanAnalyticalData[i].position-refValue[i];
         valueList << QString::number(value[i]);
     }
     valueList << QString::number(currentPeriod);
@@ -161,9 +161,9 @@ void ControlTableView::valueListSync(int row)
     valueList << model->index(row,0).data().toString();
     for(int i=0;i<NODE_NUM;i++) {
         if(row==0) {
-            value[i] = GlobalData::currentCanAnalyticalData[i].position;
+            value[i] = global->currentCanAnalyticalData[i].position;
         } else {
-            value[i] = GlobalData::currentCanAnalyticalData[i].position-refValue[i];
+            value[i] = global->currentCanAnalyticalData[i].position-refValue[i];
         }
         valueList << QString::number(value[i]);
     }
@@ -266,27 +266,27 @@ int ControlTableView::runFunc(int row)
     getModelRowValue(value, row, NODE_NUM);
 
     if(0 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex()) {
-        Package::packOperateMulti(GlobalData::sendId, value, NODE_NUM, PROTOCOL_TYPE_SPD);
+        Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_SPD);
     }
     else if(1 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex()) {
         for(int i=0;i<NODE_NUM;i++) {
             value[i] += refValue[i];
             double realVal=0;
-            if(std::abs(GlobalData::currentCanAnalyticalData[i].position-value[i]) > 180)
-                realVal = 360 - std::abs(GlobalData::currentCanAnalyticalData[i].position-value[i]);
+            if(std::abs(global->currentCanAnalyticalData[i].position-value[i]) > 180)
+                realVal = 360 - std::abs(global->currentCanAnalyticalData[i].position-value[i]);
             else
-                realVal = std::abs(GlobalData::currentCanAnalyticalData[i].position-value[i]);
+                realVal = std::abs(global->currentCanAnalyticalData[i].position-value[i]);
             if(realVal>POS_LIMIT_VALUE)
                 return -1;
         }
         //In order to be able to reach the initial position, set this mode here.
-        Package::packOperateMulti(GlobalData::sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
+        Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
     }
     else {//relative position mode
         for(int i=0;i<NODE_NUM;i++) {
-            value[i] += GlobalData::currentCanAnalyticalData[i].position;
+            value[i] += global->currentCanAnalyticalData[i].position;
         }
-        Package::packOperateMulti(GlobalData::sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
+        Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
     }
     return 0;
 }

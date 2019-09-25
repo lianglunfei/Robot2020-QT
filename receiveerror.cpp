@@ -84,28 +84,28 @@ void ReceiveError::init()
 void ReceiveError::errorHandle(int i)
 {
     if(lastRunningJoint[i]
-            && !GlobalData::runningId[i]) {
+            && !global->runningId[i]) {
         ui->lcdNumber->display(++countLostAll);
         nodeNum[i]->setNum(++countLostId[i]);
         start[i].start();
     } else if(!lastRunningJoint[i]
-              && GlobalData::runningId[i]
+              && global->runningId[i]
               && countLostId[i]) {
         int elapsedTime = start[i].elapsed();
         maxTime[i] = elapsedTime>maxTime[i]?elapsedTime:maxTime[i];
         nodeMaxTime[i]->setNum(maxTime[i]);
     }
-    if(GlobalData::runningId[i]) {
+    if(global->runningId[i]) {
         nodeMaxTime[i]->setStyleSheet("color:black;");
     } else {
         nodeMaxTime[i]->setStyleSheet("color:red;");
     }
-    if(lastStatusId[i]!=0x0b && GlobalData::statusId[i]==0x0b)
+    if(lastStatusId[i]!=0x0b && global->statusId[i]==0x0b)
         countErrorId[i]++;
-    lastRunningJoint[i] = GlobalData::runningId[i];
-    lastStatusId[i] = GlobalData::statusId[i];
-    nodeStatus[i]->setText(QString::number(GlobalData::statusId[i])+"("+QString::number(countErrorId[i])+")");
-    if(GlobalData::statusId[i]==0x0b) {
+    lastRunningJoint[i] = global->runningId[i];
+    lastStatusId[i] = global->statusId[i];
+    nodeStatus[i]->setText(QString::number(global->statusId[i])+"("+QString::number(countErrorId[i])+")");
+    if(global->statusId[i]==0x0b) {
         nodeStatus[i]->setStyleSheet("color:red;");
     } else {
         nodeStatus[i]->setStyleSheet("color:black;");
