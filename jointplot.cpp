@@ -67,10 +67,20 @@ void JointPlot::initWidget()
 
 void JointPlot::addDataToUi(double key)
 {
+    // static QTime time(QTime::currentTime());
+    // // calculate two new data points:
+    // double k = time.elapsed()/1000.0; // time elapsed since start of demo, in seconds
+    // qDebug() << k;
     for(int i=0;i<CURRENT_NODE_NUM;i++) {
+#if 0
         widgetAddData(findChild<QCustomPlot*>(posWidget[i/3]), i%3, key, global->currentCanAnalyticalData[i].position);
         widgetAddData(findChild<QCustomPlot*>(spdWidget[i/3]), i%3, key, global->currentCanAnalyticalData[i].speed);
         widgetAddData(findChild<QCustomPlot*>(curWidget[i/3]), i%3, key, global->currentCanAnalyticalData[i].current);
+#else
+        widgetAddData(findChild<QCustomPlot *>(posWidget[i / 3]), i % 3, key, qrand() % 360);
+        widgetAddData(findChild<QCustomPlot *>(spdWidget[i / 3]), i % 3, key, qrand() % 3580);
+        widgetAddData(findChild<QCustomPlot *>(curWidget[i / 3]), i % 3, key, qrand() % 10);
+#endif
     }
 }
 

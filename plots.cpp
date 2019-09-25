@@ -117,7 +117,7 @@ void Plots::realtimeDataPlot()
         lastPointKey = key;
     }
     // make key axis range scroll with the data (at a constant range size of 8):
-    setLinesReplot(key);
+     setLinesReplot(key);
 }
 
 void Plots::widgetAddData(QCustomPlot *plot, int num, double key, double value)

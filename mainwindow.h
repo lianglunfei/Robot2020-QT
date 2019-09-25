@@ -4,8 +4,7 @@
 #include <QMainWindow>
 
 class ConnectDialog;
-class JointPlot;
-class JointSpeedMeas;
+class Plots;
 class Terminal;
 class JointControl;
 class SingleJointControl;
@@ -29,8 +28,8 @@ private:
     Ui::MainWindow *ui;
 
     ConnectDialog *m_connect_dialog = nullptr;
-    JointPlot *m_joint_widget = nullptr;
-    JointSpeedMeas *m_joint_speed_meas_widget = nullptr;
+    Plots *m_joint_widget = nullptr;
+    Plots *m_joint_speed_meas_widget = nullptr;
     Terminal *m_terminal = nullptr;
     JointControl *m_joint_control = nullptr;
     SingleJointControl *m_single_joint_control = nullptr;
