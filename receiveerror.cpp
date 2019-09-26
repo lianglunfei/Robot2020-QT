@@ -100,8 +100,10 @@ void ReceiveError::errorHandle(int i)
     } else {
         nodeMaxTime[i]->setStyleSheet("color:red;");
     }
-    if(lastStatusId[i]!=0x0b && global->statusId[i]==0x0b)
+    if(lastStatusId[i]!=0x0b && global->statusId[i]==0x0b) {
         countErrorId[i]++;
+        emit jointError();
+    }
     lastRunningJoint[i] = global->runningId[i];
     lastStatusId[i] = global->statusId[i];
     nodeStatus[i]->setText(QString::number(global->statusId[i])+"("+QString::number(countErrorId[i])+")");

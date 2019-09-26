@@ -23,6 +23,9 @@ public:
     explicit ReceiveError(QWidget *parent = nullptr);
     ~ReceiveError();
 
+signals:
+    void jointError();
+
 private:
     Ui::ReceiveError *ui;
     int countLostAll=0;

@@ -15,6 +15,9 @@ public:
     explicit OfflineControl(QWidget *parent = 0);
     ~OfflineControl();
 
+public slots:
+    void on_execSeqStopPushButton_clicked();
+
 private:
     Ui::OfflineControl *ui;
     QString g_fileDir;
@@ -28,7 +31,6 @@ private slots:
     void stopStatus();
     void on_execSeqPushButton_clicked();
     void on_execReverseSeqPushButton_clicked();
-    void on_execSeqStopPushButton_clicked();
     void on_exportPushButton_clicked();
     void on_importPushButton_clicked();
     void on_initDriverPushButton_clicked();
