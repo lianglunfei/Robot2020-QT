@@ -15,7 +15,7 @@ class JointSpeedMeas : public Plots
     Q_OBJECT
 
 public:
-    explicit JointSpeedMeas();
+    explicit JointSpeedMeas(Plots* parent=0);
     ~JointSpeedMeas();
 
 private:

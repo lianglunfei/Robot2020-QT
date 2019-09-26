@@ -26,7 +26,7 @@ class JointPlot : public Plots
     Q_OBJECT
 
 public:
-    explicit JointPlot();
+    explicit JointPlot(Plots* parent=0);
     ~JointPlot();
 
 private:

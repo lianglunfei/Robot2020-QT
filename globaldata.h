@@ -25,7 +25,7 @@ enum {
 #define CONNECT_TYPE_ALYSIST    1
 #define CONNECT_TYPE_GC         2
 
-#define NODE_NUM 3
+#define NODE_NUM 12
 #define DRIVE_NEW 1
 #define SIMULATE_CONNECT        /*NONE_CONNECT//*/CONNECT_TYPE_ALYSIST
 
