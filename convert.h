@@ -1,7 +1,6 @@
 #ifndef CONVERT_H
 #define CONVERT_H
 
-
 class Convert
 {
 private:
@@ -9,7 +8,7 @@ private:
 
 public:
     static int charToInt(unsigned char chr, unsigned char *cint);
-    static int strToData(unsigned char *str, unsigned char *data,int len,int flag);
+    static int strToData(unsigned char *str, unsigned char *data, int len, int flag);
 };
 
 #endif // CONVERT_H

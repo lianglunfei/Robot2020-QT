@@ -4,7 +4,8 @@
 #include <QWidget>
 #include "plots.h"
 
-namespace Ui {
+namespace Ui
+{
 class JointSpeedMeas;
 }
 
@@ -15,7 +16,7 @@ class JointSpeedMeas : public Plots
     Q_OBJECT
 
 public:
-    explicit JointSpeedMeas(Plots* parent=0);
+    explicit JointSpeedMeas(Plots *parent = 0);
     ~JointSpeedMeas();
 
 private:

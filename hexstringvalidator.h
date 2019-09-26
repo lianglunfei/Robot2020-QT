@@ -3,7 +3,8 @@
 
 #include <QValidator>
 
-enum {
+enum
+{
     MaxPayload = 8,
     MaxPayloadFd = 64
 };

@@ -12,9 +12,10 @@ public:
     IncompleteCombox();
 
 protected:
-    void wheelEvent(QWheelEvent*){}
-    void mousePressEvent(QMouseEvent*){}
-    void mouseDoubleClickEvent(QMouseEvent*){
+    void wheelEvent(QWheelEvent *) {}
+    void mousePressEvent(QMouseEvent *) {}
+    void mouseDoubleClickEvent(QMouseEvent *)
+    {
         showPopup();
     }
 };

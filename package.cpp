@@ -7,7 +7,6 @@
 
 Package::Package()
 {
-
 }
 
 /**
@@ -19,27 +18,31 @@ Package::Package()
 **/
 bool Package::unpackOperate()
 {
-    static unsigned char receivedCanData[NODE_NUM*8]={0};//96+16
-    bool isConnected=false;
-    int dataLen[50]={0};
-    int id[50]={0};
-    unsigned char data[50][8]={{0}};
+    static unsigned char receivedCanData[NODE_NUM * 8] = {0}; //96+16
+    bool isConnected = false;
+    int dataLen[50] = {0};
+    int id[50] = {0};
+    unsigned char data[50][8] = {{0}};
     int len = DataTransmission::CANReceive(global->connectType, global->currentCanData, dataLen, id, data);
-    for(int i=0;i<len;i++) {
+    for (int i = 0; i < len; i++)
+    {
         Protocol::getRawData(data[i], receivedCanData, dataLen[i], id[i]);
     }
-    for (int leg = 0; leg < NODE_NUM; leg++) { //New add two wheel 12+2
+    for (int leg = 0; leg < NODE_NUM; leg++)
+    { //New add two wheel 12+2
         //data:26144/360=728.18
         global->currentCanAnalyticalData[leg].position = Protocol::parsePos(receivedCanData, leg);
         global->currentCanAnalyticalData[leg].speed = Protocol::parseSpeed(receivedCanData, leg);
         global->currentCanAnalyticalData[leg].current = Protocol::parseCurrent(receivedCanData, leg);
     }
-    if ((data[0][1] + data[1][2] + data[2][3]) != 0) {
+    if ((data[0][1] + data[1][2] + data[2][3]) != 0)
+    {
         isConnected = true;
     }
-    int nodeId[NODE_NUM]={0};
-    int nodeStatus[NODE_NUM]={0};
-    for(int i=0;i<50;i++) {
+    int nodeId[NODE_NUM] = {0};
+    int nodeStatus[NODE_NUM] = {0};
+    for (int i = 0; i < 50; i++)
+    {
         if (id[i] > 0)
         {
             nodeId[id[i] - global->sendId[0]] = 1;
@@ -47,7 +50,8 @@ bool Package::unpackOperate()
                 nodeStatus[id[i] - global->sendId[0]] = data[i][0];
         }
     }
-    for(int i=0;i<NODE_NUM;i++) {
+    for (int i = 0; i < NODE_NUM; i++)
+    {
         global->runningId[i] = nodeId[i];
         global->statusId[i] = nodeStatus[i];
     }
@@ -63,10 +67,11 @@ bool Package::unpackOperate()
 **/
 bool Package::packOperate(unsigned int id, double data, int type)
 {
-    if(!global->connectType)
+    if (!global->connectType)
         return false;
-    unsigned char packData[8]={0};
-    switch (type) {
+    unsigned char packData[8] = {0};
+    switch (type)
+    {
     case PROTOCOL_TYPE_POS:
         Protocol::packPos(packData, data);
         break;
@@ -122,11 +127,13 @@ bool Package::packOperate(unsigned int id, double data, int type)
 **/
 bool Package::packOperateMulti(unsigned int *id, double *data, int num, int type)
 {
-    if(!global->connectType)
+    if (!global->connectType)
         return false;
-    unsigned char packData[num][8]={0};
-    for(int i=0;i<num;i++) {
-        switch (type) {
+    unsigned char packData[num][8] = {0};
+    for (int i = 0; i < num; i++)
+    {
+        switch (type)
+        {
         case PROTOCOL_TYPE_POS:
             Protocol::packPos(packData[i], data[i]);
             break;
@@ -155,5 +162,5 @@ bool Package::packOperateMulti(unsigned int *id, double *data, int num, int type
             break;
         }
     }
-    return DataTransmission::CANTransmitMulti(global->connectType, packData, (int*)id, num);
+    return DataTransmission::CANTransmitMulti(global->connectType, packData, (int *)id, num);
 }

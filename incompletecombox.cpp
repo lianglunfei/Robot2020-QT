@@ -2,5 +2,4 @@
 
 IncompleteCombox::IncompleteCombox()
 {
-
 }

@@ -7,7 +7,8 @@
 
 #include "controls.h"
 
-namespace Ui {
+namespace Ui
+{
 class JointControl;
 }
 

@@ -5,9 +5,8 @@
 
 #include "debug.h"
 
-JointSpeedMeas::JointSpeedMeas(Plots* parent) :
-    Plots(parent),
-    ui(new Ui::JointSpeedMeas)
+JointSpeedMeas::JointSpeedMeas(Plots *parent) : Plots(parent),
+                                                ui(new Ui::JointSpeedMeas)
 {
     ui->setupUi(this);
     this->setWindowTitle(tr("Joint Speed"));
@@ -23,16 +22,16 @@ void JointSpeedMeas::initWidget()
 
 void JointSpeedMeas::addDataToUi(double key)
 {
-    int index=ui->comboBox->currentIndex()>NODE_NUM-1?NODE_NUM-1:ui->comboBox->currentIndex();
-    #if 1
+    int index = ui->comboBox->currentIndex() > NODE_NUM - 1 ? NODE_NUM - 1 : ui->comboBox->currentIndex();
+#if 1
     widgetAddData(ui->rpmWidget, 0, key, global->currentCanAnalyticalData[index].speed);
     ui->speedLcdNumber->display(global->currentCanAnalyticalData[index].speed);
-    #else
-    int tst = qrand()%50;
+#else
+    int tst = qrand() % 50;
     (void)index;
     widgetAddData(ui->rpmWidget, 0, key, tst);
     ui->speedLcdNumber->display(tst);
-    #endif
+#endif
 }
 
 void JointSpeedMeas::setLinesReplot(double key)

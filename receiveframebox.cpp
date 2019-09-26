@@ -5,9 +5,8 @@
 #include "qdebug.h"
 #include "globaldata.h"
 
-ReceiveFrameBox::ReceiveFrameBox(QWidget *parent) :
-    QGroupBox(parent),
-    ui(new Ui::ReceiveFrameBox)
+ReceiveFrameBox::ReceiveFrameBox(QWidget *parent) : QGroupBox(parent),
+                                                    ui(new Ui::ReceiveFrameBox)
 {
     ui->setupUi(this);
     ui->receivedMessagesEdit->document()->setMaximumBlockCount(1000);
@@ -30,9 +29,11 @@ void ReceiveFrameBox::initEvent()
 **/
 void ReceiveFrameBox::update()
 {
-    if((global->connectType || SIMULATE_CONNECT!=NONE_CONNECT) && global->showDebugInfo) {
-        QStringList tmp=global->currentCanData;
-        for(int i=0;i<tmp.length();i++) {
+    if ((global->connectType || SIMULATE_CONNECT != NONE_CONNECT) && global->showDebugInfo)
+    {
+        QStringList tmp = global->currentCanData;
+        for (int i = 0; i < tmp.length(); i++)
+        {
             ui->receivedMessagesEdit->append(tmp[i]);
         }
     }

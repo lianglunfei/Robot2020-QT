@@ -12,7 +12,8 @@ class OfflineControl;
 class ReceiveError;
 class ReceiveWorkerThread;
 
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 

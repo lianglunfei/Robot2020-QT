@@ -11,7 +11,8 @@ class QLabel;
 class QVBoxLayout;
 class QHBoxLayout;
 
-namespace Ui {
+namespace Ui
+{
 class ReceiveError;
 }
 
@@ -28,17 +29,17 @@ signals:
 
 private:
     Ui::ReceiveError *ui;
-    int countLostAll=0;
-    int countLostId[NODE_NUM]={0};
-    int countErrorId[NODE_NUM]={0};
-    int lastRunningJoint[NODE_NUM]={0};
-    int lastStatusId[NODE_NUM]={0};
-    QTimer *time=nullptr;
-    QLabel *nodeNum[NODE_NUM+1];
-    QLabel *nodeName[NODE_NUM+1];
-    QLabel *nodeMaxTime[NODE_NUM+1];
-    QLabel *nodeStatus[NODE_NUM+1];
-    int maxTime[NODE_NUM]={0};
+    int countLostAll = 0;
+    int countLostId[NODE_NUM] = {0};
+    int countErrorId[NODE_NUM] = {0};
+    int lastRunningJoint[NODE_NUM] = {0};
+    int lastStatusId[NODE_NUM] = {0};
+    QTimer *time = nullptr;
+    QLabel *nodeNum[NODE_NUM + 1];
+    QLabel *nodeName[NODE_NUM + 1];
+    QLabel *nodeMaxTime[NODE_NUM + 1];
+    QLabel *nodeStatus[NODE_NUM + 1];
+    int maxTime[NODE_NUM] = {0};
     QElapsedTimer start[NODE_NUM];
     QVBoxLayout *vLayout;
     QHBoxLayout *hLayout1;

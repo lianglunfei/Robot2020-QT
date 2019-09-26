@@ -3,7 +3,8 @@
 
 #include <QGroupBox>
 
-namespace Ui {
+namespace Ui
+{
 class ReceiveFrameBox;
 }
 

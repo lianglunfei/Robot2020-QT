@@ -3,7 +3,8 @@
 
 #include <QValidator>
 
-enum {
+enum
+{
     MaxStandardId = 0x7FF,
     MaxExtendedId = 0x10000000
 };

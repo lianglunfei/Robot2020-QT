@@ -17,15 +17,14 @@
 
 #include "debug.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
+                                          ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
     //Initialize the connection window
     m_connect_dialog = new ConnectDialog;
-#if SIMULATE_CONNECT==NONE_CONNECT
+#if SIMULATE_CONNECT == NONE_CONNECT
     QTimer::singleShot(50, m_connect_dialog, &ConnectDialog::show);
 #else
     canConnectEvent();

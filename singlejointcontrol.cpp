@@ -6,14 +6,14 @@
 #include "drivers.h"
 #include "qdebug.h"
 
-SingleJointControl::SingleJointControl() :
-    ui(new Ui::SingleJointControl)
+SingleJointControl::SingleJointControl() : ui(new Ui::SingleJointControl)
 {
     ui->setupUi(this);
     this->setWindowTitle(tr("Single Joint Control"));
 
     initObject();
-    if(initUiObject()) {
+    if (initUiObject())
+    {
         initConnection();
         controlWidgetInit();
     }
@@ -49,11 +49,12 @@ void SingleJointControl::on_caliPushButton_clicked()
 
 void SingleJointControl::keyPressEvent(QKeyEvent *e)
 {
-    switch(e->key())
+    switch (e->key())
     {
     case Qt::Key_A:
     {
-        if (QApplication::keyboardModifiers() == Qt::AltModifier) {
+        if (QApplication::keyboardModifiers() == Qt::AltModifier)
+        {
             on_emergencyStopPushButton_clicked();
         }
         break;

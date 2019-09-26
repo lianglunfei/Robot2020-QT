@@ -4,14 +4,13 @@
 
 Drivers::Drivers()
 {
-
 }
 
 void Drivers::initJoint(int nodeNum)
 {
-    if(nodeNum<0 || nodeNum>NODE_NUM-1)
+    if (nodeNum < 0 || nodeNum > NODE_NUM - 1)
         return;
-    double value=0;
+    double value = 0;
     Package::packOperate(global->sendId[nodeNum], value, PROTOCOL_TYPE_START);
 #if DRIVE_NEW
     Package::packOperate(global->sendId[nodeNum], value, PROTOCOL_TYPE_OPENVALVE);
@@ -20,9 +19,9 @@ void Drivers::initJoint(int nodeNum)
 
 void Drivers::stopJoint(int nodeNum)
 {
-    if(nodeNum<0 || nodeNum>NODE_NUM-1)
+    if (nodeNum < 0 || nodeNum > NODE_NUM - 1)
         return;
-    double value=0;
+    double value = 0;
     Package::packOperate(global->sendId[nodeNum], value, PROTOCOL_TYPE_SHUTDOWN);
 #if DRIVE_NEW
     Package::packOperate(global->sendId[nodeNum], value, PROTOCOL_TYPE_CLOSEVALVE);
@@ -31,15 +30,15 @@ void Drivers::stopJoint(int nodeNum)
 
 void Drivers::calJoint(int nodeNum)
 {
-    if(nodeNum<0 || nodeNum>NODE_NUM-1)
+    if (nodeNum < 0 || nodeNum > NODE_NUM - 1)
         return;
-    double value=0;
+    double value = 0;
     Package::packOperate(global->sendId[nodeNum], value, PROTOCOL_TYPE_CAL);
 }
 
 void Drivers::initJoint()
 {
-    double value[NODE_NUM]={0};
+    double value[NODE_NUM] = {0};
     Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_START);
 #if DRIVE_NEW
     Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_OPENVALVE);
@@ -48,7 +47,7 @@ void Drivers::initJoint()
 
 void Drivers::stopJoint()
 {
-    double value[NODE_NUM]={0};
+    double value[NODE_NUM] = {0};
     Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_SHUTDOWN);
 #if DRIVE_NEW
     Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_CLOSEVALVE);
@@ -57,6 +56,6 @@ void Drivers::stopJoint()
 
 void Drivers::calJoint()
 {
-    double value[NODE_NUM]={0};
+    double value[NODE_NUM] = {0};
     Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_CAL);
 }

@@ -18,8 +18,8 @@ public:
     virtual void setLinesPausePlot(QCustomPlot *plot);
     virtual void showStatus(QString s);
 
-    void plotPartWidget(QCustomPlot* part, int rangeMin, int rangeMax, int num);
-    void setPlotPen(QCustomPlot* part, const QPen p, const QString name, int index);
+    void plotPartWidget(QCustomPlot *part, int rangeMin, int rangeMax, int num);
+    void setPlotPen(QCustomPlot *part, const QPen p, const QString name, int index);
     void setLineReplot(QCustomPlot *part, int index, double key);
     void setLinePausePlot(QCustomPlot *senderPart, QCustomPlot *currentPart, int index);
     void widgetAddData(QCustomPlot *plot, int num, double key, double value);
@@ -29,7 +29,7 @@ private:
 
 private slots:
     void realtimeDataPlot();
-    void mouseDoubleClick(QMouseEvent*);
+    void mouseDoubleClick(QMouseEvent *);
     void graphClicked(QCPAbstractPlottable *plottable, int dataIndex);
 
 protected:

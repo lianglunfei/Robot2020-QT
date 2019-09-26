@@ -3,9 +3,8 @@
 
 #include "debug.h"
 
-Plots::Plots(QWidget *parent) :
-    QWidget(parent),
-    plotDataTimer(new QTimer)
+Plots::Plots(QWidget *parent) : QWidget(parent),
+                                plotDataTimer(new QTimer)
 {
     connect(plotDataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataPlot()));
     plotDataTimer->start(0);
@@ -23,7 +22,7 @@ Plots::~Plots()
 *@author        XingZhang.Wu
 *@date          20190724
 **/
-void Plots::setPlotPen(QCustomPlot* part, const QPen p, const QString name, int index)
+void Plots::setPlotPen(QCustomPlot *part, const QPen p, const QString name, int index)
 {
     part->graph(index)->setPen(p);
     part->graph(index)->setName(name);
@@ -36,11 +35,11 @@ void Plots::setPlotPen(QCustomPlot* part, const QPen p, const QString name, int 
 *@author        XingZhang.Wu
 *@date          20190724
 **/
-void Plots::plotPartWidget(QCustomPlot* part, int rangeMin, int rangeMax, int num)
+void Plots::plotPartWidget(QCustomPlot *part, int rangeMin, int rangeMax, int num)
 {
     part->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
                           QCP::iSelectLegend | QCP::iSelectPlottables);
-    for(int i=0;i<num;i++)
+    for (int i = 0; i < num; i++)
         part->addGraph();
 
     QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
@@ -52,12 +51,12 @@ void Plots::plotPartWidget(QCustomPlot* part, int rangeMin, int rangeMax, int nu
     // make left and bottom axes transfer their ranges to right and top axes:
     connect(part->xAxis, SIGNAL(rangeChanged(QCPRange)), part->xAxis2, SLOT(setRange(QCPRange)));
     connect(part->yAxis, SIGNAL(rangeChanged(QCPRange)), part->yAxis2, SLOT(setRange(QCPRange)));
-    connect(part, SIGNAL(mouseDoubleClick (QMouseEvent*)), this, SLOT(mouseDoubleClick(QMouseEvent*)));
+    connect(part, SIGNAL(mouseDoubleClick(QMouseEvent *)), this, SLOT(mouseDoubleClick(QMouseEvent *)));
 
     // connect slot that shows a message in the status bar when a graph is clicked:
-    connect(part, SIGNAL(plottableClick(QCPAbstractPlottable*, int, QMouseEvent*)), this, SLOT(graphClicked(QCPAbstractPlottable*, int)));
+    connect(part, SIGNAL(plottableClick(QCPAbstractPlottable *, int, QMouseEvent *)), this, SLOT(graphClicked(QCPAbstractPlottable *, int)));
 
-    QFont legendFont = font();  // start out with MainWindow's font..
+    QFont legendFont = font();                                         // start out with MainWindow's font..
     part->setLocale(QLocale(QLocale::English, QLocale::UnitedStates)); // period as decimal separator and comma as thousand separator
     part->legend->setVisible(true);
     legendFont.setPointSize(9); // and make a bit smaller for legend
@@ -69,7 +68,8 @@ void Plots::plotPartWidget(QCustomPlot* part, int rangeMin, int rangeMax, int nu
 
 void Plots::setLineReplot(QCustomPlot *part, int index, double key)
 {
-    if(!(pauseFlag & index)) {
+    if (!(pauseFlag & index))
+    {
         part->xAxis->setRange(key, 8, Qt::AlignRight);
         part->replot();
     }
@@ -77,7 +77,8 @@ void Plots::setLineReplot(QCustomPlot *part, int index, double key)
 
 void Plots::setLinePausePlot(QCustomPlot *senderPart, QCustomPlot *currentPart, int index)
 {
-    if(senderPart==currentPart) {
+    if (senderPart == currentPart)
+    {
         pauseFlag ^= index;
     }
 }
@@ -91,9 +92,9 @@ void Plots::graphClicked(QCPAbstractPlottable *plottable, int dataIndex)
     showStatus(message);
 }
 
-void Plots::mouseDoubleClick(QMouseEvent*)
+void Plots::mouseDoubleClick(QMouseEvent *)
 {
-    auto *plot = qobject_cast<QCustomPlot*>(this->sender());
+    auto *plot = qobject_cast<QCustomPlot *>(this->sender());
     setLinesPausePlot(plot);
 }
 
@@ -108,9 +109,9 @@ void Plots::realtimeDataPlot()
 {
     static QTime time(QTime::currentTime());
     // calculate two new data points:
-    double key = time.elapsed()/1000.0; // time elapsed since start of demo, in seconds
+    double key = time.elapsed() / 1000.0; // time elapsed since start of demo, in seconds
     static double lastPointKey = 0;
-    if (key-lastPointKey > 0.002) // at most add point every 2 ms
+    if (key - lastPointKey > 0.002) // at most add point every 2 ms
     {
         // add data to lines:
         addDataToUi(key);

@@ -6,9 +6,8 @@
 
 #include "debug.h"
 
-ConnectDialog::ConnectDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::ConnectDialog)
+ConnectDialog::ConnectDialog(QWidget *parent) : QDialog(parent),
+                                                ui(new Ui::ConnectDialog)
 {
     ui->setupUi(this);
     ui->bauteComboBox->addItem(QString::number(CAN_BAUTE_1000));
@@ -26,16 +25,16 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
 
 ConnectDialog::~ConnectDialog()
 {
-    if(DataTransmission::CANCloseDevice(global->connectType)!=-1)
+    if (DataTransmission::CANCloseDevice(global->connectType) != -1)
         qDebug() << "Disconnect CAN OK!";
     delete ui;
 }
 
 void ConnectDialog::accept()
 {
-    int baud=ui->bauteComboBox->currentIndex();
+    int baud = ui->bauteComboBox->currentIndex();
 
-    if(DataTransmission::connectToCan(global->connectType, baud)==-1)
+    if (DataTransmission::connectToCan(global->connectType, baud) == -1)
         return;
 
     qDebug() << "Connect CAN OK!";

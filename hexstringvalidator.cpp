@@ -1,8 +1,7 @@
 #include "hexstringvalidator.h"
 
-HexStringValidator::HexStringValidator(QObject *parent) :
-    QValidator(parent),
-    m_maxLength(MaxPayload)
+HexStringValidator::HexStringValidator(QObject *parent) : QValidator(parent),
+                                                          m_maxLength(MaxPayload)
 {
 }
 
@@ -27,7 +26,8 @@ QValidator::State HexStringValidator::validate(QString &input, int &pos) const
 
     // insert a space after every two hex nibbles
     const QRegularExpression insertSpace(QStringLiteral("(?:[[:xdigit:]]{2} )*[[:xdigit:]]{3}"));
-    if (insertSpace.match(input).hasMatch()) {
+    if (insertSpace.match(input).hasMatch())
+    {
         input.insert(input.size() - 1, space);
         pos = input.size();
     }

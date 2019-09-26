@@ -2,7 +2,6 @@
 
 Convert::Convert()
 {
-
 }
 
 //-----------------------------------------------------
@@ -12,18 +11,19 @@ Convert::Convert()
 //len:数据长度
 //函数功能：字符串转换为数据串
 //-----------------------------------------------------
-int Convert::strToData(unsigned char *str, unsigned char *data,int len,int flag)
+int Convert::strToData(unsigned char *str, unsigned char *data, int len, int flag)
 {
-    unsigned char cTmp=0;
-    int i=0;
-    for(int j=0;j<len;j++) {
-        if(charToInt(str[i++],&cTmp))
+    unsigned char cTmp = 0;
+    int i = 0;
+    for (int j = 0; j < len; j++)
+    {
+        if (charToInt(str[i++], &cTmp))
             return 1;
-        data[j]=cTmp;
-        if(charToInt(str[i++],&cTmp))
+        data[j] = cTmp;
+        if (charToInt(str[i++], &cTmp))
             return 1;
-        data[j]=(data[j]<<4)+cTmp;
-        if(flag==1)
+        data[j] = (data[j] << 4) + cTmp;
+        if (flag == 1)
             i++;
     }
     return 0;
@@ -38,19 +38,22 @@ int Convert::strToData(unsigned char *str, unsigned char *data,int len,int flag)
 int Convert::charToInt(unsigned char chr, unsigned char *cint)
 {
     char cTmp;
-    cTmp=chr-48;
-    if(cTmp>=0&&cTmp<=9) {
-        *cint=cTmp;
+    cTmp = chr - 48;
+    if (cTmp >= 0 && cTmp <= 9)
+    {
+        *cint = cTmp;
         return 0;
     }
-    cTmp=chr-65;
-    if(cTmp>=0&&cTmp<=5) {
-        *cint=(cTmp+10);
+    cTmp = chr - 65;
+    if (cTmp >= 0 && cTmp <= 5)
+    {
+        *cint = (cTmp + 10);
         return 0;
     }
-    cTmp=chr-97;
-    if(cTmp>=0&&cTmp<=5) {
-        *cint=(cTmp+10);
+    cTmp = chr - 97;
+    if (cTmp >= 0 && cTmp <= 5)
+    {
+        *cint = (cTmp + 10);
         return 0;
     }
     return 1;

@@ -3,7 +3,8 @@
 
 #include <QGroupBox>
 
-namespace Ui {
+namespace Ui
+{
 class SendFrameBox;
 }
 
@@ -37,8 +38,8 @@ private:
     HexStringValidator *m_hexStringValidator = nullptr;
     QTimer *repeatTimer = nullptr;
 
-    unsigned char currentData[8]={0,0,0,0,0,0,0,0};
-    unsigned int currentId=0;
+    unsigned char currentData[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    unsigned int currentId = 0;
 };
 
 #endif // SENDFRAMEBOX_H

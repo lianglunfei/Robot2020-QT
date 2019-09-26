@@ -13,14 +13,13 @@
 #include <QCoreApplication>
 #include <QTime>
 
-#define BTN_START_INDEX NODE_NUM+3 //行按钮开始的位置=节点数+mode+time+name
-#define ROW_BTN_NUM 5 //按钮个数：上下移动、增加删除、运行
-#define BEFORE_VALUE_NUM 2 //节点数之前的数值个数：name、mode
-#define POS_LIMIT_VALUE 100 //最大允许位置变化偏差，超过会显示数据异常
-#define SHOW_BTN_NUM 50 //表格显示按钮的行数，一般设定前50行s
+#define BTN_START_INDEX NODE_NUM + 3 //行按钮开始的位置=节点数+mode+time+name
+#define ROW_BTN_NUM 5                //按钮个数：上下移动、增加删除、运行
+#define BEFORE_VALUE_NUM 2           //节点数之前的数值个数：name、mode
+#define POS_LIMIT_VALUE 100          //最大允许位置变化偏差，超过会显示数据异常
+#define SHOW_BTN_NUM 50              //表格显示按钮的行数，一般设定前50行s
 
-ControlTableView::ControlTableView(QWidget *parent):
-    QTableView(parent)
+ControlTableView::ControlTableView(QWidget *parent) : QTableView(parent)
 {
     headerDataInit();
     valueListInit();
@@ -40,13 +39,13 @@ ControlTableView::~ControlTableView()
 
 void ControlTableView::eventInit()
 {
-    taskTimer=new QTimer;
-    taskThread=new QThread;
+    taskTimer = new QTimer;
+    taskThread = new QThread;
     taskTimer->setTimerType(Qt::PreciseTimer);
     taskTimer->setInterval(10);
     taskTimer->moveToThread(taskThread);
     connect(taskTimer, SIGNAL(timeout()), this, SLOT(execSeqEvent()), Qt::DirectConnection);
-    connect(this,SIGNAL(stopThread()), taskThread, SLOT(quit()));
+    connect(this, SIGNAL(stopThread()), taskThread, SLOT(quit()));
 }
 
 /**
@@ -60,8 +59,9 @@ void ControlTableView::headerDataInit()
 {
     headerData.clear();
     headerData << QObject::tr("Name") << QObject::tr("Mode");
-    for(int i=0;i<NODE_NUM;i++) {
-        headerData << QString("Value%1").arg(i+1);
+    for (int i = 0; i < NODE_NUM; i++)
+    {
+        headerData << QString("Value%1").arg(i + 1);
     }
     headerData << QObject::tr("Time") << QObject::tr("Run") << QObject::tr("Add")
                << QObject::tr("Delete") << QObject::tr("Up") << QObject::tr("Down")
@@ -72,8 +72,9 @@ void ControlTableView::modelInit()
 {
     model = new QStandardItemModel();
     model->setColumnCount(headerData.length());
-    for(int i=0;i<headerData.length();i++) {
-        model->setHeaderData(i,Qt::Horizontal,headerData[i]);
+    for (int i = 0; i < headerData.length(); i++)
+    {
+        model->setHeaderData(i, Qt::Horizontal, headerData[i]);
     }
 }
 
@@ -106,7 +107,8 @@ void ControlTableView::valueListInit()
 {
     valueList.clear();
     valueList << QObject::tr("ref");
-    for(int i=0;i<NODE_NUM;i++) {
+    for (int i = 0; i < NODE_NUM; i++)
+    {
         valueList << QObject::tr("0");
     }
     valueList << QObject::tr("");
@@ -127,8 +129,9 @@ void ControlTableView::valueListSync(QString currentName, int currentPeriod)
 
     valueList.clear();
     valueList << currentName;
-    for(int i=0;i<NODE_NUM;i++) {
-        value[i] = global->currentCanAnalyticalData[i].position-refValue[i];
+    for (int i = 0; i < NODE_NUM; i++)
+    {
+        value[i] = global->currentCanAnalyticalData[i].position - refValue[i];
         valueList << QString::number(value[i]);
     }
     valueList << QString::number(currentPeriod);
@@ -144,12 +147,12 @@ void ControlTableView::valueListSync(QString currentName, int currentPeriod)
 void ControlTableView::valueListUpdate(int row)
 {
     valueList.clear();
-    valueList << model->index(row,0).data().toString();
-    for(int i=BEFORE_VALUE_NUM;i<NODE_NUM+BEFORE_VALUE_NUM;i++)
+    valueList << model->index(row, 0).data().toString();
+    for (int i = BEFORE_VALUE_NUM; i < NODE_NUM + BEFORE_VALUE_NUM; i++)
     {
-        valueList << model->index(row,i).data().toString();
+        valueList << model->index(row, i).data().toString();
     }
-    valueList << model->index(row,NODE_NUM+BEFORE_VALUE_NUM).data().toString();
+    valueList << model->index(row, NODE_NUM + BEFORE_VALUE_NUM).data().toString();
 }
 
 void ControlTableView::valueListSync(int row)
@@ -159,16 +162,20 @@ void ControlTableView::valueListSync(int row)
     getModelRowValue(refValue, 0, NODE_NUM);
 
     valueList.clear();
-    valueList << model->index(row,0).data().toString();
-    for(int i=0;i<NODE_NUM;i++) {
-        if(row==0) {
+    valueList << model->index(row, 0).data().toString();
+    for (int i = 0; i < NODE_NUM; i++)
+    {
+        if (row == 0)
+        {
             value[i] = global->currentCanAnalyticalData[i].position;
-        } else {
-            value[i] = global->currentCanAnalyticalData[i].position-refValue[i];
+        }
+        else
+        {
+            value[i] = global->currentCanAnalyticalData[i].position - refValue[i];
         }
         valueList << QString::number(value[i]);
     }
-    valueList << model->index(row,NODE_NUM+BEFORE_VALUE_NUM).data().toString();
+    valueList << model->index(row, NODE_NUM + BEFORE_VALUE_NUM).data().toString();
 }
 
 void ControlTableView::syncTableviewRowData(int row)
@@ -186,14 +193,15 @@ void ControlTableView::syncTableviewRowData(int row)
 **/
 void ControlTableView::addModelItemData(int row)
 {
-    for(int i=0;i<valueList.length();i++) {
-        if(i==0)
-            model->setItem(row,i,new QStandardItem(valueList.at(i)));
+    for (int i = 0; i < valueList.length(); i++)
+    {
+        if (i == 0)
+            model->setItem(row, i, new QStandardItem(valueList.at(i)));
         else
-            model->setItem(row,i+1,new QStandardItem(valueList.at(i)));
+            model->setItem(row, i + 1, new QStandardItem(valueList.at(i)));
     }
     //设置字符颜色
-    model->item(row,0)->setForeground(QBrush(QColor(255, 0, 0)));
+    model->item(row, 0)->setForeground(QBrush(QColor(255, 0, 0)));
 }
 
 /**
@@ -205,43 +213,45 @@ void ControlTableView::addModelItemData(int row)
 **/
 void ControlTableView::addTableviewRowWidget(int mode, int row, bool checkState, bool complete)
 {
-    int column=valueList.length();
+    int column = valueList.length();
 
     //为这个第2列添加下拉框
-    IncompleteCombox *m_combox= new IncompleteCombox();
+    IncompleteCombox *m_combox = new IncompleteCombox();
     m_combox->addItem("速度");
     m_combox->addItem("绝对位置");
     m_combox->addItem("相对位置");
     m_combox->setCurrentIndex(mode);
-    m_combox->setProperty("row", row);  //为按钮设置row属性
+    m_combox->setProperty("row", row); //为按钮设置row属性
     m_combox->setParent(this);
     setIndexWidget(model->index(row, 1), m_combox);
-    if(complete) {
+    if (complete)
+    {
         //为这个第i列添加按钮
         QPushButton *m_button[ROW_BTN_NUM];
         QStringList iconPath;
         iconPath << tr(":/images/go.png") << tr(":/images/add.png")
                  << tr(":/images/delete.png") << tr(":/images/up.png")
                  << tr(":/images/down.png");
-        for(int i=0;i<ROW_BTN_NUM;i++) {
+        for (int i = 0; i < ROW_BTN_NUM; i++)
+        {
             m_button[i] = new QPushButton();
             m_button[i]->setIcon(QIcon(iconPath[i]));
             connect(m_button[i], SIGNAL(clicked(bool)), this, SLOT(tableClickButton()));
-            m_button[i]->setProperty("row", row);  //为按钮设置row属性
-            m_button[i]->setProperty("column", column+i+1);  //为按钮设置column属性
+            m_button[i]->setProperty("row", row);               //为按钮设置row属性
+            m_button[i]->setProperty("column", column + i + 1); //为按钮设置column属性
             m_button[i]->setParent(this);
-            setIndexWidget(model->index(row, column+i+1), m_button[i]);
+            setIndexWidget(model->index(row, column + i + 1), m_button[i]);
         }
     }
 
     QCheckBox *m_checkBox = new QCheckBox();
-    if(checkState)
+    if (checkState)
         m_checkBox->setChecked(true);
     else
         m_checkBox->setChecked(false);
-    m_checkBox->setProperty("row", row);  //为按钮设置row属性
+    m_checkBox->setProperty("row", row); //为按钮设置row属性
     m_checkBox->setParent(this);
-    setIndexWidget(model->index(row, column+ROW_BTN_NUM+1), m_checkBox);
+    setIndexWidget(model->index(row, column + ROW_BTN_NUM + 1), m_checkBox);
 }
 
 /**
@@ -251,11 +261,11 @@ void ControlTableView::addTableviewRowWidget(int mode, int row, bool checkState,
 *@author        XingZhang.Wu
 *@date          20190805
 **/
-void ControlTableView::getModelRowValue(double* value, int row, int len)
+void ControlTableView::getModelRowValue(double *value, int row, int len)
 {
-    for(int i=BEFORE_VALUE_NUM;i<len+BEFORE_VALUE_NUM;i++)
+    for (int i = BEFORE_VALUE_NUM; i < len + BEFORE_VALUE_NUM; i++)
     {
-        value[i-BEFORE_VALUE_NUM] = model->index(row,i).data().toDouble();
+        value[i - BEFORE_VALUE_NUM] = model->index(row, i).data().toDouble();
     }
 }
 
@@ -266,25 +276,30 @@ int ControlTableView::runFunc(int row)
     getModelRowValue(refValue, 0, NODE_NUM);
     getModelRowValue(value, row, NODE_NUM);
 
-    if(0 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex()) {
+    if (0 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row, 1)))->currentIndex())
+    {
         Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_SPD);
     }
-    else if(1 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex()) {
-        for(int i=0;i<NODE_NUM;i++) {
+    else if (1 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row, 1)))->currentIndex())
+    {
+        for (int i = 0; i < NODE_NUM; i++)
+        {
             value[i] += refValue[i];
-            double realVal=0;
-            if(std::abs(global->currentCanAnalyticalData[i].position-value[i]) > 180)
-                realVal = 360 - std::abs(global->currentCanAnalyticalData[i].position-value[i]);
+            double realVal = 0;
+            if (std::abs(global->currentCanAnalyticalData[i].position - value[i]) > 180)
+                realVal = 360 - std::abs(global->currentCanAnalyticalData[i].position - value[i]);
             else
-                realVal = std::abs(global->currentCanAnalyticalData[i].position-value[i]);
-            if(realVal>POS_LIMIT_VALUE)
+                realVal = std::abs(global->currentCanAnalyticalData[i].position - value[i]);
+            if (realVal > POS_LIMIT_VALUE)
                 return -1;
         }
         //In order to be able to reach the initial position, set this mode here.
         Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
     }
-    else {//relative position mode
-        for(int i=0;i<NODE_NUM;i++) {
+    else
+    { //relative position mode
+        for (int i = 0; i < NODE_NUM; i++)
+        {
             value[i] += global->currentCanAnalyticalData[i].position;
         }
         Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
@@ -301,45 +316,48 @@ int ControlTableView::runFunc(int row)
 **/
 void ControlTableView::tableClickButton()
 {
-    QPushButton *btn = (QPushButton *)sender();   //产生事件的对象
-    int row = btn->property("row").toInt();  //取得按钮的行号属性
+    QPushButton *btn = (QPushButton *)sender(); //产生事件的对象
+    int row = btn->property("row").toInt();     //取得按钮的行号属性
     int col = btn->property("column").toInt();  //取得按钮的列号属性
 
-    switch (col) {
-    case BTN_START_INDEX://run
-        if(runFunc(row)<0)
+    switch (col)
+    {
+    case BTN_START_INDEX: //run
+        if (runFunc(row) < 0)
             emit execStatus("数据异常！");
         break;
-    case BTN_START_INDEX+1://add
+    case BTN_START_INDEX + 1: //add
         model->insertRow(row);
-        valueListUpdate(row+1);
-        addTableviewRow(qobject_cast<IncompleteCombox *>(indexWidget(model->index(row+1,1)))->currentIndex(), row, true);
-        updateTablePropertyAfterLine(row,0);
+        valueListUpdate(row + 1);
+        addTableviewRow(qobject_cast<IncompleteCombox *>(indexWidget(model->index(row + 1, 1)))->currentIndex(), row, true);
+        updateTablePropertyAfterLine(row, 0);
         break;
-    case BTN_START_INDEX+2://delete
+    case BTN_START_INDEX + 2: //delete
         model->removeRow(row);
-        updateTablePropertyAfterLine(row,0);
+        updateTablePropertyAfterLine(row, 0);
         break;
-    case BTN_START_INDEX+3://up
-        if(row > 1) {
-            int modeBak = qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex();
-            bool checkBak = qobject_cast<QCheckBox *>(indexWidget(model->index(row,BTN_START_INDEX+5)))->isChecked();
+    case BTN_START_INDEX + 3: //up
+        if (row > 1)
+        {
+            int modeBak = qobject_cast<IncompleteCombox *>(indexWidget(model->index(row, 1)))->currentIndex();
+            bool checkBak = qobject_cast<QCheckBox *>(indexWidget(model->index(row, BTN_START_INDEX + 5)))->isChecked();
             QList<QStandardItem *> listItem = model->takeRow(row);
-            model->insertRow(row-1,listItem);
-            addTableviewRowWidget(modeBak,row-1,checkBak,true);
-            updateTableRowProperty(row-1,row-1);
-            updateTableRowProperty(row,row);
+            model->insertRow(row - 1, listItem);
+            addTableviewRowWidget(modeBak, row - 1, checkBak, true);
+            updateTableRowProperty(row - 1, row - 1);
+            updateTableRowProperty(row, row);
         }
         break;
-    case BTN_START_INDEX+4://down
-        if(row < model->rowCount()-1) {
-            int modeBak = qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex();
-            bool checkBak = qobject_cast<QCheckBox *>(indexWidget(model->index(row,BTN_START_INDEX+5)))->isChecked();
+    case BTN_START_INDEX + 4: //down
+        if (row < model->rowCount() - 1)
+        {
+            int modeBak = qobject_cast<IncompleteCombox *>(indexWidget(model->index(row, 1)))->currentIndex();
+            bool checkBak = qobject_cast<QCheckBox *>(indexWidget(model->index(row, BTN_START_INDEX + 5)))->isChecked();
             QList<QStandardItem *> listItem = model->takeRow(row);
-            model->insertRow(row+1,listItem);
-            addTableviewRowWidget(modeBak,row+1,checkBak,true);
-            updateTableRowProperty(row+1,row+1);
-            updateTableRowProperty(row,row);
+            model->insertRow(row + 1, listItem);
+            addTableviewRowWidget(modeBak, row + 1, checkBak, true);
+            updateTableRowProperty(row + 1, row + 1);
+            updateTableRowProperty(row, row);
         }
         break;
     default:
@@ -356,20 +374,21 @@ void ControlTableView::tableClickButton()
 **/
 void ControlTableView::updateTableRowProperty(int row, int property)
 {
-    int len=valueList.length();
-    qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->setProperty("row", property);
-    qobject_cast<QPushButton *>(indexWidget(model->index(row,len+1)))->setProperty("row", property);
-    qobject_cast<QPushButton *>(indexWidget(model->index(row,len+2)))->setProperty("row", property);
-    qobject_cast<QPushButton *>(indexWidget(model->index(row,len+3)))->setProperty("row", property);
-    qobject_cast<QPushButton *>(indexWidget(model->index(row,len+4)))->setProperty("row", property);
-    qobject_cast<QPushButton *>(indexWidget(model->index(row,len+5)))->setProperty("row", property);
-    qobject_cast<QCheckBox *>(indexWidget(model->index(row,len+6)))->setProperty("row", property);
+    int len = valueList.length();
+    qobject_cast<IncompleteCombox *>(indexWidget(model->index(row, 1)))->setProperty("row", property);
+    qobject_cast<QPushButton *>(indexWidget(model->index(row, len + 1)))->setProperty("row", property);
+    qobject_cast<QPushButton *>(indexWidget(model->index(row, len + 2)))->setProperty("row", property);
+    qobject_cast<QPushButton *>(indexWidget(model->index(row, len + 3)))->setProperty("row", property);
+    qobject_cast<QPushButton *>(indexWidget(model->index(row, len + 4)))->setProperty("row", property);
+    qobject_cast<QPushButton *>(indexWidget(model->index(row, len + 5)))->setProperty("row", property);
+    qobject_cast<QCheckBox *>(indexWidget(model->index(row, len + 6)))->setProperty("row", property);
 }
 
 void ControlTableView::updateTablePropertyAfterLine(int row, int offset)
 {
-    for(int i=row;i<model->rowCount();i++) {
-        updateTableRowProperty(i,i+offset);
+    for (int i = row; i < model->rowCount(); i++)
+    {
+        updateTableRowProperty(i, i + offset);
     }
 }
 
@@ -383,7 +402,7 @@ void ControlTableView::updateTablePropertyAfterLine(int row, int offset)
 void ControlTableView::addTableviewRow(int mode, int row, bool hasWidget)
 {
     addModelItemData(row);
-    if(hasWidget)
+    if (hasWidget)
         addTableviewRowWidget(mode, row, true, true);
 }
 
@@ -396,7 +415,8 @@ void ControlTableView::addTableviewRow(int mode, int row, bool hasWidget)
 **/
 void ControlTableView::hideTableviewData(bool is_hide)
 {
-    for(int i=BEFORE_VALUE_NUM;i<BEFORE_VALUE_NUM+NODE_NUM;i++) {
+    for (int i = BEFORE_VALUE_NUM; i < BEFORE_VALUE_NUM + NODE_NUM; i++)
+    {
         setColumnHidden(i, !is_hide);
     }
 }
@@ -414,17 +434,23 @@ int ControlTableView::seqExec(bool cycle, int value, int period)
     interValue = value;
     interPeriod = period;
 
-    if(taskThread->isRunning()) {
-        if(execRunOrPauseFlag==12) {
+    if (taskThread->isRunning())
+    {
+        if (execRunOrPauseFlag == 12)
+        {
             execRunOrPauseFlag = 11;
             return 1;
-        } else {
+        }
+        else
+        {
             execRunOrPauseFlag = 12;
             return 2;
         }
-    } else if(model->rowCount()>1) {//首次运行
+    }
+    else if (model->rowCount() > 1)
+    { //首次运行
         execRunOrPauseFlag = 11;
-        QTimer::singleShot(0, taskTimer,SLOT(start()));
+        QTimer::singleShot(0, taskTimer, SLOT(start()));
         taskThread->start();
         return 1;
     }
@@ -433,8 +459,10 @@ int ControlTableView::seqExec(bool cycle, int value, int period)
 
 int ControlTableView::execPause()
 {
-    if (taskThread->isRunning()) {
-        if(execRunOrPauseFlag%10 == 1) { //正在运行，则加1变为暂停状态
+    if (taskThread->isRunning())
+    {
+        if (execRunOrPauseFlag % 10 == 1)
+        { //正在运行，则加1变为暂停状态
             execRunOrPauseFlag++;
         }
         return execRunOrPauseFlag / 10; //返回当前是顺序运行还是逆序运行状态
@@ -453,17 +481,23 @@ int ControlTableView::reverseSeqExec(bool cycle, int value, int period)
     interValue = value;
     interPeriod = period;
 
-    if(taskThread->isRunning()) {
-        if(execRunOrPauseFlag==22) {
+    if (taskThread->isRunning())
+    {
+        if (execRunOrPauseFlag == 22)
+        {
             execRunOrPauseFlag = 21;
             return 1;
-        } else {
+        }
+        else
+        {
             execRunOrPauseFlag = 22;
             return 2;
         }
-    } else if(model->rowCount()>1) {//首次运行
+    }
+    else if (model->rowCount() > 1)
+    { //首次运行
         execRunOrPauseFlag = 21;
-        QTimer::singleShot(0, taskTimer,SLOT(start()));
+        QTimer::singleShot(0, taskTimer, SLOT(start()));
         taskThread->start();
         return 1;
     }
@@ -480,15 +514,19 @@ int ControlTableView::reverseSeqExec(bool cycle, int value, int period)
 void ControlTableView::setListBoundaryValue(int &up, int &down)
 {
     int column = valueList.length();
-    for(int row=1;row<model->rowCount();row++) {
-        if(qobject_cast<QCheckBox *>(indexWidget(model->index(row,column+ROW_BTN_NUM+1)))->isChecked()) {
-            up=row;
+    for (int row = 1; row < model->rowCount(); row++)
+    {
+        if (qobject_cast<QCheckBox *>(indexWidget(model->index(row, column + ROW_BTN_NUM + 1)))->isChecked())
+        {
+            up = row;
             break;
         }
     }
-    for(int row=model->rowCount()-1;row>0;row--) {
-        if(qobject_cast<QCheckBox *>(indexWidget(model->index(row,column+ROW_BTN_NUM+1)))->isChecked()) {
-            down=row;
+    for (int row = model->rowCount() - 1; row > 0; row--)
+    {
+        if (qobject_cast<QCheckBox *>(indexWidget(model->index(row, column + ROW_BTN_NUM + 1)))->isChecked())
+        {
+            down = row;
             break;
         }
     }
@@ -511,40 +549,48 @@ int ControlTableView::exportToCsv(QString fileName)
     if (file.open(QIODevice::WriteOnly))
     {
         QTextStream stream(&file);
-        int columnCount=model->columnCount();
+        int columnCount = model->columnCount();
         //        qDebug() << "cc:" << columnCount;
 
         QStringList list;
-        for (int i=0;i<columnCount;i++)
+        for (int i = 0; i < columnCount; i++)
         {
-            list<< model->headerData(i,Qt::Horizontal,Qt::DisplayRole).toString();
+            list << model->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString();
         }
-        stream<< list.join(",")<<"\r\n";
+        stream << list.join(",") << "\r\n";
 
-        for (int i=0;i<model->rowCount();i++)
+        for (int i = 0; i < model->rowCount(); i++)
         {
             list.clear();
-            for (int j=0;j<columnCount;j++)
+            for (int j = 0; j < columnCount; j++)
             {
-                if(1==j&&i>0) {
-                    if(model->rowCount()<SHOW_BTN_NUM)
-                        list << QString::number(qobject_cast<IncompleteCombox *>(indexWidget(model->index(i,1)))->currentIndex());
+                if (1 == j && i > 0)
+                {
+                    if (model->rowCount() < SHOW_BTN_NUM)
+                        list << QString::number(qobject_cast<IncompleteCombox *>(indexWidget(model->index(i, 1)))->currentIndex());
                     else
                         list << "1";
-                } else if(BTN_START_INDEX+ROW_BTN_NUM==j&&i>0) {
-                    if(model->rowCount()<SHOW_BTN_NUM)
-                        list << QString::number(qobject_cast<QCheckBox *>(indexWidget(model->index(i,BTN_START_INDEX+ROW_BTN_NUM)))->isChecked());
+                }
+                else if (BTN_START_INDEX + ROW_BTN_NUM == j && i > 0)
+                {
+                    if (model->rowCount() < SHOW_BTN_NUM)
+                        list << QString::number(qobject_cast<QCheckBox *>(indexWidget(model->index(i, BTN_START_INDEX + ROW_BTN_NUM)))->isChecked());
                     else
                         list << "1";
-                } else if(j>NODE_NUM+BEFORE_VALUE_NUM && j<BTN_START_INDEX+ROW_BTN_NUM) {
+                }
+                else if (j > NODE_NUM + BEFORE_VALUE_NUM && j < BTN_START_INDEX + ROW_BTN_NUM)
+                {
                     list << "1";
-                } else
-                    list<<model->index(i,j).data().toString();
+                }
+                else
+                    list << model->index(i, j).data().toString();
             }
-            stream<< list.join(",")<<"\r\n";
+            stream << list.join(",") << "\r\n";
         }
         file.close();
-    } else {
+    }
+    else
+    {
         return -1;
     }
 
@@ -554,7 +600,7 @@ int ControlTableView::exportToCsv(QString fileName)
 int ControlTableView::importCsv(QString fileName)
 {
     QFile file(fileName);
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         qDebug() << "Open file failed!";
         return -1;
@@ -566,23 +612,27 @@ int ControlTableView::importCsv(QString fileName)
     int row = 0;
     int col = 0, colMin = 0;
 
-    while(!in.atEnd()) {
+    while (!in.atEnd())
+    {
         QString fileLine = in.readLine();
         strlist = fileLine.split(",", QString::SkipEmptyParts);
         //        qDebug() << strlist;
         qlist.push_back(strlist);
 
         // 取更大值
-        if (col == 0) {
+        if (col == 0)
+        {
             col = strlist.count();
         }
-        else {
+        else
+        {
             col = col > strlist.count() ? col : strlist.count();
             colMin = col < strlist.count() ? col : strlist.count();
         }
         row++;
     }
-    if(0==col||0==row) {
+    if (0 == col || 0 == row)
+    {
         QMessageBox::critical(this, tr("Import"),
                               tr("Empty file!"),
                               QMessageBox::Ok | QMessageBox::Cancel);
@@ -590,7 +640,8 @@ int ControlTableView::importCsv(QString fileName)
         return -1;
     }
 
-    if(!QString(qlist[1][0]).contains("ref") || col!= (BTN_START_INDEX+ROW_BTN_NUM+1)) {
+    if (!QString(qlist[1][0]).contains("ref") || col != (BTN_START_INDEX + ROW_BTN_NUM + 1))
+    {
         QMessageBox::warning(this, tr("Import"),
                              tr("The imported file format is incorrect.\n"
                                 "You must manually modify the csv file and import it."),
@@ -600,35 +651,39 @@ int ControlTableView::importCsv(QString fileName)
     }
 
     model->clear();
-    model->setRowCount(row-1);
+    model->setRowCount(row - 1);
     model->setColumnCount(col);
 
-    for(int i=0;i<headerData.length();i++) {
-        model->setHeaderData(i,Qt::Horizontal,headerData[i]);
+    for (int i = 0; i < headerData.length(); i++)
+    {
+        model->setHeaderData(i, Qt::Horizontal, headerData[i]);
     }
 
     //ref line
-    for(int j = 0; j < NODE_NUM+1; j++) {
+    for (int j = 0; j < NODE_NUM + 1; j++)
+    {
         QStandardItem *item = new QStandardItem(qlist[1][j]);
         //这里的指针会在QStandardItemModel中的析构函数里面被释放掉 qDeleteAll(d->rowHeaderItems);
-        if(j == 0)
+        if (j == 0)
             model->setItem(0, 0, item);
         else
-            model->setItem(0, j+1, item);
+            model->setItem(0, j + 1, item);
     }
 
-    for (int i = 1; i < row-1; i++)//Remove the first line header
+    for (int i = 1; i < row - 1; i++) //Remove the first line header
     {
-        for (int j = 0; j < col; j++)//note:21
+        for (int j = 0; j < col; j++) //note:21
         {
-            if(j != 1 && j < colMin) {
-                QStandardItem *item = new QStandardItem(qlist[i+1][j]);
+            if (j != 1 && j < colMin)
+            {
+                QStandardItem *item = new QStandardItem(qlist[i + 1][j]);
                 //这里的指针会在QStandardItemModel中的析构函数里面被释放掉 qDeleteAll(d->rowHeaderItems);
                 model->setItem(i, j, item);
             }
         }
-        addTableviewRowWidget(QString(qlist[i+1][1]).toInt(), i, QString(qlist[i+1][colMin-1]).toInt()>0, i<SHOW_BTN_NUM);
-        if(i%1000 == 0) { //防止页面假死
+        addTableviewRowWidget(QString(qlist[i + 1][1]).toInt(), i, QString(qlist[i + 1][colMin - 1]).toInt() > 0, i < SHOW_BTN_NUM);
+        if (i % 1000 == 0)
+        { //防止页面假死
             QCoreApplication::processEvents();
         }
     }
@@ -647,144 +702,167 @@ int ControlTableView::importCsv(QString fileName)
 void ControlTableView::execSeqEvent()
 {
     static double refValue[NODE_NUM];
-    static int row=-1;
-    static int timeCnt=1;
-    static int lastRow[2]={-1,-1};//0:lastLast 1:last
-    static int g_lastRow=-1;
-    static int listHead,listHeadBak,listTail;
-    static int groupCnt=1;
+    static int row = -1;
+    static int timeCnt = 1;
+    static int lastRow[2] = {-1, -1}; //0:lastLast 1:last
+    static int g_lastRow = -1;
+    static int listHead, listHeadBak, listTail;
+    static int groupCnt = 1;
     static QTime time;
 
-    if(-1==row) {//init row
+    if (-1 == row)
+    { //init row
         time.start();
-        groupCnt=1;
+        groupCnt = 1;
         setListBoundaryValue(listHeadBak, listTail);
-        listHead=listHeadBak;
-        if(execRunOrPauseFlag/10==2)
-            row=listTail;
+        listHead = listHeadBak;
+        if (execRunOrPauseFlag / 10 == 2)
+            row = listTail;
         else
-            row=listHead;
+            row = listHead;
         getModelRowValue(refValue, 0, NODE_NUM);
     }
 
-    if(row>listTail) {//顺序执行越界处理
-        if(cycleFlag) {
+    if (row > listTail)
+    { //顺序执行越界处理
+        if (cycleFlag)
+        {
             groupCnt++;
             row = listHead;
-            lastRow[0]=-1;
-            lastRow[1]=-1;
-            g_lastRow=-1;
+            lastRow[0] = -1;
+            lastRow[1] = -1;
+            g_lastRow = -1;
         }
-        else {
+        else
+        {
             taskTimer->stop();
-            row=-1;//顺序执行结束
-            lastRow[0]=-1;
-            lastRow[1]=-1;
-            g_lastRow=-1;
-            execRunOrPauseFlag=0;
+            row = -1; //顺序执行结束
+            lastRow[0] = -1;
+            lastRow[1] = -1;
+            g_lastRow = -1;
+            execRunOrPauseFlag = 0;
             emit stopThread();
             return;
         }
     }
 
-    if(row<listHead) {//逆序执行越界处理
-        if(cycleFlag) {
+    if (row < listHead)
+    { //逆序执行越界处理
+        if (cycleFlag)
+        {
             groupCnt++;
             row = listTail;
-            lastRow[0]=-1;
-            lastRow[1]=-1;
-            g_lastRow=-1;
+            lastRow[0] = -1;
+            lastRow[1] = -1;
+            g_lastRow = -1;
         }
-        else {
+        else
+        {
             taskTimer->stop();
-            row=-1;//逆序执行结束
-            lastRow[0]=-1;
-            lastRow[1]=-1;
-            g_lastRow=-1;
-            execRunOrPauseFlag=0;
+            row = -1; //逆序执行结束
+            lastRow[0] = -1;
+            lastRow[1] = -1;
+            g_lastRow = -1;
+            execRunOrPauseFlag = 0;
             emit stopThread();
             return;
         }
     }
 
-    if(2==execRunOrPauseFlag%10) {//手动暂停
+    if (2 == execRunOrPauseFlag % 10)
+    { //手动暂停
         return;
-    } else if(execRunOrPauseFlag%10>2) {//手动结束
+    }
+    else if (execRunOrPauseFlag % 10 > 2)
+    { //手动结束
         taskTimer->stop();
         execRunOrPauseFlag = 0;
-        row=-1;
-        lastRow[0]=-1;
-        lastRow[1]=-1;
-        g_lastRow=-1;
+        row = -1;
+        lastRow[0] = -1;
+        lastRow[1] = -1;
+        g_lastRow = -1;
         emit stopThread();
         return;
     }
 
-    if(-1 == g_lastRow) {
+    if (-1 == g_lastRow)
+    {
         g_lastRow = row;
     }
 
-    if(row%interValue== 0 &&
-            qobject_cast<QCheckBox *>(indexWidget(model->index(row,BTN_START_INDEX+ROW_BTN_NUM)))->isChecked()) {
+    if (row % interValue == 0 &&
+        qobject_cast<QCheckBox *>(indexWidget(model->index(row, BTN_START_INDEX + ROW_BTN_NUM)))->isChecked())
+    {
         int runTime = interPeriod;
-        if(execRunOrPauseFlag/10==1) {//顺序执行,采用上一行命令的时间
-            if(row>=listHead) {//1-[T2-2]-[T3-3]  T1可以设置的比较小  P1-T2-P2,其中T2指的是P1转到P2的时间
-                if(runTime == 0)
-                    runTime = static_cast<int>(model->index(g_lastRow,NODE_NUM+BEFORE_VALUE_NUM).data().toDouble()+0.5);
+        if (execRunOrPauseFlag / 10 == 1)
+        { //顺序执行,采用上一行命令的时间
+            if (row >= listHead)
+            { //1-[T2-2]-[T3-3]  T1可以设置的比较小  P1-T2-P2,其中T2指的是P1转到P2的时间
+                if (runTime == 0)
+                    runTime = static_cast<int>(model->index(g_lastRow, NODE_NUM + BEFORE_VALUE_NUM).data().toDouble() + 0.5);
 
-                if(timeCnt<runTime/10) { //time must be an integer multiple of 10
+                if (timeCnt < runTime / 10)
+                { //time must be an integer multiple of 10
                     timeCnt++;
                     return;
                 }
-            } else {
-                runTime=0;
             }
-        } else {//逆序执行,采用上一行命令的时间
-            if(row<=listTail) {//3-[T3-2]-[T2-1] 其中T3代表P2转到P3的时间
-                if(runTime == 0) {
-                    runTime = static_cast<int>(model->index(lastRow[0],NODE_NUM+BEFORE_VALUE_NUM).data().toDouble()+0.5);
+            else
+            {
+                runTime = 0;
+            }
+        }
+        else
+        { //逆序执行,采用上一行命令的时间
+            if (row <= listTail)
+            { //3-[T3-2]-[T2-1] 其中T3代表P2转到P3的时间
+                if (runTime == 0)
+                {
+                    runTime = static_cast<int>(model->index(lastRow[0], NODE_NUM + BEFORE_VALUE_NUM).data().toDouble() + 0.5);
                     //如果上次运行的为速度，则只间隔上次速度所需时间再执行位置
-                    if(0 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(g_lastRow,1)))->currentIndex()) {
-                        runTime = static_cast<int>(model->index(g_lastRow,NODE_NUM+BEFORE_VALUE_NUM).data().toDouble()+0.5);
+                    if (0 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(g_lastRow, 1)))->currentIndex())
+                    {
+                        runTime = static_cast<int>(model->index(g_lastRow, NODE_NUM + BEFORE_VALUE_NUM).data().toDouble() + 0.5);
                     }
                 }
 
-                if(timeCnt<runTime/10) { //time must be an integer multiple of 10
+                if (timeCnt < runTime / 10)
+                { //time must be an integer multiple of 10
                     timeCnt++;
                     return;
                 }
-            } else {
-                runTime=0;
+            }
+            else
+            {
+                runTime = 0;
             }
         }
-        emit execStatus(model->index(g_lastRow,0).data().toString()
-                               +QString(" has runned for %1 ms\n")
-                               .arg(timeCnt*10)+QString("group %2: ").arg(groupCnt)
-                               +model->index(row,0).data().toString()
-                               +QString(" is running\n")+QString("elapsed time: %1 s").arg(time.elapsed()/1000));
-        timeCnt=1;
+        emit execStatus(model->index(g_lastRow, 0).data().toString() + QString(" has runned for %1 ms\n").arg(timeCnt * 10) + QString("group %2: ").arg(groupCnt) + model->index(row, 0).data().toString() + QString(" is running\n") + QString("elapsed time: %1 s").arg(time.elapsed() / 1000));
+        timeCnt = 1;
 
-        if(runFunc(row)<0) {
+        if (runFunc(row) < 0)
+        {
             taskTimer->stop();
             execStatus("数据导入异常！");
             execRunOrPauseFlag = 0;
-            row=-1;
-            lastRow[0]=-1;
-            lastRow[1]=-1;
-            g_lastRow=-1;
+            row = -1;
+            lastRow[0] = -1;
+            lastRow[1] = -1;
+            g_lastRow = -1;
             emit stopThread();
             return;
         }
 
         //逆向时位置控制时保留上个位置的时间间隔
-        if((execRunOrPauseFlag/10==2 &&
-                qobject_cast<IncompleteCombox *>(indexWidget(model->index(row,1)))->currentIndex()!=0)) {
+        if ((execRunOrPauseFlag / 10 == 2 &&
+             qobject_cast<IncompleteCombox *>(indexWidget(model->index(row, 1)))->currentIndex() != 0))
+        {
             lastRow[0] = lastRow[1];
             lastRow[1] = row;
         }
         g_lastRow = row;
     }
-    if(1==execRunOrPauseFlag/10)
+    if (1 == execRunOrPauseFlag / 10)
         row++;
     else
         row--;

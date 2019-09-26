@@ -15,14 +15,14 @@
 *@author        XingZhang.Wu
 *@date          20190731
 **/
-JointControl::JointControl() :
-    ui(new Ui::JointControl)
+JointControl::JointControl() : ui(new Ui::JointControl)
 {
     ui->setupUi(this);
     this->setWindowTitle(tr("Joint Control"));
 
     initObject();
-    if(initUiObject()) {
+    if (initUiObject())
+    {
         initConnection();
         controlWidgetInit();
     }
@@ -97,11 +97,12 @@ void JointControl::on_caliPushButton_clicked()
 
 void JointControl::keyPressEvent(QKeyEvent *e)
 {
-    switch(e->key())
+    switch (e->key())
     {
     case Qt::Key_A:
     {
-        if (QApplication::keyboardModifiers() == Qt::AltModifier) {
+        if (QApplication::keyboardModifiers() == Qt::AltModifier)
+        {
             on_emergencyStopPushButton_clicked();
         }
         break;

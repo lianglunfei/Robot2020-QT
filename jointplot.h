@@ -4,7 +4,8 @@
 #include <QWidget>
 #include "plots.h"
 
-namespace Ui {
+namespace Ui
+{
 class JointPlot;
 }
 
@@ -26,7 +27,7 @@ class JointPlot : public Plots
     Q_OBJECT
 
 public:
-    explicit JointPlot(Plots* parent=0);
+    explicit JointPlot(Plots *parent = 0);
     ~JointPlot();
 
 private:

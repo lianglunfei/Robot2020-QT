@@ -16,7 +16,7 @@ private:
     static int StartCANHelper(int connectType, int devIndex);
 
 public:
-    static int connectToCan(int& connectType, int baute);
+    static int connectToCan(int &connectType, int baute);
     static int CANCloseDevice(int connectType);
     static int CANTransmit(int connectType, unsigned char *data, int id);
     static int CANTransmitMulti(int connectType, unsigned char data[][8], int id[], int len);

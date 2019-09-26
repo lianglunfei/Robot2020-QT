@@ -44,7 +44,7 @@ private:
     void valueListSync(int row);
     void addModelItemData(int row);
     void addTableviewRowWidget(int mode, int row, bool checkState, bool complete);
-    void getModelRowValue(double* value, int row, int len);
+    void getModelRowValue(double *value, int row, int len);
     void updateTableRowProperty(int row, int property);
     void updateTablePropertyAfterLine(int row, int offset);
     int runFunc(int row);

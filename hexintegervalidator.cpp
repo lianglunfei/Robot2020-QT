@@ -1,8 +1,7 @@
 #include "hexintegervalidator.h"
 
-HexIntegerValidator::HexIntegerValidator(QObject *parent) :
-    QValidator(parent),
-    m_maximum(MaxStandardId)
+HexIntegerValidator::HexIntegerValidator(QObject *parent) : QValidator(parent),
+                                                            m_maximum(MaxStandardId)
 {
 }
 
