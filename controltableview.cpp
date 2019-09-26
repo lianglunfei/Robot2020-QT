@@ -11,6 +11,7 @@
 #include <QCheckBox>
 #include <QMessageBox>
 #include <QCoreApplication>
+#include <QTime>
 
 #define BTN_START_INDEX NODE_NUM+3 //行按钮开始的位置=节点数+mode+time+name
 #define ROW_BTN_NUM 5 //按钮个数：上下移动、增加删除、运行
@@ -652,8 +653,10 @@ void ControlTableView::execSeqEvent()
     static int g_lastRow=-1;
     static int listHead,listHeadBak,listTail;
     static int groupCnt=1;
+    static QTime time;
 
     if(-1==row) {//init row
+        time.start();
         groupCnt=1;
         setListBoundaryValue(listHeadBak, listTail);
         listHead=listHeadBak;
@@ -758,7 +761,7 @@ void ControlTableView::execSeqEvent()
                                +QString(" has runned for %1 ms\n")
                                .arg(timeCnt*10)+QString("group %2: ").arg(groupCnt)
                                +model->index(row,0).data().toString()
-                               +QString(" is running"));
+                               +QString(" is running\n")+QString("elapsed time: %1 s").arg(time.elapsed()/1000));
         timeCnt=1;
 
         if(runFunc(row)<0) {
