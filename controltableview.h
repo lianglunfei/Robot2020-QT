@@ -18,6 +18,7 @@ public:
     void hideTableviewData(bool is_hide);
     int seqExec(bool cycle, int value, int period);
     void execStop();
+    int execPause();
     int reverseSeqExec(bool cycle, int value, int period);
     int exportToCsv(QString fileName);
     int importCsv(QString fileName);

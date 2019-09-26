@@ -80,7 +80,7 @@ void MainWindow::connectInit()
     connect(ui->actionOffline_Control, &QAction::triggered, m_offline_control, &OfflineControl::show);
     connect(m_connect_dialog, &ConnectDialog::accepted, this, &MainWindow::canConnectEvent);
     connect(ui->actionReceive_Error, &QAction::triggered, m_receive_error, &ReceiveError::show);
-    connect(m_receive_error, &ReceiveError::jointError, m_offline_control, &OfflineControl::on_execSeqStopPushButton_clicked);
+    connect(m_receive_error, &ReceiveError::jointError, m_offline_control, &OfflineControl::pausedWhenError);
 }
 
 MainWindow::~MainWindow()

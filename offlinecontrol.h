@@ -16,7 +16,7 @@ public:
     ~OfflineControl();
 
 public slots:
-    void on_execSeqStopPushButton_clicked();
+    void pausedWhenError();
 
 private:
     Ui::OfflineControl *ui;
@@ -37,6 +37,7 @@ private slots:
     void on_emergencyStopPushButton_clicked();
     void on_synchronousPushButton_clicked();
     void on_caliPushButton_clicked();
+    void on_execSeqStopPushButton_clicked();
 };
 
 #endif // OFFLINECONTROL_H

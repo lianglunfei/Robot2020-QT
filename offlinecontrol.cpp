@@ -83,6 +83,15 @@ void OfflineControl::on_execReverseSeqPushButton_clicked()
         ui->execReverseSeqPushButton->setText("逆序执行继续");
 }
 
+void OfflineControl::pausedWhenError()
+{
+    int ret = ui->tableView->execPause();
+    if(ret==1)
+        ui->execSeqPushButton->setText("顺序异常暂停");
+    else if(ret==2)
+        ui->execReverseSeqPushButton->setText("逆序异常暂停");
+}
+
 void OfflineControl::on_execSeqStopPushButton_clicked()
 {
     ui->tableView->execStop();

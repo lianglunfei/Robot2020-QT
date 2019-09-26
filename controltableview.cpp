@@ -430,6 +430,17 @@ int ControlTableView::seqExec(bool cycle, int value, int period)
     return 0;
 }
 
+int ControlTableView::execPause()
+{
+    if (taskThread->isRunning()) {
+        if(execRunOrPauseFlag%10 == 2) {
+            execRunOrPauseFlag--;
+        }
+        return execRunOrPauseFlag / 10;
+    }
+    return 0;
+}
+
 void ControlTableView::execStop()
 {
     execRunOrPauseFlag = 3;
