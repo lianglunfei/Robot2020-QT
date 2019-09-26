@@ -57,12 +57,16 @@ void OfflineControl::runStatus(QString s)
 
 void OfflineControl::stopStatus()
 {
+    ui->execSeqPushButton->setStyleSheet("color:black;");
+    ui->execReverseSeqPushButton->setStyleSheet("color:black;");
     ui->execSeqPushButton->setText("顺序执行所选");
     ui->execReverseSeqPushButton->setText("逆序执行所选");
 }
 
 void OfflineControl::on_execSeqPushButton_clicked()
 {
+    ui->execSeqPushButton->setStyleSheet("color:black;");
+    ui->execReverseSeqPushButton->setStyleSheet("color:black;");
     ui->execReverseSeqPushButton->setText("逆序执行所选");
     int ret = ui->tableView->seqExec(ui->cycleCheckBox->isChecked(),
                            ui->interValueSpinBox->value(), ui->interPeriodSpinBox->value());
@@ -74,6 +78,8 @@ void OfflineControl::on_execSeqPushButton_clicked()
 
 void OfflineControl::on_execReverseSeqPushButton_clicked()
 {
+    ui->execSeqPushButton->setStyleSheet("color:black;");
+    ui->execReverseSeqPushButton->setStyleSheet("color:black;");
     ui->execSeqPushButton->setText("顺序执行所选");
     int ret = ui->tableView->reverseSeqExec(ui->cycleCheckBox->isChecked(),
                            ui->interValueSpinBox->value(), ui->interPeriodSpinBox->value());
@@ -86,15 +92,20 @@ void OfflineControl::on_execReverseSeqPushButton_clicked()
 void OfflineControl::pausedWhenError()
 {
     int ret = ui->tableView->execPause();
-    if(ret==1)
+    if(ret==1) {
         ui->execSeqPushButton->setText("顺序异常继续");
-    else if(ret==2)
+        ui->execSeqPushButton->setStyleSheet("color:red;");
+    } else if(ret==2) {
         ui->execReverseSeqPushButton->setText("逆序异常继续");
+        ui->execReverseSeqPushButton->setStyleSheet("color:red;");
+    }
 }
 
 void OfflineControl::on_execSeqStopPushButton_clicked()
 {
     ui->tableView->execStop();
+    ui->execSeqPushButton->setStyleSheet("color:black;");
+    ui->execReverseSeqPushButton->setStyleSheet("color:black;");
     ui->execSeqPushButton->setText("顺序执行所选");
     ui->execReverseSeqPushButton->setText("逆序执行所选");
 }
