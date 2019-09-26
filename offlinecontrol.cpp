@@ -87,9 +87,9 @@ void OfflineControl::pausedWhenError()
 {
     int ret = ui->tableView->execPause();
     if(ret==1)
-        ui->execSeqPushButton->setText("顺序异常暂停");
+        ui->execSeqPushButton->setText("顺序异常继续");
     else if(ret==2)
-        ui->execReverseSeqPushButton->setText("逆序异常暂停");
+        ui->execReverseSeqPushButton->setText("逆序异常继续");
 }
 
 void OfflineControl::on_execSeqStopPushButton_clicked()

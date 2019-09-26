@@ -402,7 +402,7 @@ void ControlTableView::hideTableviewData(bool is_hide)
 
 /**
 *@projectName   RobotControlSystem
-*@brief         返回1表示执行暂停，返回2表示执行继续
+*@brief         返回1表示执行正在进行，返回2表示执行暂停
 *@parameter
 *@author        XingZhang.Wu
 *@date          20190806
@@ -433,10 +433,10 @@ int ControlTableView::seqExec(bool cycle, int value, int period)
 int ControlTableView::execPause()
 {
     if (taskThread->isRunning()) {
-        if(execRunOrPauseFlag%10 == 2) {
-            execRunOrPauseFlag--;
+        if(execRunOrPauseFlag%10 == 1) { //正在运行，则加1变为暂停状态
+            execRunOrPauseFlag++;
         }
-        return execRunOrPauseFlag / 10;
+        return execRunOrPauseFlag / 10; //返回当前是顺序运行还是逆序运行状态
     }
     return 0;
 }
