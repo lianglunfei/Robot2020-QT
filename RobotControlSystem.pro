@@ -115,9 +115,15 @@ DISTFILES +=
 RESOURCES += \
     img.qrc
 
-unix:!macx: LIBS += -L$$PWD/LIB/ -lcontrolcan
-win32: LIBS += -L$$PWD/LIB/ -lControlCAN
-win32: LIBS += -L$$PWD/LIB/ -lECanVci64
+unix:!macx: LIBS += -L$$PWD/libs/cx/ -lcontrolcan
+unix:!macx: LIBS += -L$$PWD/libs/zlg/ -lcontrolcan
+win32: LIBS += -L$$PWD/libs/cx/ -lControlCAN
+win32: LIBS += -L$$PWD/libs/zlg/ -lControlCAN
+win32: LIBS += -L$$PWD/libs/gc/ -lECanVci64
 
-INCLUDEPATH += $$PWD/LIB
-DEPENDPATH += $$PWD/LIB
+INCLUDEPATH += $$PWD/libs/gc
+DEPENDPATH += $$PWD/libs/gc
+INCLUDEPATH += $$PWD/libs/cx
+DEPENDPATH += $$PWD/libs/cx
+INCLUDEPATH += $$PWD/libs/zlg
+DEPENDPATH += $$PWD/libs/zlg
