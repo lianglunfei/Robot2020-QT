@@ -108,9 +108,11 @@ void ReceiveError::errorHandle(int i)
     {
         nodeMaxTime[i]->setStyleSheet("color:red;");
     }
-    if (lastStatusId[i] != 0x0b && global->statusId[i] == 0x0b)
+    if ((lastStatusId[i] == 0x06) &&
+        (global->statusId[i] != -1 && global->statusId[i] != 0x06)) //不等于-1代表接收到了数据，不等于0x06代表出现了异常
     {
         countErrorId[i]++;
+        qDebug() << "error: " << global->statusId[i];
         emit jointError();
     }
     lastRunningJoint[i] = global->runningId[i];

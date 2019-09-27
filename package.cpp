@@ -41,13 +41,14 @@ bool Package::unpackOperate()
     }
     int nodeId[NODE_NUM] = {0};
     int nodeStatus[NODE_NUM] = {0};
+    memset(nodeStatus, -1, sizeof(nodeStatus)); //全部初始化为-1
+
     for (int i = 0; i < 50; i++)
     {
         if (id[i] > 0)
         {
-            nodeId[id[i] - global->sendId[0]] = 1;
-            if (data[i][0] == 0x06 || data[i][0] == 0x0b)
-                nodeStatus[id[i] - global->sendId[0]] = data[i][0];
+            nodeId[id[i] - global->sendId[0]] = 1; //该Id接收到了数据
+            nodeStatus[id[i] - global->sendId[0]] = data[i][0];
         }
     }
     for (int i = 0; i < NODE_NUM; i++)
