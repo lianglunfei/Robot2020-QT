@@ -18,24 +18,30 @@
 #define DEF(a)
 #endif
 
-EXTERNC DWORD __stdcall VCI_OpenDevice(DWORD DeviceType,DWORD DeviceInd,DWORD Reserved);
-EXTERNC DWORD __stdcall VCI_CloseDevice(DWORD DeviceType,DWORD DeviceInd);
-EXTERNC DWORD __stdcall VCI_InitCAN(DWORD DeviceType, DWORD DeviceInd, DWORD CANInd, P_INIT_CONFIG pInitConfig);
+#ifdef Q_OS_WIN
+#define CALL __stdcall
+#else
+#define CALL
+#endif
 
-EXTERNC DWORD __stdcall VCI_ReadBoardInfo(DWORD DeviceType,DWORD DeviceInd,P_BOARD_INFO pInfo);
-EXTERNC DWORD __stdcall VCI_ReadErrInfo(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd,P_ERR_INFO pErrInfo);
-EXTERNC DWORD __stdcall VCI_ReadCANStatus(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd,P_CAN_STATUS pCANStatus);
+EXTERNC DWORD CALL VCI_OpenDevice(DWORD DeviceType,DWORD DeviceInd,DWORD Reserved);
+EXTERNC DWORD CALL VCI_CloseDevice(DWORD DeviceType,DWORD DeviceInd);
+EXTERNC DWORD CALL VCI_InitCAN(DWORD DeviceType, DWORD DeviceInd, DWORD CANInd, P_INIT_CONFIG pInitConfig);
 
-EXTERNC DWORD __stdcall VCI_GetReference(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd,DWORD RefType,PVOID pData);
-EXTERNC DWORD __stdcall VCI_SetReference(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd,DWORD RefType,PVOID pData);
+EXTERNC DWORD CALL VCI_ReadBoardInfo(DWORD DeviceType,DWORD DeviceInd,P_BOARD_INFO pInfo);
+EXTERNC DWORD CALL VCI_ReadErrInfo(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd,P_ERR_INFO pErrInfo);
+EXTERNC DWORD CALL VCI_ReadCANStatus(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd,P_CAN_STATUS pCANStatus);
 
-EXTERNC ULONG __stdcall VCI_GetReceiveNum(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd);
-EXTERNC DWORD __stdcall VCI_ClearBuffer(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd);
+EXTERNC DWORD CALL VCI_GetReference(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd,DWORD RefType,PVOID pData);
+EXTERNC DWORD CALL VCI_SetReference(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd,DWORD RefType,PVOID pData);
 
-EXTERNC DWORD __stdcall VCI_StartCAN(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd);
-EXTERNC DWORD __stdcall VCI_ResetCAN(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd);
+EXTERNC ULONG CALL VCI_GetReceiveNum(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd);
+EXTERNC DWORD CALL VCI_ClearBuffer(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd);
 
-EXTERNC ULONG __stdcall VCI_Transmit(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd,P_CAN_OBJ pSend,ULONG Len);
-EXTERNC ULONG __stdcall VCI_Receive(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd,P_CAN_OBJ pReceive,ULONG Len,INT WaitTime DEF(-1));
+EXTERNC DWORD CALL VCI_StartCAN(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd);
+EXTERNC DWORD CALL VCI_ResetCAN(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd);
+
+EXTERNC ULONG CALL VCI_Transmit(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd,P_CAN_OBJ pSend,ULONG Len);
+EXTERNC ULONG CALL VCI_Receive(DWORD DeviceType,DWORD DeviceInd,DWORD CANInd,P_CAN_OBJ pReceive,ULONG Len,INT WaitTime DEF(-1));
 
 #endif
