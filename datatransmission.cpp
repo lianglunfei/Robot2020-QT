@@ -1,3 +1,10 @@
+/*
+ * @Author: wuxingzhang
+ * @Date: 2019-09-24 09:03:15
+ * @LastEditors: wuxingzhang
+ * @LastEditTime: 2019-09-27 16:12:40
+ * @Description: file content
+ */
 #include "datatransmission.h"
 #include "globaldata.h"
 
@@ -75,12 +82,12 @@ int DataTransmission::CANCloseDevice(int connectType)
 **/
 int DataTransmission::CANOpenDevice()
 {
-    if (VCI_OpenDevice(USBCAN1, 0, 0) == 1)
+    if (VCI_OpenDevice(USBCAN1, 0, 0) == STATUS_OK)
     {
         return CONNECT_TYPE_ALYSIST;
     }
 #ifdef Q_OS_WIN
-    else if (OpenDevice(USBCAN1, 0, 0) == 1)
+    else if (OpenDevice(USBCAN1, 0, 0) == STATUS_OK)
     {
         return CONNECT_TYPE_GC;
     }
@@ -102,7 +109,6 @@ int DataTransmission::InitCANHelper(int connectType, int devIndex, int baud)
 {
     switch (connectType)
     {
-
     case CONNECT_TYPE_ALYSIST:
     case CONNECT_TYPE_GC:
         INIT_CONFIG InitInfo; //结构体

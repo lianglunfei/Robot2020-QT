@@ -1,7 +1,20 @@
+/*
+ * @Author: wuxingzhang
+ * @Date: 2019-09-17 19:39:25
+ * @LastEditors: wuxingzhang
+ * @LastEditTime: 2019-09-27 15:33:15
+ * @Description: file content
+ */
 #ifndef DATATRANSMISSION_H
 #define DATATRANSMISSION_H
 
+#include "globaldata.h"
+
+#ifdef USE_ZLG
+#include "ControlCANZLG.h"
+#else
 #include "controlcan.h"
+#endif
 #include "ecanvci.h"
 #include <string.h>
 #include <QStringList>

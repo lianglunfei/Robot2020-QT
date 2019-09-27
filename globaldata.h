@@ -1,3 +1,10 @@
+/*
+ * @Author: wuxingzhang
+ * @Date: 2019-09-27 10:21:51
+ * @LastEditors: wuxingzhang
+ * @LastEditTime: 2019-09-27 16:20:21
+ * @Description: file content
+ */
 #ifndef GLOBALDATA_H
 #define GLOBALDATA_H
 
@@ -33,13 +40,14 @@ enum
     PROTOCOL_TYPE_SPD_PAW
 };
 
-#define NONE_CONNECT            0
-#define CONNECT_TYPE_ALYSIST    1
-#define CONNECT_TYPE_GC         2
+#define NONE_CONNECT 0
+#define CONNECT_TYPE_ALYSIST 1
+#define CONNECT_TYPE_GC 2
 
+#define USE_ZLG
 #define NODE_NUM 12
 #define DRIVE_NEW 1
-#define SIMULATE_CONNECT        NONE_CONNECT//CONNECT_TYPE_ALYSIST
+#define SIMULATE_CONNECT NONE_CONNECT //CONNECT_TYPE_ALYSIST
 
 #define global GlobalData::getInstance()
 
@@ -48,33 +56,38 @@ class GlobalData
 private:
     GlobalData();
 
-    static GlobalData* instance;
+    static GlobalData *instance;
     static QMutex mutex;
 
 public:
     CanAnalysis currentCanAnalyticalData[NODE_NUM];
     QStringList currentCanData;
-    int runningId[NODE_NUM]={0};
-    int statusId[NODE_NUM]={0};
-    int connectType=0;
-    unsigned int sendId[NODE_NUM]={0};
-    bool showDebugInfo=false;
+    int runningId[NODE_NUM] = {0};
+    int statusId[NODE_NUM] = {0};
+    int connectType = 0;
+    unsigned int sendId[NODE_NUM] = {0};
+    bool showDebugInfo = false;
 
     class Garbo
     {
     public:
-        ~Garbo() {
-            if(GlobalData::instance) {
+        ~Garbo()
+        {
+            if (GlobalData::instance)
+            {
                 delete GlobalData::instance;
-                GlobalData::instance=nullptr;
+                GlobalData::instance = nullptr;
             }
         }
     };
 
-    static GlobalData* getInstance() {
-        if(instance==nullptr) {
+    static GlobalData *getInstance()
+    {
+        if (instance == nullptr)
+        {
             mutex.lock();
-            if(instance==nullptr) {
+            if (instance == nullptr)
+            {
                 instance = new GlobalData();
                 static Garbo gb;
             }
