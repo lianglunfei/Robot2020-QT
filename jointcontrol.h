@@ -18,7 +18,7 @@ class JointControl : public Controls
 
 public:
     explicit JointControl();
-    ~JointControl();
+    ~JointControl() override;
 
 private slots:
     void on_initDriverPushButton_clicked();
