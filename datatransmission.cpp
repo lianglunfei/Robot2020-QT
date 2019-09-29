@@ -1,8 +1,8 @@
 /*
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 10:01:46 
- * @Last Modified by:   xingzhang.Wu 
- * @Last Modified time: 2019-09-29 10:01:46 
+ * @Last Modified by: xingzhang.Wu
+ * @Last Modified time: 2019-09-29 10:55:50
  */
 #include "datatransmission.h"
 #include "globaldata.h"
@@ -284,16 +284,16 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
     case CONNECT_TYPE_ALYSIST:
     case CONNECT_TYPE_GC:
     {
-        CAN_OBJ frameinfo[50];
+        CAN_OBJ frameinfo[CAN_MAX_FRAM];
         int len = 0;
         QString str;
         QString tmpstr;
         QStringList tmpList;
         if (connectType == CONNECT_TYPE_ALYSIST)
-            len = VCI_Receive(USBCAN1, 0, 0, frameinfo, 50, 10);
+            len = VCI_Receive(USBCAN1, 0, 0, frameinfo, CAN_MAX_FRAM, 10);
 #ifdef Q_OS_WIN
         else if (connectType == CONNECT_TYPE_GC)
-            len = Receive(USBCAN1, 0, 0, frameinfo, 50, 10);
+            len = Receive(USBCAN1, 0, 0, frameinfo, CAN_MAX_FRAM, 10);
 #endif
         if (len > 0)
         {
@@ -319,6 +319,8 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
                 str += tmpstr;
 
                 id[i] = frameinfo[i].ID;
+                //test
+                Q_ASSERT(frameinfo[i].ID >= global->sendId[0] && frameinfo[i].ID <= global->sendId[NODE_NUM-1]);
 
                 //Data
                 if (frameinfo[i].RemoteFlag == 0)

@@ -2,7 +2,7 @@
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 09:41:24 
  * @Last Modified by: xingzhang.Wu
- * @Last Modified time: 2019-09-29 09:56:37
+ * @Last Modified time: 2019-09-29 10:19:28
  */
 #include "receiveerror.h"
 #include "ui_receiveerror.h"
@@ -10,6 +10,11 @@
 #include "qdebug.h"
 #include <QDateTime>
 
+/**
+ * @brief Construct a new Receive Error:: Receive Error object
+ * 
+ * @param parent 
+ */
 ReceiveError::ReceiveError(QWidget *parent) : QDialog(parent),
                                               ui(new Ui::ReceiveError)
 {
@@ -18,6 +23,10 @@ ReceiveError::ReceiveError(QWidget *parent) : QDialog(parent),
     init();
 }
 
+/**
+ * @brief 可以根据NODE_NUM自动生成初始化界面
+ * 
+ */
 void ReceiveError::init()
 {
     for (int i = 0; i < NODE_NUM; i++)
@@ -92,6 +101,11 @@ void ReceiveError::init()
         start[i].start();
 }
 
+/**
+ * @brief 从接收到的CAN信息里面判断错误信息，更新到界面显示
+ * 
+ * @param i 第i个关节
+ */
 void ReceiveError::errorHandle(int i)
 {
     if (lastRunningJoint[i] && !global->runningId[i])
@@ -134,6 +148,10 @@ void ReceiveError::errorHandle(int i)
     }
 }
 
+/**
+ * @brief 定时处理错误信息，并更新界面
+ * 
+ */
 void ReceiveError::update()
 {
     if (ui->comboBox->currentIndex() < NODE_NUM)
@@ -150,6 +168,10 @@ void ReceiveError::update()
     }
 }
 
+/**
+ * @brief Destroy the Receive Error:: Receive Error object
+ * 
+ */
 ReceiveError::~ReceiveError()
 {
     delete time;
@@ -167,6 +189,10 @@ ReceiveError::~ReceiveError()
     delete ui;
 }
 
+/**
+ * @brief 重置按钮
+ * 
+ */
 void ReceiveError::on_pushButton_clicked()
 {
     countLostAll = 0;

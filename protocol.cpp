@@ -1,8 +1,8 @@
 /*
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 10:04:05 
- * @Last Modified by:   xingzhang.Wu 
- * @Last Modified time: 2019-09-29 10:04:05 
+ * @Last Modified by: xingzhang.Wu
+ * @Last Modified time: 2019-09-29 10:58:04
  */
 #include "protocol.h"
 #include <QDebug>
@@ -28,7 +28,7 @@ Protocol::Protocol()
 void Protocol::getRawData(unsigned char rawData[], unsigned char outData[], int len, int id)
 {
     (void)len;
-    if (id == 0)
+    if (id < global->sendId[0]/* || id > global->sendId[NODE_NUM-1]*/)
         return;
     int k = 0;
     k = (id - global->sendId[0]) * 8;

@@ -1,8 +1,8 @@
 /*
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 10:03:45 
- * @Last Modified by:   xingzhang.Wu 
- * @Last Modified time: 2019-09-29 10:03:45 
+ * @Last Modified by: xingzhang.Wu
+ * @Last Modified time: 2019-09-29 11:17:52
  */
 #include "package.h"
 #include "globaldata.h"
@@ -11,27 +11,32 @@
 
 #include "debug.h"
 
+/**
+ * @brief Construct a new Package:: Package object
+ * 
+ */
 Package::Package()
 {
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         解读从CAN卡读到的数据，并更加电机协议换算成电机电流、速度、角度信息。
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190723
-**/
+ * @brief 解读从CAN卡读到的数据，并根据电机协议换算成电机电流、速度、角度信息。
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Package::unpackOperate()
 {
     static unsigned char receivedCanData[NODE_NUM * 8] = {0}; //96+16
     bool isConnected = false;
-    int dataLen[50] = {0};
-    int id[50] = {0};
-    unsigned char data[50][8] = {{0}};
+    int dataLen[CAN_MAX_FRAM] = {0};
+    int id[CAN_MAX_FRAM] = {0};
+    unsigned char data[CAN_MAX_FRAM][8] = {{0}};
     int len = DataTransmission::CANReceive(global->connectType, global->currentCanData, dataLen, id, data);
+    Q_ASSERT(len==CAN_MAX_FRAM);
     for (int i = 0; i < len; i++)
     {
+        Q_ASSERT(id[i] >= global->sendId[0] && id[i] <= global->sendId[NODE_NUM - 1]);
         Protocol::getRawData(data[i], receivedCanData, dataLen[i], id[i]);
     }
     for (int leg = 0; leg < NODE_NUM; leg++)
@@ -49,7 +54,7 @@ bool Package::unpackOperate()
     int nodeStatus[NODE_NUM] = {0};
     memset(nodeStatus, -1, sizeof(nodeStatus)); //全部初始化为-1
 
-    for (int i = 0; i < 50; i++)
+    for (int i = 0; i < CAN_MAX_FRAM; i++)
     {
         if (id[i] > 0)
         {
@@ -66,12 +71,14 @@ bool Package::unpackOperate()
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         以速度、角度、位置信息将数据进行打包，然后再调用底层发送接口传递给CAN。
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190723
-**/
+ * @brief 以速度、角度、位置信息将数据进行打包，然后再调用底层发送接口传递给CAN。
+ * 
+ * @param id CAN节点ID
+ * @param data CAN节点数据
+ * @param type 协议解析类型
+ * @return true 
+ * @return false 如果CAN还未连接，则不处理
+ */
 bool Package::packOperate(unsigned int id, double data, int type)
 {
     if (!global->connectType)
@@ -126,16 +133,20 @@ bool Package::packOperate(unsigned int id, double data, int type)
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         可以同时打包多帧数据，直接调用底层发送多帧的CAN接口，减少各帧数据发送的延时。
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190723
-**/
+ * @brief 可以同时打包多帧数据，直接调用底层发送多帧的CAN接口，减少各帧数据发送的延时。
+ * 
+ * @param id CANID
+ * @param data 
+ * @param num 
+ * @param type 
+ * @return true 
+ * @return false 
+ */
 bool Package::packOperateMulti(unsigned int *id, double *data, int num, int type)
 {
     if (!global->connectType)
         return false;
+    Q_ASSERT(num==NODE_NUM);
     unsigned char packData[num][8] = {0};
     for (int i = 0; i < num; i++)
     {

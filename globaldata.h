@@ -1,8 +1,8 @@
 /*
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 10:02:20 
- * @Last Modified by:   xingzhang.Wu 
- * @Last Modified time: 2019-09-29 10:02:20 
+ * @Last Modified by: xingzhang.Wu
+ * @Last Modified time: 2019-09-29 10:52:02
  */
 #ifndef GLOBALDATA_H
 #define GLOBALDATA_H
@@ -46,6 +46,7 @@ enum
 #define USE_ZLG
 #define NODE_NUM 12
 #define DRIVE_NEW 1
+#define CAN_MAX_FRAM 200
 #define SIMULATE_CONNECT NONE_CONNECT //CONNECT_TYPE_ALYSIST
 
 #define global GlobalData::getInstance()

@@ -1,8 +1,8 @@
 /*
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 10:05:46 
- * @Last Modified by:   xingzhang.Wu 
- * @Last Modified time: 2019-09-29 10:05:46 
+ * @Last Modified by: xingzhang.Wu
+ * @Last Modified time: 2019-09-29 10:51:08
  */
 #ifndef CONTROLCAN_H
 #define CONTROLCAN_H
@@ -10,7 +10,7 @@
 #include "cantypes.h"
 #include <qsystemdetection.h>
 
-////文件版本：v2.01 20190527
+//文件版本：v2.01 20190527
 #ifdef __cplusplus
 #define EXTERN_C extern "C"
 #else
