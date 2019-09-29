@@ -1,3 +1,9 @@
+/*
+ * @Author: xingzhang.Wu 
+ * @Date: 2019-09-29 10:05:10 
+ * @Last Modified by:   xingzhang.Wu 
+ * @Last Modified time: 2019-09-29 10:05:10 
+ */
 #ifndef SINGLEJOINTCONTROL_H
 #define SINGLEJOINTCONTROL_H
 

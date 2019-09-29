@@ -1,9 +1,8 @@
 /*
- * @Author: wuxingzhang
- * @Date: 2019-09-27 10:21:51
- * @LastEditors: wuxingzhang
- * @LastEditTime: 2019-09-27 16:20:21
- * @Description: file content
+ * @Author: xingzhang.Wu 
+ * @Date: 2019-09-29 10:02:20 
+ * @Last Modified by:   xingzhang.Wu 
+ * @Last Modified time: 2019-09-29 10:02:20 
  */
 #ifndef GLOBALDATA_H
 #define GLOBALDATA_H

@@ -1,3 +1,9 @@
+/*
+ * @Author: xingzhang.Wu 
+ * @Date: 2019-09-29 10:02:31 
+ * @Last Modified by:   xingzhang.Wu 
+ * @Last Modified time: 2019-09-29 10:02:31 
+ */
 #ifndef HEXINTEGERVALIDATOR_H
 #define HEXINTEGERVALIDATOR_H
 

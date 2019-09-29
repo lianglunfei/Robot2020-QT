@@ -1,3 +1,9 @@
+/*
+ * @Author: xingzhang.Wu 
+ * @Date: 2019-09-29 09:41:24 
+ * @Last Modified by: xingzhang.Wu
+ * @Last Modified time: 2019-09-29 09:56:37
+ */
 #include "receiveerror.h"
 #include "ui_receiveerror.h"
 

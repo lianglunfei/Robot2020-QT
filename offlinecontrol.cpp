@@ -1,3 +1,9 @@
+/*
+ * @Author: xingzhang.Wu 
+ * @Date: 2019-09-29 10:03:36 
+ * @Last Modified by:   xingzhang.Wu 
+ * @Last Modified time: 2019-09-29 10:03:36 
+ */
 #include "offlinecontrol.h"
 #include "ui_offlinecontrol.h"
 

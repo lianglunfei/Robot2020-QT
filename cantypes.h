@@ -1,9 +1,8 @@
 /*
- * @Author: wuxingzhang
- * @Date: 2019-09-06 15:28:16
- * @LastEditors: wuxingzhang
- * @LastEditTime: 2019-09-06 15:28:16
- * @Description: file content
+ * @Author: xingzhang.Wu 
+ * @Date: 2019-09-29 09:57:04 
+ * @Last Modified by:   xingzhang.Wu 
+ * @Last Modified time: 2019-09-29 09:57:04 
  */
 #ifndef CANTYPES_H
 #define CANTYPES_H

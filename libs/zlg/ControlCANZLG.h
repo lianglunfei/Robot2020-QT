@@ -1,9 +1,8 @@
 /*
- * @Author: wuxingzhang
- * @Date: 2019-09-27 10:30:18
- * @LastEditors: wuxingzhang
- * @LastEditTime: 2019-09-27 10:30:18
- * @Description: file content
+ * @Author: xingzhang.Wu 
+ * @Date: 2019-09-29 10:06:21 
+ * @Last Modified by:   xingzhang.Wu 
+ * @Last Modified time: 2019-09-29 10:06:21 
  */
 #ifndef CONTROLCAN_H
 #define CONTROLCAN_H

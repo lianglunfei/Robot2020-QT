@@ -1,3 +1,9 @@
+/*
+ * @Author: xingzhang.Wu 
+ * @Date: 2019-09-29 09:57:48 
+ * @Last Modified by:   xingzhang.Wu 
+ * @Last Modified time: 2019-09-29 09:57:48 
+ */
 #include "connectdialog.h"
 #include "ui_connectdialog.h"
 

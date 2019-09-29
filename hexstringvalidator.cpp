@@ -1,3 +1,9 @@
+/*
+ * @Author: xingzhang.Wu 
+ * @Date: 2019-09-29 10:02:35 
+ * @Last Modified by:   xingzhang.Wu 
+ * @Last Modified time: 2019-09-29 10:02:35 
+ */
 #include "hexstringvalidator.h"
 
 HexStringValidator::HexStringValidator(QObject *parent) : QValidator(parent),

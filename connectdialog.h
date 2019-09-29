@@ -1,3 +1,9 @@
+/*
+ * @Author: xingzhang.Wu 
+ * @Date: 2019-09-29 09:57:53 
+ * @Last Modified by:   xingzhang.Wu 
+ * @Last Modified time: 2019-09-29 09:57:53 
+ */
 #ifndef CONNECTDIALOG_H
 #define CONNECTDIALOG_H
 

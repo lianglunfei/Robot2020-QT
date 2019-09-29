@@ -1,3 +1,9 @@
+/*
+ * @Author: xingzhang.Wu 
+ * @Date: 2019-09-29 10:03:15 
+ * @Last Modified by:   xingzhang.Wu 
+ * @Last Modified time: 2019-09-29 10:03:15 
+ */
 #include "mainwindow.h"
 #include <QApplication>
 #ifdef Q_OS_WIN

@@ -1,9 +1,8 @@
 /*
- * @Author: wuxingzhang
- * @Date: 2019-09-24 09:03:15
- * @LastEditors: wuxingzhang
- * @LastEditTime: 2019-09-27 16:12:40
- * @Description: file content
+ * @Author: xingzhang.Wu 
+ * @Date: 2019-09-29 10:01:46 
+ * @Last Modified by:   xingzhang.Wu 
+ * @Last Modified time: 2019-09-29 10:01:46 
  */
 #include "datatransmission.h"
 #include "globaldata.h"

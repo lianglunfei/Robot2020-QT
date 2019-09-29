@@ -1,3 +1,9 @@
+/*
+ * @Author: xingzhang.Wu 
+ * @Date: 2019-09-29 10:03:07 
+ * @Last Modified by:   xingzhang.Wu 
+ * @Last Modified time: 2019-09-29 10:03:07 
+ */
 #include "jointspeedmeas.h"
 #include "ui_jointspeedmeas.h"
 
