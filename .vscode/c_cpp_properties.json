@@ -13,7 +13,9 @@
             "cppStandard": "c++17",
             "includePath": [
                 "${default}",
-                "D:/Qt/Qt5.12.0/5.12.0/mingw73_64/include/**"
+                "${workspaceFolder}/**",
+                "D:/Qt/Qt5.12.0/5.12.0/mingw73_64/include/**",
+                "G:/software/build-RobotControlSystem-Desktop_Qt_5_12_0_MinGW_64_bit-Release"
             ]
         }
     ],

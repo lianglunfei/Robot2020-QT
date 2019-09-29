@@ -33,14 +33,18 @@ bool Package::unpackOperate()
     int id[CAN_MAX_FRAM] = {0};
     unsigned char data[CAN_MAX_FRAM][8] = {{0}};
     int len = DataTransmission::CANReceive(global->connectType, global->currentCanData, dataLen, id, data);
-    Q_ASSERT(len==CAN_MAX_FRAM);
+    if (len == 0)
+        return isConnected;
     for (int i = 0; i < len; i++)
     {
-        Q_ASSERT(id[i] >= global->sendId[0] && id[i] <= global->sendId[NODE_NUM - 1]);
+        // 防止出现有问题的ID
+        if (id[i] < global->sendId[0] || id[i] > global->sendId[NODE_NUM - 1])
+            return isConnected;
         Protocol::getRawData(data[i], receivedCanData, dataLen[i], id[i]);
     }
     for (int leg = 0; leg < NODE_NUM; leg++)
-    { //New add two wheel 12+2
+    {
+        //New add two wheel 12+2
         //data:26144/360=728.18
         global->currentCanAnalyticalData[leg].position = Protocol::parsePos(receivedCanData, leg);
         global->currentCanAnalyticalData[leg].speed = Protocol::parseSpeed(receivedCanData, leg);
@@ -54,13 +58,10 @@ bool Package::unpackOperate()
     int nodeStatus[NODE_NUM] = {0};
     memset(nodeStatus, -1, sizeof(nodeStatus)); //全部初始化为-1
 
-    for (int i = 0; i < CAN_MAX_FRAM; i++)
+    for (int i = 0; i < len; i++) //只处理有值的部分
     {
-        if (id[i] > 0)
-        {
-            nodeId[id[i] - global->sendId[0]] = 1; //该Id接收到了数据
-            nodeStatus[id[i] - global->sendId[0]] = data[i][0];
-        }
+        nodeId[id[i] - global->sendId[0]] = 1; //该Id接收到了数据
+        nodeStatus[id[i] - global->sendId[0]] = data[i][0];
     }
     for (int i = 0; i < NODE_NUM; i++)
     {
@@ -136,9 +137,9 @@ bool Package::packOperate(unsigned int id, double data, int type)
  * @brief 可以同时打包多帧数据，直接调用底层发送多帧的CAN接口，减少各帧数据发送的延时。
  * 
  * @param id CANID
- * @param data 
- * @param num 
- * @param type 
+ * @param data CAN数据
+ * @param num CAN数据大小
+ * @param type CAN数据打包类型
  * @return true 
  * @return false 
  */
@@ -146,7 +147,7 @@ bool Package::packOperateMulti(unsigned int *id, double *data, int num, int type
 {
     if (!global->connectType)
         return false;
-    Q_ASSERT(num==NODE_NUM);
+    Q_ASSERT(num == NODE_NUM);
     unsigned char packData[num][8] = {0};
     for (int i = 0; i < num; i++)
     {

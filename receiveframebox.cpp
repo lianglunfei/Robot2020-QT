@@ -11,6 +11,11 @@
 #include "qdebug.h"
 #include "globaldata.h"
 
+/**
+ * @brief Construct a new Receive Frame Box:: Receive Frame Box object
+ * 
+ * @param parent 
+ */
 ReceiveFrameBox::ReceiveFrameBox(QWidget *parent) : QGroupBox(parent),
                                                     ui(new Ui::ReceiveFrameBox)
 {
@@ -19,6 +24,10 @@ ReceiveFrameBox::ReceiveFrameBox(QWidget *parent) : QGroupBox(parent),
     initEvent();
 }
 
+/**
+ * @brief 接收控件初始化定时器
+ * 
+ */
 void ReceiveFrameBox::initEvent()
 {
     QTimer *timer = new QTimer(this);
@@ -27,12 +36,9 @@ void ReceiveFrameBox::initEvent()
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         如果已连接CAN设备并且显示调试信息变量已打开，则将收到的CAN命令在接收框中定时显示出来
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190801
-**/
+ * @brief 如果已连接CAN设备并且显示调试信息变量已打开，则将收到的CAN命令在接收框中定时显示出来
+ * 
+ */
 void ReceiveFrameBox::update()
 {
     if ((global->connectType || SIMULATE_CONNECT != NONE_CONNECT) && global->showDebugInfo)
@@ -45,6 +51,10 @@ void ReceiveFrameBox::update()
     }
 }
 
+/**
+ * @brief Destroy the Receive Frame Box:: Receive Frame Box object
+ * 
+ */
 ReceiveFrameBox::~ReceiveFrameBox()
 {
     delete ui;

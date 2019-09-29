@@ -14,8 +14,14 @@
 #include <QTime>
 
 #ifdef Q_OS_WIN
+/**
+ * @brief 程式异常捕获
+ * 
+ * @param pException 
+ * @return LONG 
+ */
 LONG ApplicationCrashHandler(EXCEPTION_POINTERS *pException)
-{ //程式异常捕获
+{
     //创建 Dump 文件
     QDateTime CurDTime = QDateTime::currentDateTime();
     QString current_date = CurDTime.toString("yyyy_MM_dd_hh_mm_ss");

@@ -13,14 +13,11 @@
 #include "debug.h"
 
 /**
-*@projectName   RobotControlSystem
-*@brief         继承类，继承于Controls，只需要完成界面对象的赋值即可，
-*               然后调用基类的一系列初始化方法就能够完成界面的搭建，
-*               比如initConnection、controlWidgetInit
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190731
-**/
+ * @brief Construct a new Joint Control:: Joint Control object
+ * 继承类，继承于Controls，只需要完成界面对象的赋值即可，
+ * 然后调用基类的一系列初始化方法就能够完成界面的搭建，
+ * 比如initConnection、controlWidgetInit
+ */
 JointControl::JointControl() : ui(new Ui::JointControl)
 {
     ui->setupUi(this);
@@ -35,12 +32,9 @@ JointControl::JointControl() : ui(new Ui::JointControl)
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         完成界面对象的赋值，该值从UI中获取
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190731
-**/
+ * @brief 完成界面对象的赋值，该值从UI中获取
+ * 
+ */
 void JointControl::initObject()
 {
     setSpeedSlider(QList<QString>({"speed11HorizontalSlider", "speed12HorizontalSlider", "speed13HorizontalSlider",
@@ -81,26 +75,48 @@ void JointControl::initObject()
                                        "relativePos41DoubleSpinBox", "relativePos42DoubleSpinBox", "relativePos43DoubleSpinBox"}));
 }
 
+/**
+ * @brief Destroy the Joint Control:: Joint Control object
+ * 
+ */
 JointControl::~JointControl()
 {
     delete ui;
 }
 
+/**
+ * @brief 初始化所有电机
+ * 
+ */
 void JointControl::on_initDriverPushButton_clicked()
 {
     Drivers::initJoint();
 }
 
+/**
+ * @brief 紧急停止所有电机
+ * 
+ */
 void JointControl::on_emergencyStopPushButton_clicked()
 {
     Drivers::stopJoint();
 }
 
+/**
+ * @brief 校验所有电机
+ * ! 只对老电机有效果
+ * 
+ */
 void JointControl::on_caliPushButton_clicked()
 {
     Drivers::calJoint();
 }
 
+/**
+ * @brief 键盘快捷键设置
+ * 
+ * @param e 
+ */
 void JointControl::keyPressEvent(QKeyEvent *e)
 {
     switch (e->key())

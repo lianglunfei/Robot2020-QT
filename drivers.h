@@ -11,6 +11,7 @@ class Drivers
 {
 private:
     Drivers();
+    friend void Delay_MSec(unsigned int msec);
 
 public:
     static void initJoint();

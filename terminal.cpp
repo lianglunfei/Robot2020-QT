@@ -7,6 +7,11 @@
 #include "terminal.h"
 #include "ui_terminal.h"
 
+/**
+ * @brief Construct a new Terminal:: Terminal object
+ * 
+ * @param parent 
+ */
 Terminal::Terminal(QWidget *parent) : QWidget(parent),
                                       ui(new Ui::Terminal)
 {
@@ -14,6 +19,10 @@ Terminal::Terminal(QWidget *parent) : QWidget(parent),
     this->setWindowTitle(tr("Terminal"));
 }
 
+/**
+ * @brief Destroy the Terminal:: Terminal object
+ * 
+ */
 Terminal::~Terminal()
 {
     delete ui;

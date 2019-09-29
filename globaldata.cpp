@@ -9,6 +9,10 @@
 GlobalData *GlobalData::instance;
 QMutex GlobalData::mutex;
 
+/**
+ * @brief Construct a new Global Data:: Global Data object
+ * 
+ */
 GlobalData::GlobalData()
 {
     for (int i = 0; i < NODE_NUM; i++)

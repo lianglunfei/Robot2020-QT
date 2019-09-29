@@ -19,17 +19,16 @@ Protocol::Protocol()
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         根据ID将某个关节的数据放到一维数组的某个位置
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190724
-**/
+ * @brief 根据ID将某个关节的数据放到一维数组的某个位置
+ * 
+ * @param rawData 从CAN接收到的原始数据
+ * @param outData 输出的一维数组
+ * @param len 
+ * @param id CAN ID
+ */
 void Protocol::getRawData(unsigned char rawData[], unsigned char outData[], int len, int id)
 {
     (void)len;
-    if (id < global->sendId[0]/* || id > global->sendId[NODE_NUM-1]*/)
-        return;
     int k = 0;
     k = (id - global->sendId[0]) * 8;
     for (int j = 0; j < 8; j++)
@@ -39,12 +38,12 @@ void Protocol::getRawData(unsigned char rawData[], unsigned char outData[], int 
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         将原始数据解析成位置信息,2^19/360=1456.36
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190724
-**/
+ * @brief 将原始数据解析成位置信息,2^19/360=1456.36
+ * 
+ * @param data 原始数据
+ * @param index 节点ID，根据该ID可以找到原始数组中对应的值
+ * @return double 解析后的位置
+ */
 double Protocol::parsePos(unsigned char data[], int index)
 {
     if (index == 13)
@@ -53,6 +52,13 @@ double Protocol::parsePos(unsigned char data[], int index)
         return (data[index * 8 + 1] * 65536 + data[index * 8 + 2] * 256 + data[index * 8 + 3]) / POS_MAX;
 }
 
+/**
+ * @brief 将原始数据解析成速度信息
+ * 
+ * @param data 原始数据
+ * @param index 节点ID，根据该ID可以找到原始数组中对应的值
+ * @return double 解析后的速度
+ */
 double Protocol::parseSpeed(unsigned char data[], int index)
 {
     double res = data[index * 8 + 6] * 256 + data[index * 8 + 7];
@@ -61,6 +67,13 @@ double Protocol::parseSpeed(unsigned char data[], int index)
     return res / 10.0;
 }
 
+/**
+ * @brief 将原始数据解析成电流信息
+ * 
+ * @param data 原始数据
+ * @param index 节点ID，根据该ID可以找到原始数组中对应的值
+ * @return double 解析后的电流
+ */
 double Protocol::parseCurrent(unsigned char data[], int index)
 {
     return (data[index * 8 + 4] * 256 + data[index * 8 + 5]) / 10.0;
@@ -72,12 +85,11 @@ int Protocol::parseStatus(unsigned char data[], int index)
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         将位置信息封装成字节数组，用于CAN信息封装
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190724
-**/
+ * @brief 将位置信息封装成字节数组，用于CAN信息封装
+ * 
+ * @param data 原始数据
+ * @param value 封装后的数据
+ */
 void Protocol::packPos(unsigned char data[], double value)
 {
     //{0x8a,0x00,0x00,0x00,0x00,0x00,0x00,0x01}; //default position mode
@@ -94,6 +106,12 @@ void Protocol::packPos(unsigned char data[], double value)
     data[7] = 0x01;
 }
 
+/**
+ * @brief 将位置信息封装成字节数组，用于CAN信息封装
+ * 
+ * @param data 原始数据
+ * @param value 封装后的数据
+ */
 void Protocol::packPosRF(unsigned char data[], double value)
 {
     //{0x8a,0x00,0x00,0x00,0x00,0x00,0x00,0x01}; //default position mode
@@ -106,6 +124,12 @@ void Protocol::packPosRF(unsigned char data[], double value)
     data[7] = 0x01;
 }
 
+/**
+ * @brief 将速度信息封装成字节数组，用于CAN信息封装
+ * 
+ * @param data 原始数据
+ * @param value 封装后的数据
+ */
 void Protocol::packSpeed(unsigned char data[], double value)
 {
     //data:65536~4000RPM 65536/4000=16.384
@@ -124,6 +148,12 @@ void Protocol::packSpeed(unsigned char data[], double value)
     data[7] = 0x01;
 }
 
+/**
+ * @brief 将速度信息封装成字节数组，用于CAN信息封装
+ * 
+ * @param data 原始数据
+ * @param value 封装后的数据
+ */
 void Protocol::packSpeedSet(unsigned char data[], double value)
 {
     //data:65536~4000RPM 65536/4000=16.384
@@ -142,6 +172,12 @@ void Protocol::packSpeedSet(unsigned char data[], double value)
     data[7] = 0x01;
 }
 
+/**
+ * @brief 封装校验信息
+ * 
+ * @param data 原始数据
+ * @param value 封装后的数据
+ */
 void Protocol::packCal(unsigned char data[], double value)
 {
     (void)value;
@@ -153,6 +189,12 @@ void Protocol::packCal(unsigned char data[], double value)
 #endif
 }
 
+/**
+ * @brief 封装启动电机命令
+ * 
+ * @param data 原始数据
+ * @param value 封装后的数据
+ */
 void Protocol::packStart(unsigned char data[], double value)
 {
     (void)value;
@@ -160,6 +202,12 @@ void Protocol::packStart(unsigned char data[], double value)
     data[7] = 0x01;
 }
 
+/**
+ * @brief 封装暂停电机命令
+ * 
+ * @param data 原始数据
+ * @param value 封装后的数据
+ */
 void Protocol::packPause(unsigned char data[], double value)
 {
     (void)value;
@@ -167,6 +215,12 @@ void Protocol::packPause(unsigned char data[], double value)
     data[7] = 0x01;
 }
 
+/**
+ * @brief 封装停止电机命令
+ * 
+ * @param data 原始数据
+ * @param value 封装后的数据
+ */
 void Protocol::packShutDown(unsigned char data[], double value)
 {
     (void)value;
@@ -174,18 +228,38 @@ void Protocol::packShutDown(unsigned char data[], double value)
     data[7] = 0x02;
 }
 
+
+/**
+ * @brief 封装打开阀门命令
+ * 
+ * @param data 原始数据
+ * @param value 封装后的数据
+ */
 void Protocol::packOpenValve(unsigned char data[], double value)
 {
     (void)value;
     data[0] = 0xea;
 }
 
+
+/**
+ * @brief 封装关闭阀门命令
+ * 
+ * @param data 原始数据
+ * @param value 封装后的数据
+ */
 void Protocol::packCloseValve(unsigned char data[], double value)
 {
     (void)value;
     data[0] = 0xfa;
 }
 
+/**
+ * @brief 轮子控制，暂时未启用
+ * 
+ * @param data 
+ * @param value 
+ */
 void Protocol::packWheelReset(unsigned char data[], double value)
 {
     (void)value;
@@ -199,6 +273,12 @@ void Protocol::packWheelReset(unsigned char data[], double value)
     data[7] = 0x55;
 }
 
+/**
+ * @brief 轮子控制，暂时未启用
+ * 
+ * @param data 
+ * @param value 
+ */
 void Protocol::packWheelSelect(unsigned char data[], double value)
 {
     (void)value;
@@ -212,6 +292,12 @@ void Protocol::packWheelSelect(unsigned char data[], double value)
     data[7] = 0x55;
 }
 
+/**
+ * @brief 轮子控制，暂时未启用
+ * 
+ * @param data 
+ * @param value 
+ */
 void Protocol::packWheelSpeed(unsigned char data[], double value)
 {
     int readValue;
@@ -226,6 +312,12 @@ void Protocol::packWheelSpeed(unsigned char data[], double value)
     data[7] = 0x55;
 }
 
+/**
+ * @brief 轮子控制，暂时未启用
+ * 
+ * @param data 
+ * @param value 
+ */
 void Protocol::packWheelRef(unsigned char data[], double value)
 {
     (void)value;
@@ -235,6 +327,12 @@ void Protocol::packWheelRef(unsigned char data[], double value)
     data[7] = 0x01;
 }
 
+/**
+ * @brief 暂时未启用
+ * 
+ * @param data 
+ * @param value 
+ */
 void Protocol::packSpdPaw(unsigned char data[], double value)
 {
     data[0] = 0x9a;

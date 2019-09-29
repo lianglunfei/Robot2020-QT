@@ -6,17 +6,23 @@
  */
 #include "convert.h"
 
+/**
+ * @brief Construct a new Convert:: Convert object
+ * 
+ */
 Convert::Convert()
 {
 }
 
-//-----------------------------------------------------
-//参数：
-//str：要转换的字符串
-//data：储存转换过来的数据串
-//len:数据长度
-//函数功能：字符串转换为数据串
-//-----------------------------------------------------
+/**
+ * @brief 字符串转换为数据串
+ * 
+ * @param str 要转换的字符串
+ * @param data 要转换的字符串
+ * @param len 数据长度
+ * @param flag 
+ * @return int 
+ */
 int Convert::strToData(unsigned char *str, unsigned char *data, int len, int flag)
 {
     unsigned char cTmp = 0;
@@ -35,12 +41,13 @@ int Convert::strToData(unsigned char *str, unsigned char *data, int len, int fla
     return 0;
 }
 
-//-----------------------------------------------------
-//参数：
-//chr：要转换的字符
-//cint：储存转换过来的数据
-//函数功能：字符转换为数据
-//-----------------------------------------------------
+/**
+ * @brief 字符转换为数据
+ * 
+ * @param chr 要转换的字符
+ * @param cint 储存转换过来的数据
+ * @return int 
+ */
 int Convert::charToInt(unsigned char chr, unsigned char *cint)
 {
     char cTmp;

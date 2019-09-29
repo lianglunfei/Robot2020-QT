@@ -12,6 +12,10 @@
 #include "drivers.h"
 #include "qdebug.h"
 
+/**
+ * @brief Construct a new Single Joint Control:: Single Joint Control object
+ * 
+ */
 SingleJointControl::SingleJointControl() : ui(new Ui::SingleJointControl)
 {
     ui->setupUi(this);
@@ -26,6 +30,10 @@ SingleJointControl::SingleJointControl() : ui(new Ui::SingleJointControl)
     setCurrentNode(0);
 }
 
+/**
+ * @brief 初始化界面信息，字符串代表界面控件的object名称
+ * 
+ */
 void SingleJointControl::initObject()
 {
     setSpeedSlider(QList<QString>({"speedHorizontalSlider"}));
@@ -38,21 +46,38 @@ void SingleJointControl::initObject()
     setRelativeSpinBox(QList<QString>({"relativePosDoubleSpinBox"}));
 }
 
+/**
+ * @brief 初始化电机
+ * 
+ */
 void SingleJointControl::on_initDriverPushButton_clicked()
 {
     Drivers::initJoint(ui->comboBox->currentIndex());
 }
 
+/**
+ * @brief 紧急停止
+ * 
+ */
 void SingleJointControl::on_emergencyStopPushButton_clicked()
 {
     Drivers::stopJoint(ui->comboBox->currentIndex());
 }
 
+/**
+ * @brief 电机校准
+ * 
+ */
 void SingleJointControl::on_caliPushButton_clicked()
 {
     Drivers::calJoint(ui->comboBox->currentIndex());
 }
 
+/**
+ * @brief 紧急停止快捷键ALT+A
+ * 
+ * @param e 
+ */
 void SingleJointControl::keyPressEvent(QKeyEvent *e)
 {
     switch (e->key())
@@ -68,6 +93,11 @@ void SingleJointControl::keyPressEvent(QKeyEvent *e)
     }
 }
 
+/**
+ * @brief 选择需要进行操控的CAN节点
+ * 
+ * @param index 节点ID
+ */
 void SingleJointControl::on_comboBox_currentIndexChanged(int index)
 {
     setCurrentNode(index);

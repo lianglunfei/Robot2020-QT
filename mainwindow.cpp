@@ -23,6 +23,11 @@
 
 #include "debug.h"
 
+/**
+ * @brief Construct a new Main Window:: Main Window object
+ * 
+ * @param parent 
+ */
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::MainWindow)
 {
@@ -60,10 +65,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     connectInit();
 }
 
+/**
+ * @brief 启动CAN接收线程
+ * 
+ */
 void MainWindow::canConnectEvent()
 {
     //start receive thread
-    workerThread = new ReceiveWorkerThread(this);
+    workerThread = new ReceiveWorkerThread();
     // After the end of the thread, automatically destroy
     connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
     workerThread->start();
@@ -74,6 +83,10 @@ void MainWindow::canConnectEvent()
         ui->statusBar->showMessage(tr("Simulate"));
 }
 
+/**
+ * @brief 对connect的初始化
+ * 
+ */
 void MainWindow::connectInit()
 {
     connect(ui->actionConnect_CAN, &QAction::triggered, m_connect_dialog, &ConnectDialog::show);
@@ -88,6 +101,10 @@ void MainWindow::connectInit()
     connect(m_receive_error, &ReceiveError::jointError, m_offline_control, &OfflineControl::pausedWhenError);
 }
 
+/**
+ * @brief Destroy the Main Window:: Main Window object
+ * 
+ */
 MainWindow::~MainWindow()
 {
     delete m_connect_dialog;

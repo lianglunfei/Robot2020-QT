@@ -43,7 +43,11 @@ enum
 #define CONNECT_TYPE_ALYSIST 1
 #define CONNECT_TYPE_GC 2
 
+//开关变量
 #define USE_ZLG
+#define DELAY_INIT
+
+//配置变量
 #define NODE_NUM 12
 #define DRIVE_NEW 1
 #define CAN_MAX_FRAM 200

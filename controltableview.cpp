@@ -25,6 +25,11 @@
 #define POS_LIMIT_VALUE 100          //最大允许位置变化偏差，超过会显示数据异常
 #define SHOW_BTN_NUM 50              //表格显示按钮的行数，一般设定前50行s
 
+/**
+ * @brief Construct a new Control Table View:: Control Table View object
+ * 
+ * @param parent 
+ */
 ControlTableView::ControlTableView(QWidget *parent) : QTableView(parent)
 {
     headerDataInit();
@@ -36,6 +41,10 @@ ControlTableView::ControlTableView(QWidget *parent) : QTableView(parent)
     eventInit();
 }
 
+/**
+ * @brief Destroy the Control Table View:: Control Table View object
+ * 
+ */
 ControlTableView::~ControlTableView()
 {
     delete taskTimer;
@@ -43,6 +52,10 @@ ControlTableView::~ControlTableView()
     delete model;
 }
 
+/**
+ * @brief 仿真事件初始化
+ * 
+ */
 void ControlTableView::eventInit()
 {
     taskTimer = new QTimer;
@@ -55,12 +68,9 @@ void ControlTableView::eventInit()
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         表头初始化，与BTN_START_INDEX、ROW_BTN_NUM、BEFORE_VALUE_NUM有关联
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190805
-**/
+ * @brief 表头初始化，与BTN_START_INDEX、ROW_BTN_NUM、BEFORE_VALUE_NUM有关联
+ * 
+ */
 void ControlTableView::headerDataInit()
 {
     headerData.clear();
@@ -74,6 +84,10 @@ void ControlTableView::headerDataInit()
                << QObject::tr("Select");
 }
 
+/**
+ * @brief 数据模型初始化
+ * 
+ */
 void ControlTableView::modelInit()
 {
     model = new QStandardItemModel();
@@ -85,12 +99,9 @@ void ControlTableView::modelInit()
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         表的初始化，绑定对应的model
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190809
-**/
+ * @brief 表的初始化，绑定对应的model
+ * 
+ */
 void ControlTableView::tableViewInit()
 {
     resizeColumnsToContents();
@@ -103,12 +114,9 @@ void ControlTableView::tableViewInit()
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         valueList为初始化表中行时的数据来源
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190805
-**/
+ * @brief valueList为初始化表中行时的数据来源
+ * 
+ */
 void ControlTableView::valueListInit()
 {
     valueList.clear();
@@ -121,12 +129,11 @@ void ControlTableView::valueListInit()
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         从当前获取的关节数据更新valueList当前获取的关节数据更新valueList
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190805
-**/
+ * @brief 从当前获取的关节数据更新valueList当前获取的关节数据更新valueList
+ * 
+ * @param currentName 
+ * @param currentPeriod 
+ */
 void ControlTableView::valueListSync(QString currentName, int currentPeriod)
 {
     double value[NODE_NUM];
@@ -144,12 +151,10 @@ void ControlTableView::valueListSync(QString currentName, int currentPeriod)
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         从表格更新valueList
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190809
-**/
+ * @brief 从表格更新valueList
+ * 
+ * @param row 
+ */
 void ControlTableView::valueListUpdate(int row)
 {
     valueList.clear();

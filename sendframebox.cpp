@@ -16,6 +16,11 @@
 
 #include <QTimer>
 
+/**
+ * @brief Construct a new Send Frame Box:: Send Frame Box object
+ * 
+ * @param parent 
+ */
 SendFrameBox::SendFrameBox(QWidget *parent) : QGroupBox(parent),
                                               ui(new Ui::SendFrameBox)
 {
@@ -72,12 +77,9 @@ SendFrameBox::SendFrameBox(QWidget *parent) : QGroupBox(parent),
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         解读界面输入的数据，调用底层CAN发送接口，将数据一次性或定时发送出去
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190801
-**/
+ * @brief 解读界面输入的数据，调用底层CAN发送接口，将数据一次性或定时发送出去
+ * 
+ */
 void SendFrameBox::sendFrameData()
 {
     char szFrameID[9];
@@ -152,6 +154,10 @@ void SendFrameBox::sendFrameData()
         repeatTimer->start(ui->periodSpinBox->text().toInt());
 }
 
+/**
+ * @brief 定时发送实际处理函数
+ * 
+ */
 void SendFrameBox::repeatSendProcess()
 {
     int ret = DataTransmission::CANTransmit(global->connectType, currentData, currentId);
@@ -163,23 +169,41 @@ void SendFrameBox::repeatSendProcess()
         qDebug() << "send successful\n";
 }
 
+/**
+ * @brief 按钮触发发送函数
+ * 
+ */
 void SendFrameBox::on_sendButton_clicked()
 {
     if (global->connectType)
         sendFrameData();
 }
 
+/**
+ * @brief 定时发送停止
+ * 
+ * @param arg1 
+ */
 void SendFrameBox::on_repeatSendCheckBox_stateChanged(int arg1)
 {
     if (arg1 == 0)
         repeatTimer->stop();
 }
 
+/**
+ * @brief Destroy the Send Frame Box:: Send Frame Box object
+ * 
+ */
 SendFrameBox::~SendFrameBox()
 {
     delete ui;
 }
 
+/**
+ * @brief 是否回显接收到的CAN信息
+ * 
+ * @param arg1 
+ */
 void SendFrameBox::on_receiveMsgCheckBox_stateChanged(int arg1)
 {
     if (arg1 == 0)

@@ -12,6 +12,11 @@
 #include <QFileDialog>
 #include <QKeyEvent>
 
+/**
+ * @brief Construct a new Offline Control:: Offline Control object
+ * 
+ * @param parent 
+ */
 OfflineControl::OfflineControl(QWidget *parent) : QDialog(parent),
                                                   ui(new Ui::OfflineControl)
 {
@@ -22,11 +27,19 @@ OfflineControl::OfflineControl(QWidget *parent) : QDialog(parent),
     connect(ui->tableView, &ControlTableView::stopThread, this, &OfflineControl::stopStatus);
 }
 
+/**
+ * @brief Destroy the Offline Control:: Offline Control object
+ * 
+ */
 OfflineControl::~OfflineControl()
 {
     delete ui;
 }
 
+/**
+ * @brief 新增命令
+ * 
+ */
 void OfflineControl::on_addRecordPushButton_clicked()
 {
     ui->tableView->valueListSync(ui->nameLineEdit->text(),
@@ -35,6 +48,10 @@ void OfflineControl::on_addRecordPushButton_clicked()
                                    ui->tableView->model->rowCount(), true);
 }
 
+/**
+ * @brief 同步命令，将当前接收到的CAN信息同步到所选的table行中
+ * 
+ */
 void OfflineControl::on_synchronousPushButton_clicked()
 {
     int row = ui->tableView->selectionModel()->currentIndex().row();
@@ -42,6 +59,10 @@ void OfflineControl::on_synchronousPushButton_clicked()
         ui->tableView->syncTableviewRowData(row);
 }
 
+/**
+ * @brief 展开/隐藏数据
+ * 
+ */
 void OfflineControl::on_hidePushButton_clicked()
 {
     if (ui->hidePushButton->text().contains("展开数值"))
@@ -56,11 +77,20 @@ void OfflineControl::on_hidePushButton_clicked()
     }
 }
 
+/**
+ * @brief 仿真数据运行状态显示
+ * 
+ * @param s 
+ */
 void OfflineControl::runStatus(QString s)
 {
     ui->runStatus->setText(s);
 }
 
+/**
+ * @brief 停止仿真时设置相关状态
+ * 
+ */
 void OfflineControl::stopStatus()
 {
     ui->execSeqPushButton->setStyleSheet("color:black;");
@@ -69,6 +99,10 @@ void OfflineControl::stopStatus()
     ui->execReverseSeqPushButton->setText("逆序执行所选");
 }
 
+/**
+ * @brief 仿真数据顺序执行
+ * 
+ */
 void OfflineControl::on_execSeqPushButton_clicked()
 {
     ui->execSeqPushButton->setStyleSheet("color:black;");
@@ -82,6 +116,10 @@ void OfflineControl::on_execSeqPushButton_clicked()
         ui->execSeqPushButton->setText("顺序执行继续");
 }
 
+/**
+ * @brief 仿真数据逆序执行
+ * 
+ */
 void OfflineControl::on_execReverseSeqPushButton_clicked()
 {
     ui->execSeqPushButton->setStyleSheet("color:black;");
@@ -95,6 +133,10 @@ void OfflineControl::on_execReverseSeqPushButton_clicked()
         ui->execReverseSeqPushButton->setText("逆序执行继续");
 }
 
+/**
+ * @brief 异常时执行行数，一般为让电机停止运动
+ * 
+ */
 void OfflineControl::pausedWhenError()
 {
     int ret = ui->tableView->execPause();
@@ -110,6 +152,10 @@ void OfflineControl::pausedWhenError()
     }
 }
 
+/**
+ * @brief 顺序执行停止
+ * 
+ */
 void OfflineControl::on_execSeqStopPushButton_clicked()
 {
     ui->tableView->execStop();
@@ -119,6 +165,10 @@ void OfflineControl::on_execSeqStopPushButton_clicked()
     ui->execReverseSeqPushButton->setText("逆序执行所选");
 }
 
+/**
+ * @brief 将当前Table中的数据导出值CSV文件中
+ * TODO: 目前打开文件的窗口在ubuntu中有问题
+ */
 void OfflineControl::on_exportPushButton_clicked()
 {
     QString fileName;
@@ -152,6 +202,10 @@ void OfflineControl::on_exportPushButton_clicked()
     }
 }
 
+/**
+ * @brief 将CSV文件的数据导入到Table中
+ * TODO: 目前打开文件的窗口在ubuntu中有问题
+ */
 void OfflineControl::on_importPushButton_clicked()
 {
     QString fileName;
@@ -184,24 +238,42 @@ void OfflineControl::on_importPushButton_clicked()
     }
 }
 
+/**
+ * @brief 初始化所有电机
+ * 
+ */
 void OfflineControl::on_initDriverPushButton_clicked()
 {
     on_execSeqStopPushButton_clicked();
     Drivers::initJoint();
 }
 
+/**
+ * @brief 所有电机紧急停止
+ * 
+ */
 void OfflineControl::on_emergencyStopPushButton_clicked()
 {
     on_execSeqStopPushButton_clicked();
     Drivers::stopJoint();
 }
 
+/**
+ * @brief 校准所有电机
+ * ! 只对老版本的电机有效
+ * 
+ */
 void OfflineControl::on_caliPushButton_clicked()
 {
     on_execSeqStopPushButton_clicked();
     Drivers::calJoint();
 }
 
+/**
+ * @brief 按键快捷键设置
+ * 
+ * @param e 
+ */
 void OfflineControl::keyPressEvent(QKeyEvent *e)
 {
     switch (e->key())

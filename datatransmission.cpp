@@ -11,16 +11,20 @@
 #include "debug.h"
 
 /**
-*@projectName   RobotControlSystem
-*@brief         作为持久层，用于提供发送/接收CAN数据、读取CAN数据、读写串口数据接口等
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190710
-**/
+ * @brief Construct a new Data Transmission:: Data Transmission object
+ * 作为持久层，用于提供发送/接收CAN数据、读取CAN数据、读写串口数据接口等
+ */
 DataTransmission::DataTransmission()
 {
 }
 
+/**
+ * @brief CAN连接流程，该接口提供给外部进行调用
+ * 
+ * @param connectType 
+ * @param baud 
+ * @return int 
+ */
 int DataTransmission::connectToCan(int &connectType, int baud)
 {
     if ((connectType = CANOpenDevice()) == 0)
@@ -56,6 +60,12 @@ int DataTransmission::connectToCan(int &connectType, int baud)
     return 0;
 }
 
+/**
+ * @brief 关闭CAN连接，程序退出时自动调用
+ * 
+ * @param connectType 
+ * @return int 
+ */
 int DataTransmission::CANCloseDevice(int connectType)
 {
     switch (connectType)
@@ -73,12 +83,10 @@ int DataTransmission::CANCloseDevice(int connectType)
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         使用CAN第一步，打开CAN
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190801
-**/
+ * @brief 使用CAN第二步，初始化CAN
+ * 
+ * @return int 
+ */
 int DataTransmission::CANOpenDevice()
 {
     if (VCI_OpenDevice(USBCAN1, 0, 0) == STATUS_OK)
@@ -98,12 +106,13 @@ int DataTransmission::CANOpenDevice()
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         使用CAN第二步，初始化CAN
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190801
-**/
+ * @brief 使用CAN第二步，初始化CAN
+ * 
+ * @param connectType 
+ * @param devIndex 
+ * @param baud 
+ * @return int 
+ */
 int DataTransmission::InitCANHelper(int connectType, int devIndex, int baud)
 {
     switch (connectType)
@@ -173,12 +182,12 @@ int DataTransmission::InitCANHelper(int connectType, int devIndex, int baud)
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         使用CAN第三步，开始CAN
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190801
-**/
+ * @brief 使用CAN第三步，开始CAN
+ * 
+ * @param connectType 
+ * @param devIndex 
+ * @return int 
+ */
 int DataTransmission::StartCANHelper(int connectType, int devIndex)
 {
     switch (connectType)
@@ -196,12 +205,13 @@ int DataTransmission::StartCANHelper(int connectType, int devIndex)
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         发送函数接口，区分不同CAN卡，其他类可以直接调用，不用管里边是怎么实现的。
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190712
-**/
+ * @brief 发送函数接口，区分不同CAN卡，其他类可以直接调用，不用管里边是怎么实现的。
+ * 
+ * @param connectType 
+ * @param data 
+ * @param id 
+ * @return int 
+ */
 int DataTransmission::CANTransmit(int connectType, unsigned char data[], int id)
 {
     switch (connectType)
@@ -234,12 +244,14 @@ int DataTransmission::CANTransmit(int connectType, unsigned char data[], int id)
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         同时发送多帧数据的底层CAN数据接口，在这里对不同的CAN卡做区分，上层无需理会这里是怎么实现的。
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190723
-**/
+ * @brief 同时发送多帧数据的底层CAN数据接口，在这里对不同的CAN卡做区分，上层无需理会这里是怎么实现的。
+ * 
+ * @param connectType 
+ * @param data 
+ * @param id 
+ * @param len 
+ * @return int 
+ */
 int DataTransmission::CANTransmitMulti(int connectType, unsigned char data[][8], int id[], int len)
 {
     switch (connectType)
@@ -271,12 +283,15 @@ int DataTransmission::CANTransmitMulti(int connectType, unsigned char data[][8],
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         接收CAN数据函数接口，自动区分不同的CAN卡，读取到的数据以统一的接口开放给外部使用。
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190712
-**/
+ * @brief 接收CAN数据函数接口，自动区分不同的CAN卡，读取到的数据以统一的接口开放给外部使用。
+ * 
+ * @param connectType 连接的CAN卡类型，会自动匹配
+ * @param list 接收到的CAN信息，用于在Terminal进行回显
+ * @param dataLen 
+ * @param id CAN的ID
+ * @param data 
+ * @return int 接收到的CAN帧数量
+ */
 int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen[], int id[], unsigned char data[][8])
 {
     switch (connectType)
@@ -319,7 +334,7 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
                 str += tmpstr;
 
                 id[i] = frameinfo[i].ID;
-                //test
+                //防止出现ID错误
                 Q_ASSERT(frameinfo[i].ID >= global->sendId[0] && frameinfo[i].ID <= global->sendId[NODE_NUM-1]);
 
                 //Data

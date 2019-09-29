@@ -15,14 +15,12 @@
 #define FIX_NODE_NUM 12
 
 /**
-*@projectName   RobotControlSystem
-*@brief         显示所有关节的波形，继承于Plots类，
-*               只需要实现initWidget，addDataToUi，
-*               setLinesReplot，setLinesPausePlot函数即可
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190724
-**/
+ * @brief Construct a new Joint Plot:: Joint Plot object
+ * 显示所有关节的波形，继承于Plots类，
+ * 只需要实现initWidget，addDataToUi，
+ * setLinesReplot，setLinesPausePlot函数即可
+ * @param parent 
+ */
 JointPlot::JointPlot(Plots *parent) : Plots(parent),
                                       ui(new Ui::JointPlot)
 {
@@ -33,6 +31,10 @@ JointPlot::JointPlot(Plots *parent) : Plots(parent),
     initWidget();
 }
 
+/**
+ * @brief 初始化界面对象
+ * 
+ */
 void JointPlot::initObject()
 {
     posWidget = QList<QString>({"positionWidget1", "positionWidget2",
@@ -57,6 +59,10 @@ void JointPlot::initObject()
                          POS4_INDEX, SPEED4_INDEX, CURRENT4_INDEX});
 }
 
+/**
+ * @brief 初始化界面控件
+ * 
+ */
 void JointPlot::initWidget()
 {
     for (int i = 0; i < FIX_NODE_NUM / 3; i++)
@@ -73,6 +79,11 @@ void JointPlot::initWidget()
     }
 }
 
+/**
+ * @brief 向界面中添加数据
+ * 
+ * @param key 
+ */
 void JointPlot::addDataToUi(double key)
 {
     for (int i = 0; i < CURRENT_NODE_NUM; i++)
@@ -89,6 +100,11 @@ void JointPlot::addDataToUi(double key)
     }
 }
 
+/**
+ * @brief 波形界面重绘，保证实时刷新
+ * 
+ * @param key 
+ */
 void JointPlot::setLinesReplot(double key)
 {
     for (int i = 0; i < FIX_NODE_NUM / 3; i++)
@@ -99,6 +115,11 @@ void JointPlot::setLinesReplot(double key)
     }
 }
 
+/**
+ * @brief 波形界面暂停刷新
+ * 
+ * @param plot 
+ */
 void JointPlot::setLinesPausePlot(QCustomPlot *plot)
 {
     for (int i = 0; i < FIX_NODE_NUM / 3; i++)
@@ -109,11 +130,20 @@ void JointPlot::setLinesPausePlot(QCustomPlot *plot)
     }
 }
 
+/**
+ * @brief 显示状态信息
+ * 
+ * @param s 
+ */
 void JointPlot::showStatus(QString s)
 {
     ui->statusLabel->setText(s);
 }
 
+/**
+ * @brief Destroy the Joint Plot:: Joint Plot object
+ * 
+ */
 JointPlot::~JointPlot()
 {
     delete ui;

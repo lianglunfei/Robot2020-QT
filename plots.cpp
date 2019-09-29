@@ -22,12 +22,13 @@ Plots::~Plots()
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         设置波形线的名称和颜色
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190724
-**/
+ * @brief 设置波形线的名称和颜色
+ * 
+ * @param part 
+ * @param p 
+ * @param name 
+ * @param index 
+ */
 void Plots::setPlotPen(QCustomPlot *part, const QPen p, const QString name, int index)
 {
     part->graph(index)->setPen(p);
@@ -35,12 +36,13 @@ void Plots::setPlotPen(QCustomPlot *part, const QPen p, const QString name, int 
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         绘制波形框架，包括x、y坐标轴范围设置等。
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190724
-**/
+ * @brief 绘制波形框架，包括x、y坐标轴范围设置等。
+ * 
+ * @param part 
+ * @param rangeMin 
+ * @param rangeMax 
+ * @param num 
+ */
 void Plots::plotPartWidget(QCustomPlot *part, int rangeMin, int rangeMax, int num)
 {
     part->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
@@ -72,6 +74,13 @@ void Plots::plotPartWidget(QCustomPlot *part, int rangeMin, int rangeMax, int nu
     part->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom | Qt::AlignRight);
 }
 
+/**
+ * @brief 强制刷新/重绘波形界面
+ * 
+ * @param part 
+ * @param index 
+ * @param key 
+ */
 void Plots::setLineReplot(QCustomPlot *part, int index, double key)
 {
     if (!(pauseFlag & index))
@@ -81,6 +90,13 @@ void Plots::setLineReplot(QCustomPlot *part, int index, double key)
     }
 }
 
+/**
+ * @brief 停止绘制波形
+ * 
+ * @param senderPart 
+ * @param currentPart 
+ * @param index 
+ */
 void Plots::setLinePausePlot(QCustomPlot *senderPart, QCustomPlot *currentPart, int index)
 {
     if (senderPart == currentPart)
@@ -89,6 +105,12 @@ void Plots::setLinePausePlot(QCustomPlot *senderPart, QCustomPlot *currentPart, 
     }
 }
 
+/**
+ * @brief 波形点击事件
+ * 
+ * @param plottable 
+ * @param dataIndex 
+ */
 void Plots::graphClicked(QCPAbstractPlottable *plottable, int dataIndex)
 {
     // since we know we only have QCPGraphs in the plot, we can immediately access interface1D()
@@ -98,6 +120,10 @@ void Plots::graphClicked(QCPAbstractPlottable *plottable, int dataIndex)
     showStatus(message);
 }
 
+/**
+ * @brief 鼠标双击事件
+ * 
+ */
 void Plots::mouseDoubleClick(QMouseEvent *)
 {
     auto *plot = qobject_cast<QCustomPlot *>(this->sender());
@@ -105,12 +131,9 @@ void Plots::mouseDoubleClick(QMouseEvent *)
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         定时绘制函数，不对外界展示
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190724
-**/
+ * @brief 定时绘制函数，不对外界展示
+ * 
+ */
 void Plots::realtimeDataPlot()
 {
     static QTime time(QTime::currentTime());
@@ -127,47 +150,54 @@ void Plots::realtimeDataPlot()
     setLinesReplot(key);
 }
 
+/**
+ * @brief 给波形新增数据
+ * 
+ * @param plot 
+ * @param num 
+ * @param key 
+ * @param value 
+ */
 void Plots::widgetAddData(QCustomPlot *plot, int num, double key, double value)
 {
     plot->graph(num)->addData(key, value);
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         刷新界面数据，调用widgetAddData函数
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190724
-**/
+ * @brief 刷新界面数据，调用widgetAddData函数
+ * 
+ * @param key 
+ */
 void Plots::addDataToUi(double key)
 {
     (void)key;
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         波形重新开始，调用setLineReplot函数
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190724
-**/
+ * @brief 波形重新开始，调用setLineReplot函数
+ * 
+ * @param key 
+ */
 void Plots::setLinesReplot(double key)
 {
     (void)key;
 }
 
 /**
-*@projectName   RobotControlSystem
-*@brief         波形暂停，调用setLinePausePlot函数
-*@parameter
-*@author        XingZhang.Wu
-*@date          20190724
-**/
+ * @brief 波形暂停，调用setLinePausePlot函数
+ * 
+ * @param plot 
+ */
 void Plots::setLinesPausePlot(QCustomPlot *plot)
 {
     (void)plot;
 }
 
+/**
+ * @brief 显示状态信息
+ * 
+ * @param s 
+ */
 void Plots::showStatus(QString s)
 {
     (void)s;
