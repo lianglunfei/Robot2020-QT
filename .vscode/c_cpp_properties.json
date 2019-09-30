@@ -12,11 +12,23 @@
             "cStandard": "c11",
             "cppStandard": "c++17",
             "includePath": [
-                "${default}",
                 "${workspaceFolder}/**",
                 "D:/Qt/Qt5.12.0/5.12.0/mingw73_64/include/**",
                 "G:/software/build-RobotControlSystem-Desktop_Qt_5_12_0_MinGW_64_bit-Release"
             ]
+        },
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/robot/Qt5.12.0/5.12.0/Src/qtbase/include/**",
+                "/home/robot/src/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
         }
     ],
     "version": 4
