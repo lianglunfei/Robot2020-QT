@@ -116,7 +116,7 @@ DISTFILES +=
 RESOURCES += \
     img.qrc
 
-unix:!macx: LIBS += -L$$PWD/libs/cx/ -lcontrolcan
+#unix:!macx: LIBS += -L$$PWD/libs/cx/ -lcontrolcan
 unix:!macx: LIBS += -L$$PWD/libs/zlg/ -lusbcan
 win32: LIBS += -L$$PWD/libs/cx/ -lControlCAN
 win32: LIBS += -L$$PWD/libs/zlg/ -lControlCAN

@@ -1,8 +1,8 @@
 /*
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 10:02:20 
- * @Last Modified by: xingzhang.Wu
- * @Last Modified time: 2019-09-29 10:52:02
+ * @Last Modified by: wuzhang.Wu
+ * @Last Modified time: 2019-10-09 15:22:03
  */
 #ifndef GLOBALDATA_H
 #define GLOBALDATA_H
@@ -45,12 +45,12 @@ enum
 
 //开关变量
 #define USE_ZLG
-#define DELAY_INIT
+// #define DELAY_INIT 5
 
 //配置变量
 #define NODE_NUM 12
 #define DRIVE_NEW 1
-#define CAN_MAX_FRAM 200
+#define CAN_MAX_FRAM 100
 #define SIMULATE_CONNECT NONE_CONNECT //CONNECT_TYPE_ALYSIST
 
 #define global GlobalData::getInstance()
