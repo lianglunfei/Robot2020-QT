@@ -2,7 +2,7 @@
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 10:04:43 
  * @Last Modified by: wuzhang.Wu
- * @Last Modified time: 2019-10-09 15:34:09
+ * @Last Modified time: 2019-10-09 15:57:21
  */
 #include "receiveworkerthread.h"
 #include "globaldata.h"
@@ -41,7 +41,7 @@ void ReceiveWorkerThread::run()
 {
     while (!isInterruptionRequested())
     {
-        QThread::msleep(5); //Time is too long, data will be delayed
+        QThread::msleep(20); //Time is too long, data will be delayed
         if (global->connectType != NONE_CONNECT || SIMULATE_CONNECT != NONE_CONNECT)
             Package::unpackOperate();
     }
