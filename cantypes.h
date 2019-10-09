@@ -16,7 +16,8 @@ typedef unsigned int UINT;
 typedef unsigned short WORD;
 typedef void *PVOID;
 typedef void *HANDLE;
-typedef unsigned long ULONG, DWORD;
+typedef unsigned int DWORD;
+typedef unsigned long ULONG;
 typedef int INT;
 
 //函数调用返回状态值
@@ -27,10 +28,6 @@ typedef int INT;
 #define FALSE 0
 
 //接口卡类型定义
-#define USBCAN1 3
-#define USBCAN2 4
-#define USBCAN2A 4
-
 #define USBCAN_E_U 20
 #define USBCAN_2E_U 21
 
@@ -127,7 +124,7 @@ typedef int INT;
 #define CMD_GET_GPS_NUM 10 //获取GPS信息的数目
 
 //1.ZLGCAN系列接口卡信息的数据类型。
-typedef struct _BOARD_INFO
+typedef struct _VCI_BOARD_INFO
 {
     USHORT hw_Version;
     USHORT fw_Version;
@@ -138,10 +135,10 @@ typedef struct _BOARD_INFO
     CHAR str_Serial_Num[20];
     CHAR str_hw_Type[40];
     USHORT Reserved[4];
-} BOARD_INFO, *P_BOARD_INFO;
+} VCI_BOARD_INFO, *PVCI_BOARD_INFO;
 
 //2.定义CAN信息帧的数据类型。
-typedef struct _CAN_OBJ
+typedef struct _VCI_CAN_OBJ
 {
     UINT ID;
     UINT TimeStamp;
@@ -152,10 +149,10 @@ typedef struct _CAN_OBJ
     BYTE DataLen;
     BYTE Data[8];
     BYTE Reserved[3];
-} CAN_OBJ, *P_CAN_OBJ;
+} VCI_CAN_OBJ, *PVCI_CAN_OBJ;
 
 //3.定义CAN控制器状态的数据类型。
-typedef struct _CAN_STATUS
+typedef struct _VCI_CAN_STATUS
 {
     UCHAR ErrInterrupt;
     UCHAR regMode;
@@ -166,7 +163,7 @@ typedef struct _CAN_STATUS
     UCHAR regRECounter;
     UCHAR regTECounter;
     DWORD Reserved;
-} CAN_STATUS, *P_CAN_STATUS;
+} VCI_CAN_STATUS, *PVCI_CAN_STATUS;
 
 //4.定义错误信息的数据类型。
 typedef struct _ERR_INFO
@@ -174,7 +171,7 @@ typedef struct _ERR_INFO
     UINT ErrCode;
     BYTE Passive_ErrData[3];
     BYTE ArLost_ErrData;
-} ERR_INFO, *P_ERR_INFO;
+} VCI_ERR_INFO, *PVCI_ERR_INFO;
 
 //5.定义初始化CAN的数据类型
 typedef struct _INIT_CONFIG
@@ -186,84 +183,6 @@ typedef struct _INIT_CONFIG
     UCHAR Timing0;
     UCHAR Timing1;
     UCHAR Mode;
-} INIT_CONFIG, *P_INIT_CONFIG;
-
-typedef struct tagRemoteClient
-{
-    int iIndex;
-    DWORD port;
-    HANDLE hClient;
-    char szip[32];
-} REMOTE_CLIENT;
-
-typedef struct _tagChgDesIPAndPort
-{
-    char szpwd[10];
-    char szdesip[20];
-    int desport;
-    BYTE blistenonly;
-} CHGDESIPANDPORT;
-
-///////// new add struct for filter /////////
-typedef struct _FILTER_RECORD
-{
-    DWORD ExtFrame; //是否为扩展帧
-    DWORD Start;
-    DWORD End;
-} FILTER_RECORD, *P_FILTER_RECORD;
-
-//定时自动发送帧结构
-typedef struct _VCI_AUTO_SEND_OBJ
-{
-    BYTE Enable;    //使能本条报文 0:禁能 1:使能
-    BYTE Index;     //报文编号     最大支持32条报文
-    DWORD Interval; //定时发送时间 1ms为单位
-    _CAN_OBJ obj;   //报文
-} VCI_AUTO_SEND_OBJ, *PVCI_AUTO_SEND_OBJ;
-
-//设置指示灯状态结构
-typedef struct _VCI_INDICATE_LIGHT
-{
-    BYTE Indicate;              //指示灯编号
-    BYTE AttribRedMode : 2;     //Red LED灭/亮/闪烁/自控
-    BYTE AttribGreenMode : 2;   //Green LED灭/亮/闪烁/自控
-    BYTE AttribReserved : 4;    //保留暂时不用
-    BYTE FrequenceRed : 2;      //Red LED闪烁频率
-    BYTE FrequenceGreen : 2;    //Green LED闪烁频率
-    BYTE FrequenceReserved : 4; //保留暂时不用
-} VCI_INDICATE_LIGHT, *PVCI_INDICATE_LIGHT;
-
-//设置转发结构
-typedef struct _VCI_CAN_OBJ_REDIRECT
-{
-    BYTE Action;       //标识开启或停止转发
-    BYTE DestCanIndex; //CAN目标通道
-} VCI_CAN_OBJ_REDIRECT, *PVCI_CAN_OBJ_REDIRECT;
-
-typedef struct _CANDTUTIME
-{
-    UINT16 wYear;
-    UINT16 wMonth;
-    UINT16 wDay;
-    UINT16 wHour;
-    UINT16 wMinute;
-    UINT16 wSecond;
-} CANDTUTIME;
-
-//GPS数据结构
-typedef struct _tagCANDTUGPSData
-{
-    float fLatitude;  //纬度
-    float fLongitude; //经度
-    float fSpeed;     //速度
-    CANDTUTIME candtuTime;
-} CANDTUGPSData, *PCANDTUGPSData;
-
-//获取GPS结构
-typedef struct _VCI_CANDTU_GPS_DATA
-{
-    PCANDTUGPSData pGPSData; //用户提供接收GPS数据的缓冲区地址
-    ULONG nGPSDataCnt;       //可以容纳的GPS数据个数
-} VCI_CANDTU_GPS_DATA, *PVCI_CANDTU_GPS_DATA;
+} VCI_INIT_CONFIG, *PVCI_INIT_CONFIG;
 
 #endif // CANTYPES_H

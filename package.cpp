@@ -129,7 +129,11 @@ bool Package::packOperate(unsigned int id, double data, int type)
     default:
         break;
     }
-    DataTransmission::CANTransmit(global->connectType, packData, id);
+    if (1 != DataTransmission::CANTransmit(global->connectType, packData, id))
+    {
+        qDebug() << "can " << id << " send failed";
+        return false;
+    }
     return true;
 }
 
@@ -181,5 +185,10 @@ bool Package::packOperateMulti(unsigned int *id, double *data, int num, int type
             break;
         }
     }
-    return DataTransmission::CANTransmitMulti(global->connectType, packData, (int *)id, num);
+    if (num != DataTransmission::CANTransmitMulti(global->connectType, packData, (int *)id, num))
+    {
+        qDebug() << "can " << id << " send failed";
+        return false;
+    }
+    return true;
 }
