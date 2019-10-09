@@ -1,8 +1,8 @@
 /*
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 10:03:45 
- * @Last Modified by: xingzhang.Wu
- * @Last Modified time: 2019-09-29 11:17:52
+ * @Last Modified by: wuzhang.Wu
+ * @Last Modified time: 2019-10-09 16:46:19
  */
 #include "package.h"
 #include "globaldata.h"
@@ -33,6 +33,20 @@ bool Package::unpackOperate()
     int id[CAN_MAX_FRAM] = {0};
     unsigned char data[CAN_MAX_FRAM][8] = {{0}};
     int len = DataTransmission::CANReceive(global->connectType, global->currentCanData, dataLen, id, data);
+    int nodeId[NODE_NUM] = {0};
+    int nodeStatus[NODE_NUM] = {0};
+    memset(nodeStatus, -1, sizeof(nodeStatus)); //全部初始化为-1
+
+    for (int i = 0; i < len; i++) //只处理有值的部分
+    {
+        nodeId[id[i] - global->sendId[0]] = 1; //该Id接收到了数据
+        nodeStatus[id[i] - global->sendId[0]] = data[i][0];
+    }
+    for (int i = 0; i < NODE_NUM; i++)
+    {
+        global->runningId[i] = nodeId[i];
+        global->statusId[i] = nodeStatus[i];
+    }
     if (len == 0)
         return isConnected;
     for (int i = 0; i < len; i++)
@@ -54,20 +68,7 @@ bool Package::unpackOperate()
     {
         isConnected = true;
     }
-    int nodeId[NODE_NUM] = {0};
-    int nodeStatus[NODE_NUM] = {0};
-    memset(nodeStatus, -1, sizeof(nodeStatus)); //全部初始化为-1
 
-    for (int i = 0; i < len; i++) //只处理有值的部分
-    {
-        nodeId[id[i] - global->sendId[0]] = 1; //该Id接收到了数据
-        nodeStatus[id[i] - global->sendId[0]] = data[i][0];
-    }
-    for (int i = 0; i < NODE_NUM; i++)
-    {
-        global->runningId[i] = nodeId[i];
-        global->statusId[i] = nodeStatus[i];
-    }
     return isConnected;
 }
 
