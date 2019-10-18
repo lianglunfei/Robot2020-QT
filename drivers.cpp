@@ -1,8 +1,8 @@
 /*
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 10:02:07 
- * @Last Modified by:   xingzhang.Wu 
- * @Last Modified time: 2019-09-29 10:02:07 
+ * @Last Modified by: wuzhang.Wu
+ * @Last Modified time: 2019-10-09 14:29:30
  */
 #include "drivers.h"
 #include "globaldata.h"
@@ -82,13 +82,13 @@ void Drivers::initJoint()
     Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_OPENVALVE);
 #endif
 #else
-    for (int i = 0; i < NODE_NUM-2; i++)
+    for (int i = 0; i < NODE_NUM; i++)
     {
         Package::packOperate(global->sendId[i], value[i], PROTOCOL_TYPE_START);
         Package::packOperate(global->sendId[i], value[i], PROTOCOL_TYPE_OPENVALVE);
         QElapsedTimer t;
         t.start();
-        Delay_MSec(1);
+        Delay_MSec(DELAY_INIT);
         qDebug() << "elapsed: " << t.elapsed();
     }
 #endif
