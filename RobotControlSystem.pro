@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui qml quick gamepad
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -49,7 +49,9 @@ SOURCES += \
     controltableview.cpp \
     drivers.cpp \
     singlejointcontrol.cpp \
-    receiveerror.cpp
+    receiveerror.cpp \
+    autocontrol.cpp \
+    remotecontrol.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -81,7 +83,9 @@ HEADERS += \
     singlejointcontrol.h \
     receiveerror.h \
     ecanvci.h \
-    cantypes.h
+    cantypes.h \
+    autocontrol.h \
+    remotecontrol.h
 
 FORMS += \
         mainwindow.ui \
@@ -111,10 +115,33 @@ QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_LFLAGS_RELEASE -= -Wl,-s
 QMAKE_LFLAGS_RELEASE += -Wl,-Map,RobotControlSystem.map
 
-DISTFILES +=
-
-RESOURCES += \
-    img.qrc
+DISTFILES += \
+    qml/xboxControllerBack.png \
+    qml/xboxControllerButtonA.png \
+    qml/xboxControllerButtonB.png \
+    qml/xboxControllerButtonGuide.png \
+    qml/xboxControllerButtonX.png \
+    qml/xboxControllerButtonY.png \
+    qml/xboxControllerDPad.png \
+    qml/xboxControllerLeftShoulder.png \
+    qml/xboxControllerLeftThumbstick.png \
+    qml/xboxControllerLeftTrigger.png \
+    qml/xboxControllerRightShoulder.png \
+    qml/xboxControllerRightThumbstick.png \
+    qml/xboxControllerRightTrigger.png \
+    qml/xboxControllerStart.png \
+    qml/ButtonImage.qml \
+    qml/DPad.qml \
+    qml/JoystickViewer.qml \
+    qml/LeftThumbstick.qml \
+    qml/main.qml \
+    qml/RightThumbstick.qml \
+    images/dog.jpg \
+    images/add.png \
+    images/delete.png \
+    images/down.png \
+    images/go.png \
+    images/up.png
 
 unix:!macx: LIBS += -L$$PWD/libs/cx/ -lcontrolcan
 unix:!macx: LIBS += -L$$PWD/libs/zlg/ -lusbcan
@@ -128,3 +155,6 @@ INCLUDEPATH += $$PWD/libs/cx
 DEPENDPATH += $$PWD/libs/cx
 INCLUDEPATH += $$PWD/libs/zlg
 DEPENDPATH += $$PWD/libs/zlg
+
+RESOURCES += \
+    robot.qrc

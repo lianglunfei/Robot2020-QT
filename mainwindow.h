@@ -17,6 +17,7 @@ class SingleJointControl;
 class OfflineControl;
 class ReceiveError;
 class ReceiveWorkerThread;
+class RemoteControl;
 
 namespace Ui
 {
@@ -39,6 +40,7 @@ private:
     Plots *m_joint_speed_meas_widget = nullptr;
     Terminal *m_terminal = nullptr;
     JointControl *m_joint_control = nullptr;
+    RemoteControl *m_remote_control = nullptr;
     SingleJointControl *m_single_joint_control = nullptr;
     OfflineControl *m_offline_control = nullptr;
     ReceiveError *m_receive_error = nullptr;

@@ -1,0 +1,56 @@
+#include "remotecontrol.h"
+#include "debug.h"
+
+RemoteControl::RemoteControl(QDialog *parent) :
+    QDialog(parent)
+{
+}
+
+RemoteControl::~RemoteControl()
+{
+    delete qmlControl1;
+    delete qmlControl2;
+}
+
+void RemoteControl::show()
+{
+    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+    QObject *item = engine.rootObjects().first();//component->create();
+    QObject *qmlLeftObject = item->findChild<QObject*>("qmlLeftJoySignal");
+    QObject *qmlRightObject = item->findChild<QObject*>("qmlRightJoySignal");
+    QObject *qmlGamepadObject = item->findChild<QObject*>("qmlGamepadSignal");
+
+    QObject::connect(qmlLeftObject, SIGNAL(qmlLeftJoySignal(double)), this, SLOT(leftJoySlot(double)));
+    QObject::connect(qmlRightObject, SIGNAL(qmlRightJoySignal(double)), this, SLOT(rightJoySlot(double)));
+    QObject::connect(qmlGamepadObject, SIGNAL(qmlStartSignal(void)), this, SLOT(qmlStartSlot(void)));
+    QObject::connect(qmlGamepadObject, SIGNAL(qmlL1Signal(void)), this, SLOT(qmlL1Slot(void)));
+    QObject::connect(qmlGamepadObject, SIGNAL(qmlASignal(bool)), this, SLOT(qmlASlot(bool)));
+    QObject::connect(qmlGamepadObject, SIGNAL(qmlBSignal(bool)), this, SLOT(qmlBSlot(bool)));
+
+    qmlControl2 = item->findChild<QObject*>("qmlcontrol2");
+    qmlControl1 = item->findChild<QObject*>("qmlcontrol1");
+}
+
+void RemoteControl::leftJoySlot(const double &speed)
+{
+}
+
+void RemoteControl::rightJoySlot(const double &angle)
+{
+}
+
+void RemoteControl::qmlStartSlot()
+{
+}
+
+void RemoteControl::qmlL1Slot()
+{
+}
+
+void RemoteControl::qmlASlot(bool press)
+{
+}
+
+void RemoteControl::qmlBSlot(bool press)
+{
+}

@@ -12,6 +12,7 @@
 #include "jointplot.h"
 #include "jointspeedmeas.h"
 #include "jointcontrol.h"
+#include "remotecontrol.h"
 #include "singlejointcontrol.h"
 #include "offlinecontrol.h"
 #include "receiveworkerthread.h"
@@ -62,6 +63,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     //Initialize test window
     m_receive_error = new ReceiveError;
 
+    //Initialize remote control window
+    m_remote_control = new RemoteControl;
+
     connectInit();
 }
 
@@ -96,6 +100,7 @@ void MainWindow::connectInit()
     connect(ui->actionJoint_Control, &QAction::triggered, m_joint_control, &JointControl::show);
     connect(ui->actionSingle_Joint_Control, &QAction::triggered, m_single_joint_control, &SingleJointControl::show);
     connect(ui->actionOffline_Control, &QAction::triggered, m_offline_control, &OfflineControl::show);
+    connect(ui->actionRemote_Control, &QAction::triggered, m_remote_control, &RemoteControl::show);
     connect(m_connect_dialog, &ConnectDialog::accepted, this, &MainWindow::canConnectEvent);
     connect(ui->actionReceive_Error, &QAction::triggered, m_receive_error, &ReceiveError::show);
     connect(m_receive_error, &ReceiveError::jointError, m_offline_control, &OfflineControl::pausedWhenError);
@@ -115,6 +120,7 @@ MainWindow::~MainWindow()
     delete m_single_joint_control;
     delete m_offline_control;
     delete m_receive_error;
+    delete m_remote_control;
     delete workerThread;
     delete ui;
 }

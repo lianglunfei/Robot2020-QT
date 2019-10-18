@@ -17,7 +17,7 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/dog.jpg);</string>
+   <string notr="true">background-image: url(:/images/dog.jpg);</string>
   </property>
   <widget class="QWidget" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">
@@ -51,6 +51,7 @@
     <addaction name="actionSingle_Joint_Control"/>
     <addaction name="actionJoint_Control"/>
     <addaction name="actionOffline_Control"/>
+    <addaction name="actionRemote_Control"/>
    </widget>
    <addaction name="menuTool"/>
    <addaction name="menuPlot"/>
@@ -103,6 +104,11 @@
   <action name="actionReceive_Error">
    <property name="text">
     <string>Receive Error</string>
+   </property>
+  </action>
+  <action name="actionRemote_Control">
+   <property name="text">
+    <string>Remote Control</string>
    </property>
   </action>
  </widget>
