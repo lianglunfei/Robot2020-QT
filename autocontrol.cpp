@@ -1,8 +1,8 @@
 /*
  * @Author: xingzhang.Wu 
  * @Date: 2019-10-21 16:07:31 
- * @Last Modified by:   xingzhang.Wu 
- * @Last Modified time: 2019-10-21 16:07:31 
+ * @Last Modified by: xingzhang.Wu
+ * @Last Modified time: 2019-10-21 16:17:26
  */
 #include "autocontrol.h"
 #include "globaldata.h"
@@ -18,6 +18,14 @@ int AutoControl::run()
     return 0;
 }
 
+/**
+ * @brief 单独移动一条腿
+ * 
+ * @param leg 第几条腿
+ * @param changePos 腿部末端位置
+ * @param v 运动速度
+ * @return int 
+ */
 int AutoControl::moveLeg(int leg, double changePos[], double v)
 {
     double c1 = global->currentCanAnalyticalData[leg].position;
@@ -45,12 +53,12 @@ int AutoControl::moveLeg(int leg, double changePos[], double v)
             changePos[2] = -changePos[2];
 
         if (leg == 0 || leg == 3)
-            px = x + changePos[1] * tp;
+            px = x + changePos[0] * tp;
         else
-            px = -x + changePos[1] * tp;
+            px = -x + changePos[0] * tp;
 
-        py = y + changePos[2] * tp;
-        pz = z + changePos[3] * tp;
+        py = y + changePos[1] * tp;
+        pz = z + changePos[2] * tp;
         double c1 = atan(py / pz);
         double f = acos((l2 * l2 + px * px + (py - l1 * sin(c1)) * (py - l1 * sin(c1)) + (pz + l1 * cos(c1)) * (pz + l1 * cos(c1)) - l3 * l3) / (2 * l2 * sqrt(px * px + (py - l1 * sin(c1)) * (py - l1 * sin(c1)) + (pz + l1 * cos(c1)) * (pz + l1 * cos(c1)))));
         double c2 = atan(px / (sqrt(py * py + pz * pz)) - l1) - f;
@@ -75,6 +83,13 @@ int AutoControl::moveLeg(int leg, double changePos[], double v)
     return 0;
 }
 
+/**
+ * @brief 四足身体移动
+ * 
+ * @param changePos 身体的位置
+ * @param v 运动速度
+ * @return int 
+ */
 int AutoControl::moveBody(double changePos[], double v)
 {
     double l1 = 0, l2 = 0.304, l3 = 0.277;
@@ -114,33 +129,33 @@ int AutoControl::moveBody(double changePos[], double v)
         double T1 = d / (v * 0.1);
         tp = tp + t.elapsed() * 1 / T1;
 
-        double pxa = -xa + changePos[1] * tp;
-        double pya = ya + changePos[2] * tp;
-        double pza = za + changePos[3] * tp;
+        double pxa = -xa + changePos[0] * tp;
+        double pya = ya + changePos[1] * tp;
+        double pza = za + changePos[2] * tp;
         ca1 = atan(pya / pza);
         f = acos((l2 * l2 + pxa * pxa + (pya - l1 * sin(ca1)) * (pya - l1 * sin(ca1)) + (pza + l1 * cos(ca1)) * (pza + l1 * cos(ca1)) - l3 * l3) / (2 * l2 * sqrt(pxa * pxa + (pya - l1 * sin(ca1)) * (pya - l1 * sin(ca1)) + (pza + l1 * cos(ca1)) * (pza + l1 * cos(ca1)))));
         ca2 = atan(pxa / (sqrt(pya * pya + pza * pza)) - l1) - f;
         ca3 = (l2 + l3) / l3 * f;
 
-        double pxb = xb - changePos[1] * tp;
-        double pyb = yb + changePos[2] * tp;
-        double pzb = zb + changePos[3] * tp;
+        double pxb = xb - changePos[0] * tp;
+        double pyb = yb + changePos[1] * tp;
+        double pzb = zb + changePos[2] * tp;
         cb1 = atan(pyb / pzb);
         f = acos((l2 * l2 + pxb * pxb + (pyb - l1 * sin(cb1)) * (pyb - l1 * sin(cb1)) + (pzb + l1 * cos(cb1)) * (pzb + l1 * cos(cb1)) - l3 * l3) / (2 * l2 * sqrt(pxb * pxb + (pyb - l1 * sin(cb1)) * (pyb - l1 * sin(cb1)) + (pzb + l1 * cos(cb1)) * (pzb + l1 * cos(cb1)))));
         cb2 = atan(pxb / (sqrt(pyb * pyb + pzb * pzb)) - l1) - f;
         cb3 = (l2 + l3) / l3 * f;
 
-        double pxc = xc + changePos[1] * tp;
-        double pyc = yc - changePos[2] * tp;
-        double pzc = zc + changePos[3] * tp;
+        double pxc = xc + changePos[0] * tp;
+        double pyc = yc - changePos[1] * tp;
+        double pzc = zc + changePos[2] * tp;
         cc1 = atan(pyc / pzc);
         f = acos((l2 * l2 + pxc * pxc + (pyc - l1 * sin(cc1)) * (pyc - l1 * sin(cc1)) + (pzc + l1 * cos(cc1)) * (pzc + l1 * cos(cc1)) - l3 * l3) / (2 * l2 * sqrt(pxc * pxc + (pyc - l1 * sin(cc1)) * (pyc - l1 * sin(cc1)) + (pzc + l1 * cos(cc1)) * (pzc + l1 * cos(cc1)))));
         cc2 = atan(pxc / (sqrt(pyc * pyc + pzc * pzc)) - l1) - f;
         cc3 = (l2 + l3) / l3 * f;
 
-        double pxd = -xd - changePos[1] * tp;
-        double pyd = yd - changePos[2] * tp;
-        double pzd = zd + changePos[3] * tp;
+        double pxd = -xd - changePos[0] * tp;
+        double pyd = yd - changePos[1] * tp;
+        double pzd = zd + changePos[2] * tp;
         cd1 = atan(pyd / pzd);
         f = acos((l2 * l2 + pxd * pxd + (pyd - l1 * sin(cd1)) * (pyd - l1 * sin(cd1)) +
                   (pzd + l1 * cos(cd1)) * (pzd + l1 * cos(cd1)) - l3 * l3) /

@@ -1,8 +1,8 @@
 /*
  * @Author: xingzhang.Wu 
  * @Date: 2019-10-21 16:07:52 
- * @Last Modified by:   xingzhang.Wu 
- * @Last Modified time: 2019-10-21 16:07:52 
+ * @Last Modified by: xingzhang.Wu
+ * @Last Modified time: 2019-10-21 16:14:06
  */
 #include "remotecontrol.h"
 #include "debug.h"
@@ -17,6 +17,10 @@ RemoteControl::~RemoteControl()
     delete qmlControl2;
 }
 
+/**
+ * @brief 显示遥控器界面
+ * 
+ */
 void RemoteControl::show()
 {
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
