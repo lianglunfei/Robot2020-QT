@@ -86,25 +86,25 @@ int AutoControl::moveLeg(int leg, double changePos[], double v)
 /**
  * @brief 四足身体移动
  * 
- * @param changePos 身体的位置
+ * @param changePos 身体的位置 c a d b
  * @param v 运动速度
  * @return int 
  */
 int AutoControl::moveBody(double changePos[], double v)
 {
     double l1 = 0, l2 = 0.304, l3 = 0.277;
-    double ca1 = global->currentCanAnalyticalData[0].position;
-    double ca2 = global->currentCanAnalyticalData[1].position;
-    double ca3 = global->currentCanAnalyticalData[2].position;
-    double cb1 = global->currentCanAnalyticalData[3].position;
-    double cb2 = global->currentCanAnalyticalData[4].position;
-    double cb3 = global->currentCanAnalyticalData[5].position;
-    double cc1 = global->currentCanAnalyticalData[6].position;
-    double cc2 = global->currentCanAnalyticalData[7].position;
-    double cc3 = global->currentCanAnalyticalData[8].position;
-    double cd1 = global->currentCanAnalyticalData[9].position;
-    double cd2 = global->currentCanAnalyticalData[10].position;
-    double cd3 = global->currentCanAnalyticalData[11].position;
+    double ca1 = global->currentCanAnalyticalData[3].position;
+    double ca2 = global->currentCanAnalyticalData[4].position;
+    double ca3 = global->currentCanAnalyticalData[5].position;
+    double cb1 = global->currentCanAnalyticalData[9].position;
+    double cb2 = global->currentCanAnalyticalData[10].position;
+    double cb3 = global->currentCanAnalyticalData[11].position;
+    double cc1 = global->currentCanAnalyticalData[0].position;
+    double cc2 = global->currentCanAnalyticalData[1].position;
+    double cc3 = global->currentCanAnalyticalData[2].position;
+    double cd1 = global->currentCanAnalyticalData[6].position;
+    double cd2 = global->currentCanAnalyticalData[7].position;
+    double cd3 = global->currentCanAnalyticalData[8].position;
     double xa = l2 * sin(ca2) + l3 * sin(ca2 + ca3);
     double ya = l2 * sin(ca1) * cos(ca2) + l3 * sin(ca1) * cos(ca2 + ca3);
     double za = -l2 * cos(ca1) * cos(ca2) - l3 * cos(ca1) * cos(ca2 + ca3);
@@ -163,21 +163,21 @@ int AutoControl::moveBody(double changePos[], double v)
         cd2 = atan(pxd / (sqrt(pyd * pyd + pzd * pzd)) - l1) - f;
         cd3 = (l2 + l3) / l3 * f;
 
-        global->currentCanAnalyticalData[0].position = -ca1;
-        global->currentCanAnalyticalData[1].position = -ca2;
-        global->currentCanAnalyticalData[2].position = -ca3;
+        global->currentCanAnalyticalData[3].position = -ca1;
+        global->currentCanAnalyticalData[4].position = -ca2;
+        global->currentCanAnalyticalData[5].position = -ca3;
 
-        global->currentCanAnalyticalData[3].position = cb1;
-        global->currentCanAnalyticalData[4].position = cb1;
-        global->currentCanAnalyticalData[5].position = cb1;
+        global->currentCanAnalyticalData[9].position = cb1;
+        global->currentCanAnalyticalData[10].position = cb1;
+        global->currentCanAnalyticalData[11].position = cb1;
 
-        global->currentCanAnalyticalData[6].position = cc1;
-        global->currentCanAnalyticalData[7].position = cc1;
-        global->currentCanAnalyticalData[8].position = cc1;
+        global->currentCanAnalyticalData[0].position = cc1;
+        global->currentCanAnalyticalData[1].position = cc1;
+        global->currentCanAnalyticalData[2].position = cc1;
 
-        global->currentCanAnalyticalData[9].position = -cd1;
-        global->currentCanAnalyticalData[10].position = -cd1;
-        global->currentCanAnalyticalData[11].position = -cd1;
+        global->currentCanAnalyticalData[6].position = -cd1;
+        global->currentCanAnalyticalData[7].position = -cd1;
+        global->currentCanAnalyticalData[8].position = -cd1;
 
         if (tp >= 1)
             break;
