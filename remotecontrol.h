@@ -10,15 +10,15 @@ class RemoteControl : public QDialog
     Q_OBJECT
 
 public:
-    RemoteControl(QDialog *parent=nullptr);
+    RemoteControl(QDialog *parent = nullptr);
     ~RemoteControl();
 
 public slots:
     void show();
 
 private:
-    QObject *qmlControl1=nullptr;
-    QObject *qmlControl2=nullptr;
+    QObject *qmlControl1 = nullptr;
+    QObject *qmlControl2 = nullptr;
     QQmlApplicationEngine engine;
 
 private slots:
