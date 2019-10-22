@@ -66,6 +66,7 @@ private:
 public:
     CanAnalysis currentCanAnalyticalData[NODE_NUM];
     QStringList currentCanData;
+    double refValue[12] = {99.052, 160.415, 88.0911, 329.31, 184.486, 148.467, 141.212, 261.981, 30.9121, 222, 250.584, 147.704};
     int runningId[NODE_NUM] = {0};
     int statusId[NODE_NUM] = {0};
     int connectType = 0;

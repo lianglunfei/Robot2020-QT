@@ -11,8 +11,10 @@
 #include <QElapsedTimer>
 #include <QTimer>
 
-AutoControl::AutoControl(QObject* parent) : QObject (parent),
-    period(20), l1(0), l2(0.304), l3(0.277)
+#define PI 3.14159
+
+AutoControl::AutoControl(QObject *parent) : QObject(parent),
+                                            period(20), l1(0), l2(0.304), l3(0.277)
 {
     timer = new QTimer();
     timer->setTimerType(Qt::PreciseTimer);
@@ -33,9 +35,11 @@ int AutoControl::run()
  */
 int AutoControl::moveLeg(int leg, double changePos[], double v)
 {
-    double c1 = global->currentCanAnalyticalData[leg].position;
-    double c2 = global->currentCanAnalyticalData[leg + 1].position;
-    double c3 = global->currentCanAnalyticalData[leg + 2].position;
+    if (NODE_NUM != 12)
+        return -1;
+    double c1 = (global->currentCanAnalyticalData[leg].position - global->refValue[leg]) / PI;
+    double c2 = (global->currentCanAnalyticalData[leg + 1].position - global->refValue[leg + 1]) / PI;
+    double c3 = (global->currentCanAnalyticalData[leg + 2].position - global->refValue[leg + 2]) / PI;
     double x = l2 * sin(c2) + l3 * sin(c2 + c3);
     double y = l2 * sin(c1) * cos(c2) + l3 * sin(c1) * cos(c2 + c3);
     double z = -l2 * cos(c1) * cos(c2) - l3 * cos(c1) * cos(c2 + c3);
@@ -47,7 +51,7 @@ int AutoControl::moveLeg(int leg, double changePos[], double v)
     connect(timer, &QTimer::timeout, [=]() mutable {
         double d = sqrt(changePos[0] * changePos[0] + changePos[1] * changePos[1] + changePos[2] * changePos[2]);
         double T1 = d / (v * 0.1);
-        tp += (t.elapsed()/1000) * 1 / T1;
+        tp += (t.elapsed() / 1000) * 1 / T1;
         double px = 0, py = 0, pz = 0;
         if (leg == 0 || leg == 1)
             changePos[1] = -changePos[1];
@@ -69,22 +73,23 @@ int AutoControl::moveLeg(int leg, double changePos[], double v)
 
         if (leg == 0 || leg == 3)
         {
-            global->currentCanAnalyticalData[leg].position = c1;
-            global->currentCanAnalyticalData[leg + 1].position = c2;
-            global->currentCanAnalyticalData[leg + 2].position = c3;
+            global->currentCanAnalyticalData[leg].position = c1 * PI + global->refValue[leg];
+            global->currentCanAnalyticalData[leg + 1].position = c2 * PI + global->refValue[leg + 1];
+            global->currentCanAnalyticalData[leg + 2].position = c3 * PI + global->refValue[leg + 2];
         }
         else
         {
-            global->currentCanAnalyticalData[leg].position = -c1;
-            global->currentCanAnalyticalData[leg + 1].position = -c2;
-            global->currentCanAnalyticalData[leg + 2].position = -c3;
+            global->currentCanAnalyticalData[leg].position = -c1 * PI - global->refValue[leg];
+            global->currentCanAnalyticalData[leg + 1].position = -c2 * PI - global->refValue[leg + 1];
+            global->currentCanAnalyticalData[leg + 2].position = -c3 * PI - global->refValue[leg + 2];
         }
-        qDebug() << c1 << c2 << c3;
+        qDebug() << global->currentCanAnalyticalData[leg].position << global->currentCanAnalyticalData[leg + 1].position
+                 << global->currentCanAnalyticalData[leg + 2].position;
         if (tp >= 1)
             timer->stop();
     });
 
-    if(!timer->isActive())
+    if (!timer->isActive())
         timer->start(period);
 
     return 0;
@@ -99,18 +104,20 @@ int AutoControl::moveLeg(int leg, double changePos[], double v)
  */
 int AutoControl::moveBody(double changePos[], double v)
 {
-    double ca1 = global->currentCanAnalyticalData[3].position;
-    double ca2 = global->currentCanAnalyticalData[4].position;
-    double ca3 = global->currentCanAnalyticalData[5].position;
-    double cb1 = global->currentCanAnalyticalData[9].position;
-    double cb2 = global->currentCanAnalyticalData[10].position;
-    double cb3 = global->currentCanAnalyticalData[11].position;
-    double cc1 = global->currentCanAnalyticalData[0].position;
-    double cc2 = global->currentCanAnalyticalData[1].position;
-    double cc3 = global->currentCanAnalyticalData[2].position;
-    double cd1 = global->currentCanAnalyticalData[6].position;
-    double cd2 = global->currentCanAnalyticalData[7].position;
-    double cd3 = global->currentCanAnalyticalData[8].position;
+    if (NODE_NUM != 12)
+        return -1;
+    double ca1 = (global->currentCanAnalyticalData[3].position - global->refValue[3]) / PI;
+    double ca2 = (global->currentCanAnalyticalData[4].position - global->refValue[4]) / PI;
+    double ca3 = (global->currentCanAnalyticalData[5].position - global->refValue[5]) / PI;
+    double cb1 = (global->currentCanAnalyticalData[9].position - global->refValue[9]) / PI;
+    double cb2 = (global->currentCanAnalyticalData[10].position - global->refValue[10]) / PI;
+    double cb3 = (global->currentCanAnalyticalData[11].position - global->refValue[11]) / PI;
+    double cc1 = (global->currentCanAnalyticalData[0].position - global->refValue[0]) / PI;
+    double cc2 = (global->currentCanAnalyticalData[1].position - global->refValue[1]) / PI;
+    double cc3 = (global->currentCanAnalyticalData[2].position - global->refValue[2]) / PI;
+    double cd1 = (global->currentCanAnalyticalData[6].position - global->refValue[6]) / PI;
+    double cd2 = (global->currentCanAnalyticalData[7].position - global->refValue[7]) / PI;
+    double cd3 = (global->currentCanAnalyticalData[8].position - global->refValue[8]) / PI;
     double xa = l2 * sin(ca2) + l3 * sin(ca2 + ca3);
     double ya = l2 * sin(ca1) * cos(ca2) + l3 * sin(ca1) * cos(ca2 + ca3);
     double za = -l2 * cos(ca1) * cos(ca2) - l3 * cos(ca1) * cos(ca2 + ca3);
@@ -132,7 +139,7 @@ int AutoControl::moveBody(double changePos[], double v)
     connect(timer, &QTimer::timeout, [=]() mutable {
         double d = sqrt(changePos[0] * changePos[0] + changePos[1] * changePos[1] + changePos[2] * changePos[2]);
         double T1 = d / (v * 0.1);
-        tp = tp + (t.elapsed()/1000) * 1 / T1;
+        tp = tp + (t.elapsed() / 1000) * 1 / T1;
 
         double pxa = -xa + changePos[0] * tp;
         double pya = ya + changePos[1] * tp;
@@ -168,27 +175,27 @@ int AutoControl::moveBody(double changePos[], double v)
         cd2 = atan(pxd / (sqrt(pyd * pyd + pzd * pzd)) - l1) - f;
         cd3 = (l2 + l3) / l3 * f;
 
-        global->currentCanAnalyticalData[3].position = -ca1;
-        global->currentCanAnalyticalData[4].position = -ca2;
-        global->currentCanAnalyticalData[5].position = -ca3;
+        global->currentCanAnalyticalData[3].position = -ca1 * PI - global->refValue[3];
+        global->currentCanAnalyticalData[4].position = -ca2 * PI - global->refValue[4];
+        global->currentCanAnalyticalData[5].position = -ca3 * PI - global->refValue[5];
 
-        global->currentCanAnalyticalData[9].position = cb1;
-        global->currentCanAnalyticalData[10].position = cb1;
-        global->currentCanAnalyticalData[11].position = cb1;
+        global->currentCanAnalyticalData[9].position = cb1 * PI + global->refValue[9];
+        global->currentCanAnalyticalData[10].position = cb2 * PI + global->refValue[10];
+        global->currentCanAnalyticalData[11].position = cb3 * PI + global->refValue[11];
 
-        global->currentCanAnalyticalData[0].position = cc1;
-        global->currentCanAnalyticalData[1].position = cc1;
-        global->currentCanAnalyticalData[2].position = cc1;
+        global->currentCanAnalyticalData[0].position = cc1 * PI + global->refValue[0];
+        global->currentCanAnalyticalData[1].position = cc2 * PI + global->refValue[1];
+        global->currentCanAnalyticalData[2].position = cc3 * PI + global->refValue[2];
 
-        global->currentCanAnalyticalData[6].position = -cd1;
-        global->currentCanAnalyticalData[7].position = -cd1;
-        global->currentCanAnalyticalData[8].position = -cd1;
+        global->currentCanAnalyticalData[6].position = -cd1 * PI - global->refValue[6];
+        global->currentCanAnalyticalData[7].position = -cd2 * PI - global->refValue[7];
+        global->currentCanAnalyticalData[8].position = -cd3 * PI - global->refValue[8];
 
         if (tp >= 1)
             timer->stop();
     });
 
-    if(!timer->isActive())
+    if (!timer->isActive())
         timer->start(period);
 
     return 0;
