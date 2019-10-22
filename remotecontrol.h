@@ -5,6 +5,8 @@
 #include <QQmlComponent>
 #include <QQmlApplicationEngine>
 
+#include "autocontrol.h"
+
 class RemoteControl : public QDialog
 {
     Q_OBJECT
@@ -20,6 +22,7 @@ private:
     QObject *qmlControl1 = nullptr;
     QObject *qmlControl2 = nullptr;
     QQmlApplicationEngine engine;
+    AutoControl *ac = nullptr;
 
 private slots:
     void leftJoySlot(const double &speed);

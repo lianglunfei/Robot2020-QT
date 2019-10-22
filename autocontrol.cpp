@@ -1,16 +1,21 @@
 /*
- * @Author: xingzhang.Wu 
- * @Date: 2019-10-21 16:07:31 
+ * @Author: xingzhang.Wu
+ * @Date: 2019-10-21 16:07:31
  * @Last Modified by: xingzhang.Wu
  * @Last Modified time: 2019-10-21 16:17:26
  */
 #include "autocontrol.h"
 #include "globaldata.h"
+#include "debug.h"
 #include <cmath>
 #include <QElapsedTimer>
+#include <QTimer>
 
-AutoControl::AutoControl()
+AutoControl::AutoControl(QObject* parent) : QObject (parent),
+    period(20), l1(0), l2(0.304), l3(0.277)
 {
+    timer = new QTimer();
+    timer->setTimerType(Qt::PreciseTimer);
 }
 
 int AutoControl::run()
@@ -20,18 +25,17 @@ int AutoControl::run()
 
 /**
  * @brief 单独移动一条腿
- * 
+ *
  * @param leg 第几条腿
  * @param changePos 腿部末端位置
  * @param v 运动速度
- * @return int 
+ * @return int
  */
 int AutoControl::moveLeg(int leg, double changePos[], double v)
 {
     double c1 = global->currentCanAnalyticalData[leg].position;
     double c2 = global->currentCanAnalyticalData[leg + 1].position;
     double c3 = global->currentCanAnalyticalData[leg + 2].position;
-    double l1 = 0, l2 = 0.304, l3 = 0.277;
     double x = l2 * sin(c2) + l3 * sin(c2 + c3);
     double y = l2 * sin(c1) * cos(c2) + l3 * sin(c1) * cos(c2 + c3);
     double z = -l2 * cos(c1) * cos(c2) - l3 * cos(c1) * cos(c2 + c3);
@@ -40,11 +44,10 @@ int AutoControl::moveLeg(int leg, double changePos[], double v)
     QElapsedTimer t;
     t.start();
 
-    while (1)
-    {
+    connect(timer, &QTimer::timeout, [=]() mutable {
         double d = sqrt(changePos[0] * changePos[0] + changePos[1] * changePos[1] + changePos[2] * changePos[2]);
         double T1 = d / (v * 0.1);
-        tp += t.elapsed() * 1 / T1;
+        tp += (t.elapsed()/1000) * 1 / T1;
         double px = 0, py = 0, pz = 0;
         if (leg == 0 || leg == 1)
             changePos[1] = -changePos[1];
@@ -76,23 +79,26 @@ int AutoControl::moveLeg(int leg, double changePos[], double v)
             global->currentCanAnalyticalData[leg + 1].position = -c2;
             global->currentCanAnalyticalData[leg + 2].position = -c3;
         }
+        qDebug() << c1 << c2 << c3;
         if (tp >= 1)
-            break;
-    }
+            timer->stop();
+    });
+
+    if(!timer->isActive())
+        timer->start(period);
 
     return 0;
 }
 
 /**
  * @brief 四足身体移动
- * 
+ *
  * @param changePos 身体的位置 c a d b
  * @param v 运动速度
- * @return int 
+ * @return int
  */
 int AutoControl::moveBody(double changePos[], double v)
 {
-    double l1 = 0, l2 = 0.304, l3 = 0.277;
     double ca1 = global->currentCanAnalyticalData[3].position;
     double ca2 = global->currentCanAnalyticalData[4].position;
     double ca3 = global->currentCanAnalyticalData[5].position;
@@ -123,11 +129,10 @@ int AutoControl::moveBody(double changePos[], double v)
     QElapsedTimer t;
     t.start();
 
-    while (1)
-    {
+    connect(timer, &QTimer::timeout, [=]() mutable {
         double d = sqrt(changePos[0] * changePos[0] + changePos[1] * changePos[1] + changePos[2] * changePos[2]);
         double T1 = d / (v * 0.1);
-        tp = tp + t.elapsed() * 1 / T1;
+        tp = tp + (t.elapsed()/1000) * 1 / T1;
 
         double pxa = -xa + changePos[0] * tp;
         double pya = ya + changePos[1] * tp;
@@ -180,7 +185,11 @@ int AutoControl::moveBody(double changePos[], double v)
         global->currentCanAnalyticalData[8].position = -cd1;
 
         if (tp >= 1)
-            break;
-    }
+            timer->stop();
+    });
+
+    if(!timer->isActive())
+        timer->start(period);
+
     return 0;
 }

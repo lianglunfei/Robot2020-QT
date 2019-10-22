@@ -2,19 +2,21 @@
  * @Author: xingzhang.Wu 
  * @Date: 2019-10-21 16:07:52 
  * @Last Modified by: xingzhang.Wu
- * @Last Modified time: 2019-10-21 16:14:06
+ * @Last Modified time: 2019-10-22 11:04:06
  */
 #include "remotecontrol.h"
 #include "debug.h"
 
 RemoteControl::RemoteControl(QDialog *parent) : QDialog(parent)
 {
+    ac = new AutoControl();
 }
 
 RemoteControl::~RemoteControl()
 {
     delete qmlControl1;
     delete qmlControl2;
+    delete ac;
 }
 
 /**
@@ -42,10 +44,14 @@ void RemoteControl::show()
 
 void RemoteControl::leftJoySlot(const double &speed)
 {
+    double changePos[3] = {0, 0, 1};
+    ac->moveLeg(0, changePos, 0.1);
 }
 
 void RemoteControl::rightJoySlot(const double &angle)
 {
+    double changePos[3] = {0, 0, -1};
+    ac->moveLeg(0, changePos, 0.1);
 }
 
 void RemoteControl::qmlStartSlot()

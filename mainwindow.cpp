@@ -2,7 +2,7 @@
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 10:03:19 
  * @Last Modified by: xingzhang.Wu
- * @Last Modified time: 2019-09-29 10:28:30
+ * @Last Modified time: 2019-10-22 10:59:53
  */
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 #endif
 
     //Initialize joint window
-    // m_joint_widget = new JointPlot;
+    m_joint_widget = new JointPlot;
 
     //Initialize joint speed measure window
     // m_joint_speed_meas_widget = new JointSpeedMeas;
@@ -95,7 +95,7 @@ void MainWindow::connectInit()
 {
     connect(ui->actionConnect_CAN, &QAction::triggered, m_connect_dialog, &ConnectDialog::show);
     connect(ui->actionTerminal, &QAction::triggered, m_terminal, &Terminal::show);
-    // connect(ui->actionJoint, &QAction::triggered, m_joint_widget, &JointPlot::show);
+    connect(ui->actionJoint, &QAction::triggered, m_joint_widget, &JointPlot::show);
     // connect(ui->actionJoint_Speed_Meas, &QAction::triggered, m_joint_speed_meas_widget, &JointSpeedMeas::show);
     connect(ui->actionJoint_Control, &QAction::triggered, m_joint_control, &JointControl::show);
     connect(ui->actionSingle_Joint_Control, &QAction::triggered, m_single_joint_control, &SingleJointControl::show);
@@ -113,7 +113,7 @@ void MainWindow::connectInit()
 MainWindow::~MainWindow()
 {
     delete m_connect_dialog;
-    // delete m_joint_widget;
+    delete m_joint_widget;
     // delete m_joint_speed_meas_widget;
     delete m_terminal;
     delete m_joint_control;

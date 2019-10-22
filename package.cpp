@@ -1,8 +1,8 @@
 /*
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 10:03:45 
- * @Last Modified by: wuzhang.Wu
- * @Last Modified time: 2019-10-09 16:46:19
+ * @Last Modified by: xingzhang.Wu
+ * @Last Modified time: 2019-10-22 10:57:34
  */
 #include "package.h"
 #include "globaldata.h"
@@ -27,6 +27,10 @@ Package::Package()
  */
 bool Package::unpackOperate()
 {
+    if (SIMULATE_CONNECT == AUTORUN)
+    {
+        return true;
+    }
     static unsigned char receivedCanData[NODE_NUM * 8] = {0}; //96+16
     bool isConnected = false;
     int dataLen[CAN_MAX_FRAM] = {0};
