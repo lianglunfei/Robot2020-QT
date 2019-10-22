@@ -54,10 +54,10 @@ int AutoControl::moveLeg(int leg, double changePos[], double v)
         tp += (t.elapsed() / 1000) * 1 / T1;
         double px = 0, py = 0, pz = 0;
         if (leg == 0 || leg == 1)
-            changePos[1] = -changePos[1];
+            changePos[0] = -changePos[0];
 
         if (leg == 1 || leg == 3)
-            changePos[2] = -changePos[2];
+            changePos[1] = -changePos[1];
 
         if (leg == 0 || leg == 3)
             px = x + changePos[0] * tp;
