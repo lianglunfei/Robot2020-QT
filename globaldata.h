@@ -42,7 +42,6 @@ enum
 #define NONE_CONNECT 0
 #define CONNECT_TYPE_ALYSIST 1
 #define CONNECT_TYPE_GC 2
-#define AUTORUN 3
 
 //开关变量
 #define USE_ZLG
@@ -52,7 +51,7 @@ enum
 #define NODE_NUM 12
 #define DRIVE_NEW 1
 #define CAN_MAX_FRAM 100
-#define SIMULATE_CONNECT AUTORUN //CONNECT_TYPE_ALYSIST
+#define SIMULATE_CONNECT NONE_CONNECT //CONNECT_TYPE_ALYSIST
 
 #define global GlobalData::getInstance()
 

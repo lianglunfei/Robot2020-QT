@@ -27,10 +27,6 @@ Package::Package()
  */
 bool Package::unpackOperate()
 {
-    if (SIMULATE_CONNECT == AUTORUN)
-    {
-        return true;
-    }
     static unsigned char receivedCanData[NODE_NUM * 8] = {0}; //96+16
     bool isConnected = false;
     int dataLen[CAN_MAX_FRAM] = {0};
