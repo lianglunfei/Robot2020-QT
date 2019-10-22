@@ -44,13 +44,13 @@ void RemoteControl::show()
 
 void RemoteControl::leftJoySlot(const double &speed)
 {
-    double changePos[3] = {0, 0, 1};
+    double changePos[3] = {0, 0, 0.01};
     ac->moveLeg(0, changePos, 0.1);
 }
 
 void RemoteControl::rightJoySlot(const double &angle)
 {
-    double changePos[3] = {0, 0, -1};
+    double changePos[3] = {0, 0, -0.01};
     ac->moveLeg(0, changePos, 0.1);
 }
 
