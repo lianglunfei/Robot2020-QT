@@ -44,14 +44,10 @@ void RemoteControl::show()
 
 void RemoteControl::leftJoySlot(const double &speed)
 {
-    double changePos[3] = {0, 0, 0.01};
-    ac->moveLeg(0, changePos, 0.1);
 }
 
 void RemoteControl::rightJoySlot(const double &angle)
 {
-    double changePos[3] = {0, 0, -0.01};
-    ac->moveLeg(0, changePos, 0.1);
 }
 
 void RemoteControl::qmlStartSlot()
@@ -64,8 +60,12 @@ void RemoteControl::qmlL1Slot()
 
 void RemoteControl::qmlASlot(bool press)
 {
+    double changePos[3] = {0.05, 0, 0};
+    ac->moveLeg(0, changePos, 0.1);
 }
 
 void RemoteControl::qmlBSlot(bool press)
 {
+    double changePos[3] = {-0.05, 0, 0};
+    ac->moveLeg(0, changePos, 0.1);
 }

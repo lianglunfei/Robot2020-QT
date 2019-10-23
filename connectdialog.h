@@ -31,6 +31,9 @@ public:
     explicit ConnectDialog(QWidget *parent = 0);
     ~ConnectDialog();
 
+public slots:
+    void disconnect();
+
 private:
     Ui::ConnectDialog *ui;
     void accept();

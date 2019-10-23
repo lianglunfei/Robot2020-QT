@@ -40,7 +40,7 @@ int AutoControl::moveLeg(int leg, double changePos[], double v)
     double c1 = (global->currentCanAnalyticalData[leg].position - global->refValue[leg]) / PI;
     double c2 = (global->currentCanAnalyticalData[leg + 1].position - global->refValue[leg + 1]) / PI;
     double c3 = (global->currentCanAnalyticalData[leg + 2].position - global->refValue[leg + 2]) / PI;
-    qDebug() << "ref" << c1 << c2 << c3;
+    // qDebug() << "ref" << c1 << c2 << c3;
     double x = l2 * sin(c2) + l3 * sin(c2 + c3);
     double y = l2 * sin(c1) * cos(c2) + l3 * sin(c1) * cos(c2 + c3);
     double z = -l2 * cos(c1) * cos(c2) - l3 * cos(c1) * cos(c2 + c3);

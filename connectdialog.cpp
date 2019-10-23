@@ -36,6 +36,14 @@ ConnectDialog::~ConnectDialog()
     delete ui;
 }
 
+void ConnectDialog::disconnect()
+{
+    if (DataTransmission::CANCloseDevice(global->connectType) != -1) {
+        global->connectType = 0;
+        qDebug() << "Disconnect CAN OK!";
+    }
+}
+
 void ConnectDialog::accept()
 {
     int baud = ui->bauteComboBox->currentIndex();

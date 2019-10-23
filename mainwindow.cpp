@@ -94,6 +94,7 @@ void MainWindow::canConnectEvent()
 void MainWindow::connectInit()
 {
     connect(ui->actionConnect_CAN, &QAction::triggered, m_connect_dialog, &ConnectDialog::show);
+    connect(ui->actionDisconnect_CAN, &QAction::triggered, m_connect_dialog, &ConnectDialog::disconnect);
     connect(ui->actionTerminal, &QAction::triggered, m_terminal, &Terminal::show);
     connect(ui->actionJoint, &QAction::triggered, m_joint_widget, &JointPlot::show);
     // connect(ui->actionJoint_Speed_Meas, &QAction::triggered, m_joint_speed_meas_widget, &JointSpeedMeas::show);
