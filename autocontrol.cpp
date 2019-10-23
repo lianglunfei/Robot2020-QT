@@ -11,7 +11,7 @@
 #include <QElapsedTimer>
 #include <QTimer>
 
-#define PI 3.14159
+#define PI 57.3
 
 AutoControl::AutoControl(QObject *parent) : QObject(parent),
                                             period(20), l1(0), l2(0.304), l3(0.277)
