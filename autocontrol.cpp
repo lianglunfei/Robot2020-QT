@@ -6,6 +6,7 @@
  */
 #include "autocontrol.h"
 #include "globaldata.h"
+#include "package.h"
 #include "debug.h"
 #include <cmath>
 #include <QElapsedTimer>
@@ -14,15 +15,28 @@
 #define PI 57.3
 
 AutoControl::AutoControl(QObject *parent) : QObject(parent),
-                                            period(20), l1(0), l2(0.304), l3(0.277)
+                                            period(20), l1(0), l2(0.304), l3(0.277),
+                                            flag(0), leg(0), v(0), mode(0)
 {
     timer = new QTimer();
     timer->setTimerType(Qt::PreciseTimer);
+    connect(timer, &QTimer::timeout, this, &AutoControl::moveLeg);
+    timer->start(period);
 }
 
 int AutoControl::run()
 {
     return 0;
+}
+
+void AutoControl::reset()
+{
+    flag = 0;
+}
+
+void AutoControl::stop()
+{
+    mode = 0;
 }
 
 /**
@@ -33,26 +47,51 @@ int AutoControl::run()
  * @param v 运动速度
  * @return int
  */
-int AutoControl::moveLeg(int leg, double changePos[], double v)
+int AutoControl::moveLegSet(int leg, double changePos[], double v, int mode)
 {
-    if (NODE_NUM != 12)
-        return -1;
-    double c1 = (global->currentCanAnalyticalData[leg].position - global->refValue[leg]) / PI;
-    double c2 = (global->currentCanAnalyticalData[leg + 1].position - global->refValue[leg + 1]) / PI;
-    double c3 = (global->currentCanAnalyticalData[leg + 2].position - global->refValue[leg + 2]) / PI;
-    // qDebug() << "ref" << c1 << c2 << c3;
-    double x = l2 * sin(c2) + l3 * sin(c2 + c3);
-    double y = l2 * sin(c1) * cos(c2) + l3 * sin(c1) * cos(c2 + c3);
-    double z = -l2 * cos(c1) * cos(c2) - l3 * cos(c1) * cos(c2 + c3);
-    double tp = 0;
+    this->leg = leg;
+    for(int i=0;i<3;i++) {
+        this->changePos[i]=changePos[i];
+    }
+    this->v = v;
+    this->mode=mode;
+}
 
-    QElapsedTimer t;
-    t.start();
+int AutoControl::moveLeg()
+{
+    static double c1 = 0;
+    static double c2 = 0;
+    static double c3 = 0;
+    static double x = 0;
+    static double y = 0;
+    static double z = 0;
+    static double tp = 0;
+    static QElapsedTimer t;
+    static double currentPos[NODE_NUM];
 
-    connect(timer, &QTimer::timeout, [=]() mutable {
-        double d = sqrt(changePos[0] * changePos[0] + changePos[1] * changePos[1] + changePos[2] * changePos[2]);
-        double T1 = d / (v * 0.1);
-        tp += (t.elapsed() / 1000) * 1 / T1;
+    if(flag==0){
+        if (NODE_NUM != 12)
+            return -1;
+        flag = 1;
+        c1 = (global->currentCanAnalyticalData[leg].position - global->refValue[leg]) / PI;
+        c2 = (global->currentCanAnalyticalData[leg + 1].position - global->refValue[leg + 1]) / PI;
+        c3 = (global->currentCanAnalyticalData[leg + 2].position - global->refValue[leg + 2]) / PI;
+
+        for(int i=0;i<NODE_NUM;i++)
+            currentPos[i]=global->currentCanAnalyticalData[i].position;
+
+        x = l2 * sin(c2) + l3 * sin(c2 + c3);
+        y = l2 * sin(c1) * cos(c2) + l3 * sin(c1) * cos(c2 + c3);
+        z = -l2 * cos(c1) * cos(c2) - l3 * cos(c1) * cos(c2 + c3);
+        tp = 0;
+
+        t.start();
+    }
+
+    double d = sqrt((changePos[0] * changePos[0]) + (changePos[1] * changePos[1]) + (changePos[2] * changePos[2]));
+    double T1 = d / (v * 0.1);
+    tp += (t.elapsed() / 1000.0) * 1 / T1;
+    if (tp < 1) {
         double px = 0, py = 0, pz = 0;
         if (leg == 0 || leg == 1)
             changePos[0] = -changePos[0];
@@ -67,31 +106,55 @@ int AutoControl::moveLeg(int leg, double changePos[], double v)
 
         py = y + changePos[1] * tp;
         pz = z + changePos[2] * tp;
-        double c1 = atan(py / pz);
+        c1 = atan(py / pz);
         double f = acos((l2 * l2 + px * px + (py - l1 * sin(c1)) * (py - l1 * sin(c1)) + (pz + l1 * cos(c1)) * (pz + l1 * cos(c1)) - l3 * l3) / (2 * l2 * sqrt(px * px + (py - l1 * sin(c1)) * (py - l1 * sin(c1)) + (pz + l1 * cos(c1)) * (pz + l1 * cos(c1)))));
-        double c2 = atan(px / (sqrt(py * py + pz * pz)) - l1) - f;
-        double c3 = (l2 + l3) / l3 * f;
+        c2 = atan(px / (sqrt(py * py + pz * pz)) - l1) - f;
+        c3 = (l2 + l3) / l3 * f;
+
+        double cc1=0,cc2=0,cc3=0;
 
         if (leg == 0 || leg == 3)
         {
-            global->currentCanAnalyticalData[leg].position = c1 * PI + global->refValue[leg];
-            global->currentCanAnalyticalData[leg + 1].position = c2 * PI + global->refValue[leg + 1];
-            global->currentCanAnalyticalData[leg + 2].position = c3 * PI + global->refValue[leg + 2];
+            cc1 = c1 * PI + global->refValue[leg];
+            cc2 = c2 * PI + global->refValue[leg + 1];
+            cc3 = c3 * PI + global->refValue[leg + 2];
         }
         else
         {
-            global->currentCanAnalyticalData[leg].position = -c1 * PI - global->refValue[leg];
-            global->currentCanAnalyticalData[leg + 1].position = -c2 * PI - global->refValue[leg + 1];
-            global->currentCanAnalyticalData[leg + 2].position = -c3 * PI - global->refValue[leg + 2];
+            cc1 = -c1 * PI - global->refValue[leg];
+            cc2 = -c2 * PI - global->refValue[leg + 1];
+            cc3 = -c3 * PI - global->refValue[leg + 2];
         }
+#if 0
+        if(!isnanl(static_cast<long double>(cc1)))
+            global->currentCanAnalyticalData[leg].position = cc1;
+        if(!isnanl(static_cast<long double>(cc2)))
+            global->currentCanAnalyticalData[leg + 1].position = cc2;
+        if(!isnanl(static_cast<long double>(cc3)))
+            global->currentCanAnalyticalData[leg + 2].position = cc3;
+
         qDebug() << global->currentCanAnalyticalData[leg].position << global->currentCanAnalyticalData[leg + 1].position
                  << global->currentCanAnalyticalData[leg + 2].position;
-        if (tp >= 1)
-            timer->stop();
-    });
 
-    if (!timer->isActive())
-        timer->start(period);
+        for(int i=0;i<3;i++)
+            Package::packOperate(global->sendId[leg+i], global->currentCanAnalyticalData[leg+i].position, PROTOCOL_TYPE_POS);
+#else
+        if(!isnanl(static_cast<long double>(cc1)))
+            currentPos[leg] = cc1;
+        if(!isnanl(static_cast<long double>(cc2)))
+            currentPos[leg+1] = cc2;
+        if(!isnanl(static_cast<long double>(cc3)))
+            currentPos[leg+2] = cc3;
+
+        qDebug() << currentPos[leg] << currentPos[leg+1]
+                 << currentPos[leg+2];
+
+        Package::packOperateMulti(global->sendId, currentPos, NODE_NUM, PROTOCOL_TYPE_POS);
+#endif
+    } else {
+        if(mode)
+            flag = 0;
+    }
 
     return 0;
 }
