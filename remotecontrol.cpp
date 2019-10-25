@@ -70,14 +70,14 @@ void RemoteControl::qmlL1Slot()
 
 void RemoteControl::qmlASlot(bool press)
 {
-    double changePos[3] = {0.0, 0.0, -0.01};
+    double changePos[3] = {0.0, 0.0, -0.05};
     ac->moveLegSet(0, changePos, 1, 0);
     ac->reset();
 }
 
 void RemoteControl::qmlBSlot(bool press)
 {
-    double changePos[3] = {0.0, 0.0, 0.01};
+    double changePos[3] = {0.0, 0.0, 0.05};
     ac->moveLegSet(0, changePos, 1, 0);
     ac->reset();
 }
