@@ -13,7 +13,7 @@
 #include <QTimer>
 
 #define PI 57.3
-#define DEBUG_SIM 1
+#define DEBUG_SIM 0
 
 AutoControl::AutoControl(QObject *parent) : QObject(parent),
                                             period(20), l1(0), l2(0.304), l3(0.277),
@@ -51,19 +51,21 @@ void AutoControl::moveLegSet(int leg, double changePos[], double v, int mode)
 {
     this->isSetting = 1;
     this->leg = leg;
-    for(int i=0;i<3;i++) {
-        this->changePos[i]=changePos[i];
+    for (int i = 0; i < 3; i++)
+    {
+        this->changePos[i] = changePos[i];
     }
     this->v = v;
-    this->mode=mode;
+    this->mode = mode;
     this->useBody = 0;
     this->isSetting = 0;
 }
 
 void AutoControl::moveFunc()
 {
-    if(!isSetting) {
-        if(this->useBody)
+    if (!isSetting)
+    {
+        if (this->useBody)
             moveBody();
         else
             moveLeg();
@@ -82,7 +84,8 @@ void AutoControl::moveLeg()
     static QElapsedTimer t;
     static double currentPos[NODE_NUM];
 
-    if(flag==0){
+    if (flag == 0)
+    {
         if (NODE_NUM != 12)
             return;
         flag = 1;
@@ -90,8 +93,8 @@ void AutoControl::moveLeg()
         c2 = (global->currentCanAnalyticalData[leg + 1].position - global->refValue[leg + 1]) / PI;
         c3 = (global->currentCanAnalyticalData[leg + 2].position - global->refValue[leg + 2]) / PI;
 
-        for(int i=0;i<NODE_NUM;i++)
-            currentPos[i]=global->currentCanAnalyticalData[i].position;
+        for (int i = 0; i < NODE_NUM; i++)
+            currentPos[i] = global->currentCanAnalyticalData[i].position;
 
         x = l2 * sin(c2) + l3 * sin(c2 + c3);
         y = l2 * sin(c1) * cos(c2) + l3 * sin(c1) * cos(c2 + c3);
@@ -104,7 +107,8 @@ void AutoControl::moveLeg()
     double d = sqrt((changePos[0] * changePos[0]) + (changePos[1] * changePos[1]) + (changePos[2] * changePos[2]));
     double T1 = d / (v * 0.1);
     tp += (t.elapsed() / 1000.0) * 1 / T1;
-    if (tp < 1) {
+    if (tp < 1)
+    {
         double px = 0, py = 0, pz = 0;
         if (leg == 0 || leg == 1)
             changePos[0] = -changePos[0];
@@ -124,7 +128,7 @@ void AutoControl::moveLeg()
         c2 = atan(px / (sqrt(py * py + pz * pz)) - l1) - f;
         c3 = (l2 + l3) / l3 * f;
 
-        double cc1=0,cc2=0,cc3=0;
+        double cc1 = 0, cc2 = 0, cc3 = 0;
 
         if (leg == 0 || leg == 3)
         {
@@ -134,35 +138,37 @@ void AutoControl::moveLeg()
         }
         else
         {
-            cc1 = -c1 * PI - global->refValue[leg];
-            cc2 = -c2 * PI - global->refValue[leg + 1];
-            cc3 = -c3 * PI - global->refValue[leg + 2];
+            cc1 = -c1 * PI + global->refValue[leg];
+            cc2 = -c2 * PI + global->refValue[leg + 1];
+            cc3 = -c3 * PI + global->refValue[leg + 2];
         }
 #if DEBUG_SIM
-        if(!isnanf(static_cast<long double>(cc1)))
+        if (!isnanf(static_cast<long double>(cc1)))
             global->currentCanAnalyticalData[leg].position = cc1;
-        if(!isnanf(static_cast<long double>(cc2)))
+        if (!isnanf(static_cast<long double>(cc2)))
             global->currentCanAnalyticalData[leg + 1].position = cc2;
-        if(!isnanf(static_cast<long double>(cc3)))
+        if (!isnanf(static_cast<long double>(cc3)))
             global->currentCanAnalyticalData[leg + 2].position = cc3;
 
         qDebug() << global->currentCanAnalyticalData[leg].position << global->currentCanAnalyticalData[leg + 1].position
                  << global->currentCanAnalyticalData[leg + 2].position;
 #else
-        if(!isnanf(static_cast<long double>(cc1)))
+        if (!isnanf(static_cast<long double>(cc1)))
             currentPos[leg] = cc1;
-        if(!isnanf(static_cast<long double>(cc2)))
-            currentPos[leg+1] = cc2;
-        if(!isnanf(static_cast<long double>(cc3)))
-            currentPos[leg+2] = cc3;
+        if (!isnanf(static_cast<long double>(cc2)))
+            currentPos[leg + 1] = cc2;
+        if (!isnanf(static_cast<long double>(cc3)))
+            currentPos[leg + 2] = cc3;
 
-        qDebug() << currentPos[leg] << currentPos[leg+1]
-                 << currentPos[leg+2];
+        qDebug() << currentPos[leg] << currentPos[leg + 1]
+                 << currentPos[leg + 2];
 
         Package::packOperateMulti(global->sendId, currentPos, NODE_NUM, PROTOCOL_TYPE_POS);
 #endif
-    } else {
-        if(mode)
+    }
+    else
+    {
+        if (mode)
             flag = 0;
     }
 }
@@ -177,11 +183,12 @@ void AutoControl::moveLeg()
 void AutoControl::moveBodySet(double changePos[], double v, int mode)
 {
     this->isSetting = 1;
-    for(int i=0;i<3;i++) {
-        this->changePos[i]=changePos[i];
+    for (int i = 0; i < 3; i++)
+    {
+        this->changePos[i] = changePos[i];
     }
     this->v = v;
-    this->mode=mode;
+    this->mode = mode;
     this->useBody = 1;
     this->isSetting = 0;
 }
@@ -220,7 +227,8 @@ void AutoControl::moveBody()
     static QElapsedTimer t;
     static double currentPos[NODE_NUM];
 
-    if(flag==0){
+    if (flag == 0)
+    {
         if (NODE_NUM != 12)
             return;
         flag = 1;
@@ -237,8 +245,8 @@ void AutoControl::moveBody()
         cd2 = (global->currentCanAnalyticalData[7].position - global->refValue[7]) / PI;
         cd3 = (global->currentCanAnalyticalData[8].position - global->refValue[8]) / PI;
 
-        for(int i=0;i<NODE_NUM;i++)
-            currentPos[i]=global->currentCanAnalyticalData[i].position;
+        for (int i = 0; i < NODE_NUM; i++)
+            currentPos[i] = global->currentCanAnalyticalData[i].position;
 
         xa = l2 * sin(ca2) + l3 * sin(ca2 + ca3);
         ya = l2 * sin(ca1) * cos(ca2) + l3 * sin(ca1) * cos(ca2 + ca3);
@@ -260,7 +268,8 @@ void AutoControl::moveBody()
     double d = sqrt((changePos[0] * changePos[0]) + (changePos[1] * changePos[1]) + (changePos[2] * changePos[2]));
     double T1 = d / (v * 0.1);
     tp += (t.elapsed() / 1000.0) * 1 / T1;
-    if (tp < 1) {
+    if (tp < 1)
+    {
         double pxa = -xa + changePos[0] * tp;
         double pya = ya + changePos[1] * tp;
         double pza = za + changePos[2] * tp;
@@ -295,9 +304,9 @@ void AutoControl::moveBody()
         cd2 = atan(pxd / (sqrt(pyd * pyd + pzd * pzd)) - l1) - f;
         cd3 = (l2 + l3) / l3 * f;
 
-        double cca1 = ca1 * PI + global->refValue[3];
-        double cca2 = ca2 * PI + global->refValue[4];
-        double cca3 = ca3 * PI + global->refValue[5];
+        double cca1 = -ca1 * PI + global->refValue[3];
+        double cca2 = -ca2 * PI + global->refValue[4];
+        double cca3 = -ca3 * PI + global->refValue[5];
 
         double ccb1 = cb1 * PI + global->refValue[9];
         double ccb2 = cb2 * PI + global->refValue[10];
@@ -307,72 +316,72 @@ void AutoControl::moveBody()
         double ccc2 = cc2 * PI + global->refValue[1];
         double ccc3 = cc3 * PI + global->refValue[2];
 
-        double ccd1 = cd1 * PI + global->refValue[6];
-        double ccd2 = cd2 * PI + global->refValue[7];
-        double ccd3 = cd3 * PI + global->refValue[8];
+        double ccd1 = -cd1 * PI + global->refValue[6];
+        double ccd2 = -cd2 * PI + global->refValue[7];
+        double ccd3 = -cd3 * PI + global->refValue[8];
 
 #if DEBUG_SIM
-        if(!isnanf(static_cast<long double>(cca1)))
+        if (!isnanf(static_cast<long double>(cca1)))
             global->currentCanAnalyticalData[3].position = cca1;
-        if(!isnanf(static_cast<long double>(cca2)))
+        if (!isnanf(static_cast<long double>(cca2)))
             global->currentCanAnalyticalData[4].position = cca2;
-        if(!isnanf(static_cast<long double>(cca3)))
+        if (!isnanf(static_cast<long double>(cca3)))
             global->currentCanAnalyticalData[5].position = cca3;
 
-        if(!isnanf(static_cast<long double>(ccb1)))
+        if (!isnanf(static_cast<long double>(ccb1)))
             global->currentCanAnalyticalData[9].position = ccb1;
-        if(!isnanf(static_cast<long double>(ccb2)))
+        if (!isnanf(static_cast<long double>(ccb2)))
             global->currentCanAnalyticalData[10].position = ccb2;
-        if(!isnanf(static_cast<long double>(ccb3)))
+        if (!isnanf(static_cast<long double>(ccb3)))
             global->currentCanAnalyticalData[11].position = ccb3;
 
-        if(!isnanf(static_cast<long double>(ccc1)))
+        if (!isnanf(static_cast<long double>(ccc1)))
             global->currentCanAnalyticalData[0].position = ccc1;
-        if(!isnanf(static_cast<long double>(ccc2)))
+        if (!isnanf(static_cast<long double>(ccc2)))
             global->currentCanAnalyticalData[1].position = ccc2;
-        if(!isnanf(static_cast<long double>(ccc3)))
+        if (!isnanf(static_cast<long double>(ccc3)))
             global->currentCanAnalyticalData[2].position = ccc3;
 
-        if(!isnanf(static_cast<long double>(ccd1)))
+        if (!isnanf(static_cast<long double>(ccd1)))
             global->currentCanAnalyticalData[6].position = ccd1;
-        if(!isnanf(static_cast<long double>(ccd2)))
+        if (!isnanf(static_cast<long double>(ccd2)))
             global->currentCanAnalyticalData[7].position = ccd2;
-        if(!isnanf(static_cast<long double>(ccd3)))
+        if (!isnanf(static_cast<long double>(ccd3)))
             global->currentCanAnalyticalData[8].position = ccd3;
 #else
-        if(!isnanf(static_cast<long double>(cca1)))
+        if (!isnanf(static_cast<long double>(cca1)))
             currentPos[3] = cca1;
-        if(!isnanf(static_cast<long double>(cca2)))
+        if (!isnanf(static_cast<long double>(cca2)))
             currentPos[4] = cca2;
-        if(!isnanf(static_cast<long double>(cca3)))
+        if (!isnanf(static_cast<long double>(cca3)))
             currentPos[5] = cca3;
 
-        if(!isnanf(static_cast<long double>(ccb1)))
+        if (!isnanf(static_cast<long double>(ccb1)))
             currentPos[9] = ccb1;
-        if(!isnanf(static_cast<long double>(ccb2)))
+        if (!isnanf(static_cast<long double>(ccb2)))
             currentPos[10] = ccb2;
-        if(!isnanf(static_cast<long double>(ccb3)))
+        if (!isnanf(static_cast<long double>(ccb3)))
             currentPos[11] = ccb3;
 
-        if(!isnanf(static_cast<long double>(ccc1)))
+        if (!isnanf(static_cast<long double>(ccc1)))
             currentPos[0] = ccc1;
-        if(!isnanf(static_cast<long double>(ccc2)))
+        if (!isnanf(static_cast<long double>(ccc2)))
             currentPos[1] = ccc2;
-        if(!isnanf(static_cast<long double>(ccc3)))
+        if (!isnanf(static_cast<long double>(ccc3)))
             currentPos[2] = ccc3;
 
-        if(!isnanf(static_cast<long double>(ccd1)))
+        if (!isnanf(static_cast<long double>(ccd1)))
             currentPos[6] = ccd1;
-        if(!isnanf(static_cast<long double>(ccd2)))
+        if (!isnanf(static_cast<long double>(ccd2)))
             currentPos[7] = ccd2;
-        if(!isnanf(static_cast<long double>(ccd3)))
+        if (!isnanf(static_cast<long double>(ccd3)))
             currentPos[8] = ccd3;
 
         qDebug() << currentPos[0] << currentPos[1] << currentPos[2] << currentPos[3] << currentPos[4]
-                << currentPos[5] << currentPos[6] << currentPos[7] << currentPos[8] << currentPos[9]
-                << currentPos[10] << currentPos[11];
+                 << currentPos[5] << currentPos[6] << currentPos[7] << currentPos[8] << currentPos[9]
+                 << currentPos[10] << currentPos[11];
 
-//        Package::packOperateMulti(global->sendId, currentPos, NODE_NUM, PROTOCOL_TYPE_POS);
+       Package::packOperateMulti(global->sendId, currentPos, NODE_NUM, PROTOCOL_TYPE_POS);
 #endif
     }
 }

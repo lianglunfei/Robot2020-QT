@@ -44,20 +44,20 @@ void RemoteControl::show()
 
 void RemoteControl::leftJoySlot(const double &speed)
 {
-    double changePos[3] = {0.0, 0.0, -0.05};
-    ac->moveLegSet(0, changePos, 1, 1);
-    ac->reset();
-    if(speed<100)
-        ac->stop();
+    // double changePos[3] = {0.0, 0.0, -0.05};
+    // ac->moveLegSet(0, changePos, 1, 1);
+    // ac->reset();
+    // if (speed < 1000)
+    //     ac->stop();
 }
 
 void RemoteControl::rightJoySlot(const double &angle)
 {
-    double changePos[3] = {0.0, 0.0, 0.05};
-    ac->moveLegSet(0, changePos, 1, 1);
-    ac->reset();
-    if(angle<100)
-        ac->stop();
+    // double changePos[3] = {0.0, 0.0, 0.05};
+    // ac->moveLegSet(0, changePos, 1, 1);
+    // ac->reset();
+    // if (angle < 1000)
+    //     ac->stop();
 }
 
 void RemoteControl::qmlStartSlot()
@@ -70,14 +70,20 @@ void RemoteControl::qmlL1Slot()
 
 void RemoteControl::qmlASlot(bool press)
 {
-    double changePos[3] = {0.0, 0.0, -0.05};
-    ac->moveLegSet(0, changePos, 1, 0);
+    // double changePos[3] = {0.0, 0.0, -0.05};
+    // ac->moveLegSet(0, changePos, 1, 0);
+    // ac->reset();
+    double changePos[3] = {0.0, -0.025, 0.0};
+    ac->moveBodySet(changePos, 1, 0);
     ac->reset();
 }
 
 void RemoteControl::qmlBSlot(bool press)
 {
-    double changePos[3] = {0.0, 0.0, 0.05};
-    ac->moveLegSet(0, changePos, 1, 0);
+    // double changePos[3] = {0.0, 0.0, 0.05};
+    // ac->moveLegSet(0, changePos, 1, 0);
+    // ac->reset();
+    double changePos[3] = {0.0, 0.025, 0.0};
+    ac->moveBodySet(changePos, 1, 0);
     ac->reset();
 }

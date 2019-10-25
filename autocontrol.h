@@ -26,7 +26,7 @@ private:
     int flag;
     double l1, l2, l3;
     int leg;
-    double changePos[3]={0,0,0};
+    double changePos[3] = {0, 0, 0};
     double v;
     int mode;
     int useBody;
