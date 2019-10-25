@@ -11,7 +11,6 @@ class AutoControl : public QObject
 public:
     explicit AutoControl(QObject *parent = nullptr);
 
-    void run();
     void moveLegSet(int leg, double changePos[], double v, int mode);
     void moveBodySet(double changePos[], double v, int mode);
     void reset();

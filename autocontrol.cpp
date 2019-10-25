@@ -25,27 +25,31 @@ AutoControl::AutoControl(QObject *parent) : QObject(parent),
     timer->start(period);
 }
 
-void AutoControl::run()
-{
-}
-
+/**
+ * @brief 设置完成后，调用该接口开始运行
+ * 
+ */
 void AutoControl::reset()
 {
     flag = 0;
 }
 
+/**
+ * @brief 将连续运动改为点动模式
+ * 
+ */
 void AutoControl::stop()
 {
     mode = 0;
 }
 
 /**
- * @brief 单独移动一条腿
+ * @brief 单独移动一条腿设置
  *
  * @param leg 第几条腿
  * @param changePos 腿部末端位置
  * @param v 运动速度
- * @return int
+ * @return void
  */
 void AutoControl::moveLegSet(int leg, double changePos[], double v, int mode)
 {
@@ -61,6 +65,10 @@ void AutoControl::moveLegSet(int leg, double changePos[], double v, int mode)
     this->isSetting = 0;
 }
 
+/**
+ * @brief 运动定时函数
+ * 
+ */
 void AutoControl::moveFunc()
 {
     if (!isSetting)
@@ -72,6 +80,10 @@ void AutoControl::moveFunc()
     }
 }
 
+/**
+ * @brief 单条腿运动
+ * 
+ */
 void AutoControl::moveLeg()
 {
     static double c1 = 0;
@@ -174,11 +186,11 @@ void AutoControl::moveLeg()
 }
 
 /**
- * @brief 四足身体移动
+ * @brief 四足身体移动设置
  *
  * @param changePos 身体的位置 c a d b
  * @param v 运动速度
- * @return int
+ * @return void
  */
 void AutoControl::moveBodySet(double changePos[], double v, int mode)
 {
@@ -193,6 +205,10 @@ void AutoControl::moveBodySet(double changePos[], double v, int mode)
     this->isSetting = 0;
 }
 
+/**
+ * @brief 移动机器人本体
+ * 
+ */
 void AutoControl::moveBody()
 {
     static double ca1 = 0;
