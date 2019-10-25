@@ -11,14 +11,14 @@ class AutoControl : public QObject
 public:
     explicit AutoControl(QObject *parent = nullptr);
 
-    int run();
-    int moveLegSet(int leg, double changePos[], double v, int mode);
-    int moveBody(double changePos[], double v);
+    void run();
+    void moveLegSet(int leg, double changePos[], double v, int mode);
+    void moveBodySet(double changePos[], double v, int mode);
     void reset();
     void stop();
 
 public slots:
-    int moveLeg();
+    void moveFunc();
 
 private:
     QTimer *timer;
@@ -29,6 +29,11 @@ private:
     double changePos[3]={0,0,0};
     double v;
     int mode;
+    int useBody;
+    int isSetting;
+
+    void moveLeg();
+    void moveBody();
 };
 
 #endif // AUTOCONTROL_H
