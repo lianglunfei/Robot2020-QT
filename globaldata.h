@@ -2,7 +2,7 @@
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 10:02:20 
  * @Last Modified by: xingzhang.Wu
- * @Last Modified time: 2019-10-22 10:55:33
+ * @Last Modified time: 2019-11-11 13:57:02
  */
 #ifndef GLOBALDATA_H
 #define GLOBALDATA_H
@@ -17,6 +17,7 @@ typedef struct
     double current;
 } CanAnalysis;
 
+// 数字枚举变量
 enum
 {
     PROTOCOL_TYPE_POS = 1,
@@ -64,13 +65,14 @@ private:
     static QMutex mutex;
 
 public:
-    CanAnalysis currentCanAnalyticalData[NODE_NUM];
-    QStringList currentCanData;
+    CanAnalysis currentCanAnalyticalData[NODE_NUM]; //关节CAN解析后的数据
+    QStringList currentCanData; //当前CAN原始数据字符串链表
+    //参考位置，注意和csv文件保持一致，在自动控制类种被调用
     double refValue[12] = {99.052, 160.415, 88.0911, 329.31, 184.486, 148.467, 141.212, 261.981, 30.9121, 222, 250.584, 147.704};
-    int runningId[NODE_NUM] = {0};
-    int statusId[NODE_NUM] = {0};
-    int connectType = 0;
-    unsigned int sendId[NODE_NUM] = {0};
+    int runningId[NODE_NUM] = {0}; //当前能接收到CAN数据的节点ID
+    int statusId[NODE_NUM] = {0}; //节点的状态位
+    int connectType = 0; //CAN连接类型
+    unsigned int sendId[NODE_NUM] = {0}; //CAN 节点ID，在构造函数中进行初始化
     bool showDebugInfo = false;
 
     class Garbo
@@ -80,7 +82,7 @@ public:
         {
             if (GlobalData::instance)
             {
-                delete GlobalData::instance;
+                delete GlobalData::instance; //程序退出时，能够自动释放指针
                 GlobalData::instance = nullptr;
             }
         }
@@ -91,7 +93,7 @@ public:
         if (instance == nullptr)
         {
             mutex.lock();
-            if (instance == nullptr)
+            if (instance == nullptr) //双重互斥锁，保证不被实例化两次
             {
                 instance = new GlobalData();
                 static Garbo gb;
