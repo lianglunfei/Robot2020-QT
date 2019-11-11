@@ -2,7 +2,7 @@
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 10:03:19 
  * @Last Modified by: xingzhang.Wu
- * @Last Modified time: 2019-10-22 10:59:53
+ * @Last Modified time: 2019-11-11 17:00:57
  */
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -18,6 +18,7 @@
 #include "receiveworkerthread.h"
 #include "terminal.h"
 #include "receiveerror.h"
+#include "dataserver.h"
 #include "globaldata.h"
 
 #include <QTimer>
@@ -65,6 +66,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
     //Initialize remote control window
     m_remote_control = new RemoteControl;
+
+    //Initialize Network Server
+    m_data_server = new DataServer();
 
     connectInit();
 }
@@ -122,6 +126,7 @@ MainWindow::~MainWindow()
     delete m_offline_control;
     delete m_receive_error;
     delete m_remote_control;
+    delete m_data_server;
     delete workerThread;
     delete ui;
 }

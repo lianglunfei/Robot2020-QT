@@ -1,8 +1,8 @@
 /*
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 10:03:25 
- * @Last Modified by:   xingzhang.Wu 
- * @Last Modified time: 2019-09-29 10:03:25 
+ * @Last Modified by: xingzhang.Wu
+ * @Last Modified time: 2019-11-11 16:58:30
  */
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
@@ -18,6 +18,7 @@ class OfflineControl;
 class ReceiveError;
 class ReceiveWorkerThread;
 class RemoteControl;
+class DataServer;
 
 namespace Ui
 {
@@ -45,6 +46,7 @@ private:
     OfflineControl *m_offline_control = nullptr;
     ReceiveError *m_receive_error = nullptr;
     ReceiveWorkerThread *workerThread = nullptr;
+    DataServer *m_data_server = nullptr;
     void connectInit();
 
 private slots:

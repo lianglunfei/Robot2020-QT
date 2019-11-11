@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui qml quick gamepad
+QT       += core gui qml quick gamepad network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -51,7 +51,9 @@ SOURCES += \
     singlejointcontrol.cpp \
     receiveerror.cpp \
     autocontrol.cpp \
-    remotecontrol.cpp
+    remotecontrol.cpp \
+    dataserver.cpp \
+    tcpreadthread.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -85,7 +87,9 @@ HEADERS += \
     ecanvci.h \
     cantypes.h \
     autocontrol.h \
-    remotecontrol.h
+    remotecontrol.h \
+    dataserver.h \
+    tcpreadthread.h
 
 FORMS += \
         mainwindow.ui \
