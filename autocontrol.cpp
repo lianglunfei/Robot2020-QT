@@ -2,7 +2,7 @@
  * @Author: xingzhang.Wu
  * @Date: 2019-10-21 16:07:31
  * @Last Modified by: xingzhang.Wu
- * @Last Modified time: 2019-10-21 16:17:26
+ * @Last Modified time: 2019-11-11 21:37:47
  */
 #include "autocontrol.h"
 #include "globaldata.h"
@@ -15,13 +15,23 @@
 #define PI 57.3
 #define DEBUG_SIM 0
 
+/**
+ * @brief Construct a new Auto Control:: Auto Control object
+ * 使用流程：
+ * 1. 调用moveBodySet或者moveLegSet函数设置好目标位置、关节Id、运动速度，或者调用autoRunSet启动自动运行任务。
+ *    !: moveBodySet或者moveLegSet函数一般用来进行遥控控制，autoRunSet用来自动控制。
+ * 2. 调用start启动运行
+ * 3. 调用stop停止运行
+ * 
+ * @param parent 
+ */
 AutoControl::AutoControl(QObject *parent) : QObject(parent),
                                             period(20), l1(0), l2(0.304), l3(0.277),
                                             flag(0), leg(0), v(0), mode(0), useBody(0), isSetting(0)
 {
     timer = new QTimer();
     timer->setTimerType(Qt::PreciseTimer);
-    connect(timer, &QTimer::timeout, this, &AutoControl::moveFunc);
+    connect(timer, &QTimer::timeout, this, &AutoControl::run); //定时运行运动函数，该函数可以处理一些自动运行的逻辑
     timer->start(period);
 }
 
@@ -29,7 +39,7 @@ AutoControl::AutoControl(QObject *parent) : QObject(parent),
  * @brief 设置完成后，调用该接口开始运行
  * 
  */
-void AutoControl::reset()
+void AutoControl::start()
 {
     flag = 0;
 }
@@ -44,6 +54,32 @@ void AutoControl::stop()
 }
 
 /**
+ * @brief 运动定时函数
+ * 
+ */
+void AutoControl::run()
+{
+    if (!isSetting) //正在修改设置时不启动运行
+    {
+        if (this->useBody == 1)
+            moveBody();
+        else if(this->useBody == 0)
+            moveLeg();
+        else
+            autoRunFunc();
+    }
+}
+
+/**
+ * @brief 启动自动运行任务
+ * 
+ */
+void AutoControl::autoRunSet()
+{
+    useBody = 2;
+}
+
+/**
  * @brief 单独移动一条腿设置
  *
  * @param leg 第几条腿
@@ -53,7 +89,7 @@ void AutoControl::stop()
  */
 void AutoControl::moveLegSet(int leg, double changePos[], double v, int mode)
 {
-    this->isSetting = 1;
+    this->isSetting = 1; //正在修改设置时不启动运行
     this->leg = leg;
     for (int i = 0; i < 3; i++)
     {
@@ -62,22 +98,7 @@ void AutoControl::moveLegSet(int leg, double changePos[], double v, int mode)
     this->v = v;
     this->mode = mode;
     this->useBody = 0;
-    this->isSetting = 0;
-}
-
-/**
- * @brief 运动定时函数
- * 
- */
-void AutoControl::moveFunc()
-{
-    if (!isSetting)
-    {
-        if (this->useBody)
-            moveBody();
-        else
-            moveLeg();
-    }
+    this->isSetting = 0; //修改完成
 }
 
 /**
@@ -98,7 +119,7 @@ void AutoControl::moveLeg()
 
     if (flag == 0)
     {
-        if (NODE_NUM != 12)
+        if (NODE_NUM != 12) //目前只对12个关节做处理
             return;
         flag = 1;
         c1 = (global->currentCanAnalyticalData[leg].position - global->refValue[leg]) / PI;
@@ -154,6 +175,8 @@ void AutoControl::moveLeg()
             cc2 = -c2 * PI + global->refValue[leg + 1];
             cc3 = -c3 * PI + global->refValue[leg + 2];
         }
+
+        //isnanf代表检查数据是否为NAN
 #if DEBUG_SIM
         if (!isnanf(static_cast<long double>(cc1)))
             global->currentCanAnalyticalData[leg].position = cc1;
@@ -175,6 +198,7 @@ void AutoControl::moveLeg()
         qDebug() << currentPos[leg] << currentPos[leg + 1]
                  << currentPos[leg + 2];
 
+        //逆运算完成后，将计算出的目标角度输出给关节，启动四足运动
         Package::packOperateMulti(global->sendId, currentPos, NODE_NUM, PROTOCOL_TYPE_POS);
 #endif
     }
@@ -194,7 +218,7 @@ void AutoControl::moveLeg()
  */
 void AutoControl::moveBodySet(double changePos[], double v, int mode)
 {
-    this->isSetting = 1;
+    this->isSetting = 1; //正在修改设置时不启动运行
     for (int i = 0; i < 3; i++)
     {
         this->changePos[i] = changePos[i];
@@ -202,7 +226,7 @@ void AutoControl::moveBodySet(double changePos[], double v, int mode)
     this->v = v;
     this->mode = mode;
     this->useBody = 1;
-    this->isSetting = 0;
+    this->isSetting = 0; //修改完成
 }
 
 /**
@@ -245,7 +269,7 @@ void AutoControl::moveBody()
 
     if (flag == 0)
     {
-        if (NODE_NUM != 12)
+        if (NODE_NUM != 12) //目前只对12个关节做处理
             return;
         flag = 1;
         ca1 = (global->currentCanAnalyticalData[3].position - global->refValue[3]) / PI;
@@ -336,6 +360,7 @@ void AutoControl::moveBody()
         double ccd2 = -cd2 * PI + global->refValue[7];
         double ccd3 = -cd3 * PI + global->refValue[8];
 
+        //isnanf代表检查数据是否为NAN
 #if DEBUG_SIM
         if (!isnanf(static_cast<long double>(cca1)))
             global->currentCanAnalyticalData[3].position = cca1;
@@ -397,7 +422,19 @@ void AutoControl::moveBody()
                  << currentPos[5] << currentPos[6] << currentPos[7] << currentPos[8] << currentPos[9]
                  << currentPos[10] << currentPos[11];
 
-       Package::packOperateMulti(global->sendId, currentPos, NODE_NUM, PROTOCOL_TYPE_POS);
+        //逆运算完成后，将计算出的目标角度输出给关节，启动四足运动
+        Package::packOperateMulti(global->sendId, currentPos, NODE_NUM, PROTOCOL_TYPE_POS);
 #endif
     }
+}
+
+/**
+ * @brief 自动运行函数，用来自动进行路径规划，从导航、相机等外设获取控制信号，
+ * 来计算控制数据，最后输出给四足运行，无需人工进行干预
+ * TODO: 待完善
+ * 建议数据获取：global->navigateData/global->CanAnalysis
+ */
+void AutoControl::autoRunFunc()
+{
+    
 }

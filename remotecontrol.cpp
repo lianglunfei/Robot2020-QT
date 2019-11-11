@@ -2,7 +2,7 @@
  * @Author: xingzhang.Wu 
  * @Date: 2019-10-21 16:07:52 
  * @Last Modified by: xingzhang.Wu
- * @Last Modified time: 2019-10-22 11:04:06
+ * @Last Modified time: 2019-11-11 18:40:40
  */
 #include "remotecontrol.h"
 #include "debug.h"
@@ -46,7 +46,7 @@ void RemoteControl::leftJoySlot(const double &speed)
 {
     // double changePos[3] = {0.0, 0.0, -0.05};
     // ac->moveLegSet(0, changePos, 1, 1);
-    // ac->reset();
+    // ac->start();
     // if (speed < 1000)
     //     ac->stop();
 }
@@ -55,7 +55,7 @@ void RemoteControl::rightJoySlot(const double &angle)
 {
     // double changePos[3] = {0.0, 0.0, 0.05};
     // ac->moveLegSet(0, changePos, 1, 1);
-    // ac->reset();
+    // ac->start();
     // if (angle < 1000)
     //     ac->stop();
 }
@@ -72,18 +72,18 @@ void RemoteControl::qmlASlot(bool press)
 {
     // double changePos[3] = {0.0, 0.0, -0.05};
     // ac->moveLegSet(0, changePos, 1, 0);
-    // ac->reset();
+    // ac->start();
     double changePos[3] = {0.0, -0.025, 0.0};
     ac->moveBodySet(changePos, 1, 0);
-    ac->reset();
+    ac->start();
 }
 
 void RemoteControl::qmlBSlot(bool press)
 {
     // double changePos[3] = {0.0, 0.0, 0.05};
     // ac->moveLegSet(0, changePos, 1, 0);
-    // ac->reset();
+    // ac->start();
     double changePos[3] = {0.0, 0.025, 0.0};
     ac->moveBodySet(changePos, 1, 0);
-    ac->reset();
+    ac->start();
 }

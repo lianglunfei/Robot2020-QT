@@ -1,10 +1,11 @@
 /*
  * @Author: xingzhang.Wu 
  * @Date: 2019-11-11 16:49:30 
- * @Last Modified by:   xingzhang.Wu 
- * @Last Modified time: 2019-11-11 16:49:30 
+ * @Last Modified by: xingzhang.Wu
+ * @Last Modified time: 2019-11-11 19:06:57
  */
 #include "tcpreadthread.h"
+#include "globaldata.h"
 
 TcpReadThread::TcpReadThread(QTcpSocket* client,  QObject *parent) :
     QThread(parent)
@@ -27,4 +28,10 @@ void TcpReadThread::run()
 
     //More processing can be done here.
     s.append(tcpSocket->readAll());
+
+    //更新导航目标数据
+    //TODO: 待完善协议
+    global->navigateData.x = 0;
+    global->navigateData.y = 0;
+    global->navigateData.z = 0;
 }

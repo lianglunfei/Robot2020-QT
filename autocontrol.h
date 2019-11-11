@@ -13,11 +13,12 @@ public:
 
     void moveLegSet(int leg, double changePos[], double v, int mode);
     void moveBodySet(double changePos[], double v, int mode);
-    void reset();
+    void autoRunSet();
+    void start();
     void stop();
 
 public slots:
-    void moveFunc();
+    void run();
 
 private:
     QTimer *timer;
@@ -33,6 +34,7 @@ private:
 
     void moveLeg();
     void moveBody();
+    void autoRunFunc();
 };
 
 #endif // AUTOCONTROL_H

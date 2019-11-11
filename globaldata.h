@@ -2,7 +2,7 @@
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 10:02:20 
  * @Last Modified by: xingzhang.Wu
- * @Last Modified time: 2019-11-11 13:57:02
+ * @Last Modified time: 2019-11-11 19:05:31
  */
 #ifndef GLOBALDATA_H
 #define GLOBALDATA_H
@@ -10,12 +10,21 @@
 #include <QStringList>
 #include <QMutex>
 
+//CAN解析后的数据
 typedef struct
 {
     double position;
     double speed;
     double current;
 } CanAnalysis;
+
+//接收到导航的数据
+typedef struct
+{
+    double x;
+    double y;
+    double z;
+} Navigation;
 
 // 数字枚举变量
 enum
@@ -66,12 +75,13 @@ private:
 
 public:
     CanAnalysis currentCanAnalyticalData[NODE_NUM]; //关节CAN解析后的数据
-    QStringList currentCanData; //当前CAN原始数据字符串链表
+    QStringList currentCanData;                     //当前CAN原始数据字符串链表
     //参考位置，注意和csv文件保持一致，在自动控制类种被调用
     double refValue[12] = {99.052, 160.415, 88.0911, 329.31, 184.486, 148.467, 141.212, 261.981, 30.9121, 222, 250.584, 147.704};
-    int runningId[NODE_NUM] = {0}; //当前能接收到CAN数据的节点ID
-    int statusId[NODE_NUM] = {0}; //节点的状态位
-    int connectType = 0; //CAN连接类型
+    int runningId[NODE_NUM] = {0};       //当前能接收到CAN数据的节点ID
+    int statusId[NODE_NUM] = {0};        //节点的状态位
+    int connectType = 0;                 //CAN连接类型
+    Navigation navigateData;             //接收到的导航目标数据
     unsigned int sendId[NODE_NUM] = {0}; //CAN 节点ID，在构造函数中进行初始化
     bool showDebugInfo = false;
 
