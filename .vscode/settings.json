@@ -9,6 +9,7 @@
         "vector": "cpp",
         "system_error": "cpp",
         "qmainwindow": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "cmath": "cpp"
     }
 }

@@ -302,7 +302,7 @@ int ControlTableView::runFunc(int row)
             else
                 realVal = std::abs(global->currentCanAnalyticalData[i].position - value[i]);
             if (realVal > POS_LIMIT_VALUE)
-                return -1;
+                return i+1;
         }
         //In order to be able to reach the initial position, set this mode here.
         Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
@@ -330,12 +330,14 @@ void ControlTableView::tableClickButton()
     QPushButton *btn = (QPushButton *)sender(); //产生事件的对象
     int row = btn->property("row").toInt();     //取得按钮的行号属性
     int col = btn->property("column").toInt();  //取得按钮的列号属性
+    int errorNode = 0;
 
     switch (col)
     {
     case BTN_START_INDEX: //run
-        if (runFunc(row) < 0)
-            emit execStatus("数据异常！");
+        errorNode = runFunc(row);
+        if (errorNode > 0)
+            emit execStatus("数据"+QString::number(errorNode)+"异常！");
         break;
     case BTN_START_INDEX + 1: //add
         model->insertRow(row);
@@ -851,10 +853,11 @@ void ControlTableView::execSeqEvent()
         emit execStatus(model->index(g_lastRow, 0).data().toString() + QString(" has runned for %1 ms\n").arg(timeCnt * 10) + QString("group %2: ").arg(groupCnt) + model->index(row, 0).data().toString() + QString(" is running\n") + QString("elapsed time: %1 s").arg(time.elapsed() / 1000));
         timeCnt = 1;
 
-        if (runFunc(row) < 0)
+        int errorNode = runFunc(row);
+        if (errorNode > 0)
         {
             taskTimer->stop();
-            execStatus("数据导入异常！");
+            execStatus("数据"+QString::number(errorNode)+"导入异常！");
             execRunOrPauseFlag = 0;
             row = -1;
             lastRow[0] = -1;
