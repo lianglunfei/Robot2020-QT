@@ -22,7 +22,7 @@
 #define BTN_START_INDEX NODE_NUM + 3 //行按钮开始的位置=节点数+mode+time+name
 #define ROW_BTN_NUM 5                //按钮个数：上下移动、增加删除、运行
 #define BEFORE_VALUE_NUM 2           //节点数之前的数值个数：name、mode
-#define POS_LIMIT_VALUE 50          //最大允许位置变化偏差，超过会显示数据异常
+#define POS_LIMIT_VALUE 100          //最大允许位置变化偏差，超过会显示数据异常
 #define SHOW_BTN_NUM 50              //表格显示按钮的行数，一般设定前50行s
 
 /**
