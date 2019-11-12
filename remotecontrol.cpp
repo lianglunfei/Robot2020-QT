@@ -2,7 +2,7 @@
  * @Author: xingzhang.Wu 
  * @Date: 2019-10-21 16:07:52 
  * @Last Modified by: xingzhang.Wu
- * @Last Modified time: 2019-11-11 18:40:40
+ * @Last Modified time: 2019-11-11 21:43:51
  */
 #include "remotecontrol.h"
 #include "debug.h"
@@ -42,8 +42,14 @@ void RemoteControl::show()
     qmlControl1 = item->findChild<QObject *>("qmlcontrol1");
 }
 
+/**
+ * @brief 左边摇杆事件
+ * 
+ * @param speed 
+ */
 void RemoteControl::leftJoySlot(const double &speed)
 {
+    //测试案例
     // double changePos[3] = {0.0, 0.0, -0.05};
     // ac->moveLegSet(0, changePos, 1, 1);
     // ac->start();
@@ -51,8 +57,14 @@ void RemoteControl::leftJoySlot(const double &speed)
     //     ac->stop();
 }
 
+/**
+ * @brief 右边摇杆事件
+ * 
+ * @param angle 
+ */
 void RemoteControl::rightJoySlot(const double &angle)
 {
+    //测试案例
     // double changePos[3] = {0.0, 0.0, 0.05};
     // ac->moveLegSet(0, changePos, 1, 1);
     // ac->start();
@@ -60,16 +72,32 @@ void RemoteControl::rightJoySlot(const double &angle)
     //     ac->stop();
 }
 
+/**
+ * @brief 按键Start事件函数
+ * 
+ */
 void RemoteControl::qmlStartSlot()
 {
+    //测试案例
+    ac->autoRunSet();
 }
 
+/**
+ * @brief L1事件函数
+ * 
+ */
 void RemoteControl::qmlL1Slot()
 {
 }
 
+/**
+ * @brief 按键A事件函数
+ * 
+ * @param press 
+ */
 void RemoteControl::qmlASlot(bool press)
 {
+    //测试案例
     // double changePos[3] = {0.0, 0.0, -0.05};
     // ac->moveLegSet(0, changePos, 1, 0);
     // ac->start();
@@ -78,8 +106,14 @@ void RemoteControl::qmlASlot(bool press)
     ac->start();
 }
 
+/**
+ * @brief 按键B事件函数
+ * 
+ * @param press 
+ */
 void RemoteControl::qmlBSlot(bool press)
 {
+    //测试案例
     // double changePos[3] = {0.0, 0.0, 0.05};
     // ac->moveLegSet(0, changePos, 1, 0);
     // ac->start();

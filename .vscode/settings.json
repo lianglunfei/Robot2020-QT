@@ -1,15 +1,21 @@
 {
     "files.associations": {
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "*.cjson": "jsonc",
+        "*.wxss": "css",
+        "*.wxs": "javascript",
         "*.tcc": "cpp",
         "fstream": "cpp",
         "typeinfo": "cpp",
         "deque": "cpp",
-        "string": "cpp",
         "unordered_map": "cpp",
         "vector": "cpp",
         "system_error": "cpp",
         "qmainwindow": "cpp",
         "random": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "qtcpsocket": "cpp"
     }
 }
