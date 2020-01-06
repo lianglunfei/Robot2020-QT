@@ -1,8 +1,8 @@
 /*
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 09:58:15 
- * @Last Modified by:   xingzhang.Wu 
- * @Last Modified time: 2019-09-29 09:58:15 
+ * @Last Modified by: Qingmao.Wei
+ * @Last Modified time: 2020-01-06 14:14:08
  */
 #include "controltableview.h"
 #include "globaldata.h"
@@ -651,7 +651,21 @@ int ControlTableView::importCsv(QString fileName)
         return -1;
     }
 
-    if (!QString(qlist[1][0]).contains("ref") || col != (BTN_START_INDEX + ROW_BTN_NUM + 1))
+    /**
+     * 头两行为空时提示
+     */
+    if (qlist[0].length() == 0 && qlist[1].length() == 0){
+        QString str = "ref,,0,0,0,0,0,0,0,0,0,0,0,0,,1,1,1,1,1,";
+        QStringList refRow = str.split(",");
+        qlist[1] = refRow;
+        QMessageBox::warning(this, tr("Import"),
+                             tr("The imported file format is incorrect.\n"
+                                "The first 2 rows are empty."
+                                "Set all 0 as reference."),
+                             QMessageBox::Ok | QMessageBox::Cancel);
+    }
+
+    else if (!QString(qlist[1][0]).contains("ref") || col != (BTN_START_INDEX + ROW_BTN_NUM + 1))
     {
         QMessageBox::warning(this, tr("Import"),
                              tr("The imported file format is incorrect.\n"

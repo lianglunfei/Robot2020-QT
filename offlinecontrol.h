@@ -1,8 +1,8 @@
 /*
  * @Author: xingzhang.Wu 
  * @Date: 2019-09-29 10:03:40 
- * @Last Modified by:   xingzhang.Wu 
- * @Last Modified time: 2019-09-29 10:03:40 
+ * @Last Modified by: Qingmao.Wei
+ * @Last Modified time: 2020-01-06 12:18:18
  */
 #ifndef OFFLINECONTROL_H
 #define OFFLINECONTROL_H
@@ -28,6 +28,7 @@ public slots:
 private:
     Ui::OfflineControl *ui;
     QString g_fileDir;
+    QAction *fileOpenAction; //创建一个QAction指针，打开文件动作
 
     void keyPressEvent(QKeyEvent *e) override;
 
@@ -45,6 +46,7 @@ private slots:
     void on_synchronousPushButton_clicked();
     void on_caliPushButton_clicked();
     void on_execSeqStopPushButton_clicked();
+    void on_fileSelectorButton_clicked();
 };
 
 #endif // OFFLINECONTROL_H
