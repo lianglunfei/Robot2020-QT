@@ -51,7 +51,8 @@ SOURCES += \
     singlejointcontrol.cpp \
     receiveerror.cpp \
     autocontrol.cpp \
-    remotecontrol.cpp
+    remotecontrol.cpp \
+    offlinesequencecontrol.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -85,7 +86,8 @@ HEADERS += \
     ecanvci.h \
     cantypes.h \
     autocontrol.h \
-    remotecontrol.h
+    remotecontrol.h \
+    offlinesequencecontrol.h
 
 FORMS += \
         mainwindow.ui \
@@ -98,7 +100,8 @@ FORMS += \
     jointcontrol.ui \
     offlinecontrol.ui \
     singlejointcontrol.ui \
-    receiveerror.ui
+    receiveerror.ui \
+    offlinesequencecontrol.ui
 
 target.path = ../
 INSTALLS += target

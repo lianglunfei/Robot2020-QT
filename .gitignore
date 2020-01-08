@@ -6,5 +6,7 @@ GRTAGS
 GTAGS
 *.obj
 cmake-build-*
+*_Release/
 .vscode
 .idea
+*.dll

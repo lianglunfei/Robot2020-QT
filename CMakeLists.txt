@@ -5,6 +5,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(QT_DIR D:/Qt/Qt5.12.0)
 SET(QT_VERSION 5.12.0)
 SET(QT_ARCH mingw73_64)
+#set(CMAKE_EXE_LINKER_FLAGS -static)
 
 # 自动调用moc，uic，rcc处理qt的扩展部分
 set(CMAKE_AUTOMOC ON)
@@ -33,20 +34,16 @@ find_package(Qt5 REQUIRED COMPONENTS
 aux_source_directory(. DIRS_SRCS)
 include_directories(AFTER libs/cx libs/gc libs/zlg)
 
-
-file(GLOB_RECURSE SRC_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS *.cpp)
-#同理，查找当前文件夹中所有的头文件
-file(GLOB_RECURSE HEAD_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS *.h)
-
-
 #添加资源文件
-SET(RCC_FILES robot.qrc)
-SET(UI_FILES robot.qrc)
+file(GLOB_RECURSE SRC_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS *.cpp)
+file(GLOB_RECURSE HEAD_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS *.h)
+FILE(GLOB_RECURSE UI_FILES "./*.ui")
+SET(RCC_FILES logo.rc)
 SET(QRC_FILES robot.qrc)
 
 #add_executable(${PROJECT_NAME} ${SRC_FILES} )
 
-add_executable(RobotControlSystem ${DIRS_SRCS} ${HEAD_FILES} ${RCC_FILES})
+add_executable(RobotControlSystem ${DIRS_SRCS} ${HEAD_FILES} ${QRC_FILES} ${RCC_FILES} ${UI_FILES})
 
 target_link_libraries(${PROJECT_NAME} Qt5::Core
         Qt5::Widgets
@@ -65,6 +62,7 @@ IF (WIN32)
     find_library(GC_CAN_LIBRARY ECanVci64 libs/gc REQUIRED)
     find_library(ZLG_CAN_LIBRARY ControlCAN libs/zlg REQUIRED)
     find_library(CX_CAN_LIBRARY ControlCAN libs/cx REQUIRED)
+    find_library(WINDOWS_LIB qwindows libs REQUIRED)
     #    find_package(DbgHelp REQUIRED)
     MESSAGE(STATUS "find library ${ZLG_CAN_LIBRARY}")
     MESSAGE(STATUS "find library ${CX_CAN_LIBRARY}")
@@ -73,7 +71,9 @@ IF (WIN32)
             ${ZLG_CAN_LIBRARY}
             ${CX_CAN_LIBRARY}
             ${GC_CAN_LIBRARY}
-            DbgHelp)
+            DbgHelp
+            ${WINDOWS_LIB}
+            )
 
 ELSEIF (APPLE)
     MESSAGE(STATUS "Now is Apple systens.")

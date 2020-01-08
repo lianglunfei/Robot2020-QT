@@ -9,6 +9,8 @@
 #ifdef Q_OS_WIN
 #include <windows.h>
 #include <dbghelp.h>
+//#include <QtPlugin>
+//Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
 #endif
 #include <QMessageBox>
 #include <QTime>
