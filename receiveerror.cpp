@@ -108,42 +108,33 @@ void ReceiveError::init()
  */
 void ReceiveError::errorHandle(int i)
 {
-    if (lastRunningJoint[i] && !global->runningId[i])
-    {
+    if (lastRunningJoint[i] && !globalData->runningId[i]) {
         ui->lcdNumber->display(++countLostAll);
         nodeNum[i]->setNum(++countLostId[i]);
         start[i].start();
-    }
-    else if (!lastRunningJoint[i] && global->runningId[i] && countLostId[i])
-    {
+    } else if (!lastRunningJoint[i] && globalData->runningId[i] && countLostId[i]) {
         int elapsedTime = start[i].elapsed();
         maxTime[i] = elapsedTime > maxTime[i] ? elapsedTime : maxTime[i];
         nodeMaxTime[i]->setNum(maxTime[i]);
     }
-    if (global->runningId[i])
-    {
+    if (globalData->runningId[i]) {
         nodeMaxTime[i]->setStyleSheet("color:black;");
-    }
-    else
-    {
+    } else {
         nodeMaxTime[i]->setStyleSheet("color:red;");
     }
     if ((lastStatusId[i] == 0x06) &&
-        (global->statusId[i] != -1 && global->statusId[i] != 0x06)) //不等于-1代表接收到了数据，不等于0x06代表出现了异常
+        (globalData->statusId[i] != -1 && globalData->statusId[i] != 0x06)) //不等于-1代表接收到了数据，不等于0x06代表出现了异常
     {
         countErrorId[i]++;
-        qDebug() << "error: " << global->statusId[i];
+        qDebug() << "error: " << globalData->statusId[i];
         emit jointError();
     }
-    lastRunningJoint[i] = global->runningId[i];
-    lastStatusId[i] = global->statusId[i];
-    nodeStatus[i]->setText(QString::number(global->statusId[i]) + "(" + QString::number(countErrorId[i]) + ")");
-    if (global->statusId[i] == 0x0b)
-    {
+    lastRunningJoint[i] = globalData->runningId[i];
+    lastStatusId[i] = globalData->statusId[i];
+    nodeStatus[i]->setText(QString::number(globalData->statusId[i]) + "(" + QString::number(countErrorId[i]) + ")");
+    if (globalData->statusId[i] == 0x0b) {
         nodeStatus[i]->setStyleSheet("color:red;");
-    }
-    else
-    {
+    } else {
         nodeStatus[i]->setStyleSheet("color:black;");
     }
 }

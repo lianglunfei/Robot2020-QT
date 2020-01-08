@@ -4,3 +4,7 @@ GSYMS
 GPATH
 GRTAGS
 GTAGS
+*.obj
+cmake-build-*
+.vscode
+.idea

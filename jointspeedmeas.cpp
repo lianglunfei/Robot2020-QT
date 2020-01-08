@@ -44,8 +44,8 @@ void JointSpeedMeas::addDataToUi(double key)
 {
     int index = ui->comboBox->currentIndex() > NODE_NUM - 1 ? NODE_NUM - 1 : ui->comboBox->currentIndex();
 #if 1
-    widgetAddData(ui->rpmWidget, 0, key, global->currentCanAnalyticalData[index].speed);
-    ui->speedLcdNumber->display(global->currentCanAnalyticalData[index].speed);
+    widgetAddData(ui->rpmWidget, 0, key, globalData->currentCanAnalyticalData[index].speed);
+    ui->speedLcdNumber->display(globalData->currentCanAnalyticalData[index].speed);
 #else
     int tst = qrand() % 50;
     (void)index;

@@ -335,17 +335,16 @@ int DataTransmission::CANReceive(int connectType, QStringList &list, int dataLen
 
                 id[i] = frameinfo[i].ID;
                 //防止出现ID错误
-                Q_ASSERT(frameinfo[i].ID >= global->sendId[0] && frameinfo[i].ID <= global->sendId[NODE_NUM-1]);
+                Q_ASSERT(frameinfo[i].ID >= globalData->sendId[0] &&
+                         frameinfo[i].ID <= globalData->sendId[NODE_NUM - 1]);
 
                 //Data
-                if (frameinfo[i].RemoteFlag == 0)
-                {
+                if (frameinfo[i].RemoteFlag == 0) {
                     if (frameinfo[i].DataLen > 8)
                         frameinfo[i].DataLen = 8;
                     dataLen[i] = frameinfo[i].DataLen;
 
-                    for (int j = 0; j < frameinfo[i].DataLen; j++)
-                    {
+                    for (int j = 0; j < frameinfo[i].DataLen; j++) {
                         str += QString("%1   ").arg(frameinfo[i].Data[j], 2, 16, QLatin1Char('0'));
                         data[i][j] = frameinfo[i].Data[j];
                     }

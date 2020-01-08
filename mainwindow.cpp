@@ -81,7 +81,7 @@ void MainWindow::canConnectEvent()
     connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
     workerThread->start();
     //set status
-    if (global->connectType)
+    if (globalData->connectType)
         ui->statusBar->showMessage(tr("Connected"));
     else if (SIMULATE_CONNECT != NONE_CONNECT)
         ui->statusBar->showMessage(tr("Simulate"));

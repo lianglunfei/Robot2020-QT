@@ -34,9 +34,9 @@ void Drivers::initJoint(int nodeNum)
     if (nodeNum < 0 || nodeNum > NODE_NUM - 1)
         return;
     double value = 0; //数据位为0
-    Package::packOperate(global->sendId[nodeNum], value, PROTOCOL_TYPE_START);
+    Package::packOperate(globalData->sendId[nodeNum], value, PROTOCOL_TYPE_START);
 #if DRIVE_NEW
-    Package::packOperate(global->sendId[nodeNum], value, PROTOCOL_TYPE_OPENVALVE);
+    Package::packOperate(globalData->sendId[nodeNum], value, PROTOCOL_TYPE_OPENVALVE);
 #endif
 }
 
@@ -50,9 +50,9 @@ void Drivers::stopJoint(int nodeNum)
     if (nodeNum < 0 || nodeNum > NODE_NUM - 1)
         return;
     double value = 0; //数据位为0
-    Package::packOperate(global->sendId[nodeNum], value, PROTOCOL_TYPE_SHUTDOWN);
+    Package::packOperate(globalData->sendId[nodeNum], value, PROTOCOL_TYPE_SHUTDOWN);
 #if DRIVE_NEW
-    Package::packOperate(global->sendId[nodeNum], value, PROTOCOL_TYPE_CLOSEVALVE);
+    Package::packOperate(globalData->sendId[nodeNum], value, PROTOCOL_TYPE_CLOSEVALVE);
 #endif
 }
 
@@ -66,7 +66,7 @@ void Drivers::calJoint(int nodeNum)
     if (nodeNum < 0 || nodeNum > NODE_NUM - 1)
         return;
     double value = 0; //数据位为0
-    Package::packOperate(global->sendId[nodeNum], value, PROTOCOL_TYPE_CAL);
+    Package::packOperate(globalData->sendId[nodeNum], value, PROTOCOL_TYPE_CAL);
 }
 
 /**
@@ -77,9 +77,9 @@ void Drivers::initJoint()
 {
     double value[NODE_NUM] = {0}; //数据位为0
 #ifndef DELAY_INIT
-    Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_START);
+    Package::packOperateMulti(globalData->sendId, value, NODE_NUM, PROTOCOL_TYPE_START);
 #ifdef DRIVE_NEW
-    Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_OPENVALVE);
+    Package::packOperateMulti(globalData->sendId, value, NODE_NUM, PROTOCOL_TYPE_OPENVALVE);
 #endif
 #else
     for (int i = 0; i < NODE_NUM; i++)
@@ -101,9 +101,9 @@ void Drivers::initJoint()
 void Drivers::stopJoint()
 {
     double value[NODE_NUM] = {0}; //数据位为0
-    Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_SHUTDOWN);
+    Package::packOperateMulti(globalData->sendId, value, NODE_NUM, PROTOCOL_TYPE_SHUTDOWN);
 #if DRIVE_NEW
-    Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_CLOSEVALVE);
+    Package::packOperateMulti(globalData->sendId, value, NODE_NUM, PROTOCOL_TYPE_CLOSEVALVE);
 #endif
 }
 
@@ -114,5 +114,5 @@ void Drivers::stopJoint()
 void Drivers::calJoint()
 {
     double value[NODE_NUM] = {0}; //数据位为0
-    Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_CAL);
+    Package::packOperateMulti(globalData->sendId, value, NODE_NUM, PROTOCOL_TYPE_CAL);
 }

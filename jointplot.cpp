@@ -89,9 +89,12 @@ void JointPlot::addDataToUi(double key)
     for (int i = 0; i < CURRENT_NODE_NUM; i++)
     {
 #if 1
-        widgetAddData(findChild<QCustomPlot *>(posWidget[i / 3]), i % 3, key, global->currentCanAnalyticalData[i].position);
-        widgetAddData(findChild<QCustomPlot *>(spdWidget[i / 3]), i % 3, key, global->currentCanAnalyticalData[i].speed);
-        widgetAddData(findChild<QCustomPlot *>(curWidget[i / 3]), i % 3, key, global->currentCanAnalyticalData[i].current);
+        widgetAddData(findChild<QCustomPlot *>(posWidget[i / 3]), i % 3, key,
+                      globalData->currentCanAnalyticalData[i].position);
+        widgetAddData(findChild<QCustomPlot *>(spdWidget[i / 3]), i % 3, key,
+                      globalData->currentCanAnalyticalData[i].speed);
+        widgetAddData(findChild<QCustomPlot *>(curWidget[i / 3]), i % 3, key,
+                      globalData->currentCanAnalyticalData[i].current);
 #else
         widgetAddData(findChild<QCustomPlot *>(posWidget[i / 3]), i % 3, key, qrand() % 360);
         widgetAddData(findChild<QCustomPlot *>(spdWidget[i / 3]), i % 3, key, qrand() % 3580);

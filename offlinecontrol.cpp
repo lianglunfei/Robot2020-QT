@@ -204,8 +204,9 @@ void OfflineControl::on_exportPushButton_clicked()
 }
 
 /**
- * @brief 打开系统自带资源浏览器来选择csv文件
- * TODO: export
+ * @msg: 打开系统自带资源浏览器来选择csv文件
+ * @param {type} 
+ * @return: 
  */
 void OfflineControl::on_fileSelectorButton_clicked()
 {

@@ -20,7 +20,7 @@
  * @param pException 
  * @return LONG 
  */
-LONG ApplicationCrashHandler(EXCEPTION_POINTERS *pException)
+/* LONG ApplicationCrashHandler(EXCEPTION_POINTERS *pException)
 {
     //创建 Dump 文件
     QDateTime CurDTime = QDateTime::currentDateTime();
@@ -32,7 +32,7 @@ LONG ApplicationCrashHandler(EXCEPTION_POINTERS *pException)
     QString errAddr(QString::number((long long)record->ExceptionAddress, 16));
     QString errFlag(QString::number(record->ExceptionFlags, 16));
     QString errPara(QString::number(record->NumberParameters, 16));
-    HANDLE DumpHandle = CreateFile((LPCWSTR)dumpText.utf16(),
+    HANDLE DumpHandle = CreateFile((LPWCSTR)dumpText.utf16(),
                                    GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (DumpHandle != INVALID_HANDLE_VALUE)
     {
@@ -48,14 +48,14 @@ LONG ApplicationCrashHandler(EXCEPTION_POINTERS *pException)
     QMessageBox::warning(NULL, "Dump", QString("ErrorCode%1  ErrorAddr：%2  ErrorFlag:%3 ErrorPara:%4").arg(errCode).arg(errAddr).arg(errFlag).arg(errPara),
                          QMessageBox::Ok);
     return EXCEPTION_EXECUTE_HANDLER;
-}
+} */
 #endif
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 #ifdef Q_OS_WIN
-    SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)ApplicationCrashHandler); //注冊异常捕获函数
+    // SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)ApplicationCrashHandler); //注冊异常捕获函数
 #endif
     MainWindow w;
     w.show();
