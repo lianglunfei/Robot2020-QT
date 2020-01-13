@@ -4,7 +4,7 @@
  * @Author: xingzhang.Wu
  * @Date: 2019-09-26 19:38:15
  * @LastEditors  : Qingmao Wei
- * @LastEditTime : 2020-01-07 11:58:08
+ * @LastEditTime : 2020-01-13 11:09:14
  */
 
 #include "controltableview.h"
@@ -132,7 +132,7 @@ void ControlTableView::valueListInit()
 }
 
 /**
- * @brief 从当前获取的关节数据更新valueList当前获取的关节数据更新valueList
+ * @brief 从当前获取的关节数据更新valueList
  * 
  * @param currentName 
  * @param currentPeriod 
@@ -653,6 +653,8 @@ int ControlTableView::importCsv(QString fileName)
         return -1;
     }
 
+    // csv model格式检查
+    // 头两行为空
     if (qlist[0].length() == 0 && qlist[1].length() == 0){
         QString str = "ref,,0,0,0,0,0,0,0,0,0,0,0,0,,1,1,1,1,1,";
         QStringList refRow = str.split(",");
@@ -663,7 +665,7 @@ int ControlTableView::importCsv(QString fileName)
                                 "Set all 0 as reference."),
                              QMessageBox::Ok | QMessageBox::Cancel);
     }
-
+    // 第一行不是'ref'
     else if (!QString(qlist[1][0]).contains("ref") || col != (BTN_START_INDEX + ROW_BTN_NUM + 1))
     {
         QMessageBox::warning(this, tr("Import"),

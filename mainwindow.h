@@ -1,8 +1,10 @@
 /*
- * @Author: xingzhang.Wu 
- * @Date: 2019-09-29 10:03:25 
- * @Last Modified by:   xingzhang.Wu 
- * @Last Modified time: 2019-09-29 10:03:25 
+ * @Descripttion: 
+ * @version: 
+ * @Author: xingzhang.Wu
+ * @Date: 2019-09-26 09:53:10
+ * @LastEditors  : Qingmao Wei
+ * @LastEditTime : 2020-01-10 15:14:24
  */
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
@@ -18,6 +20,7 @@ class OfflineControl;
 class ReceiveError;
 class ReceiveWorkerThread;
 class RemoteControl;
+class OfflineSequenceControl;
 
 namespace Ui
 {
@@ -43,6 +46,7 @@ private:
     RemoteControl *m_remote_control = nullptr;
     SingleJointControl *m_single_joint_control = nullptr;
     OfflineControl *m_offline_control = nullptr;
+    OfflineSequenceControl *m_offline_sequence_control = nullptr;
     ReceiveError *m_receive_error = nullptr;
     ReceiveWorkerThread *workerThread = nullptr;
     void connectInit();

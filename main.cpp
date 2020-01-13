@@ -55,6 +55,7 @@
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::addLibraryPath("./");
     QApplication a(argc, argv);
 #ifdef Q_OS_WIN
     // SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)ApplicationCrashHandler); //注冊异常捕获函数

@@ -26,7 +26,7 @@
      <x>0</x>
      <y>0</y>
      <width>1095</width>
-     <height>28</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTool">
@@ -53,6 +53,7 @@
     <addaction name="actionJoint_Control"/>
     <addaction name="actionOffline_Control"/>
     <addaction name="actionRemote_Control"/>
+    <addaction name="actionSequence_Control"/>
    </widget>
    <addaction name="menuTool"/>
    <addaction name="menuPlot"/>
@@ -115,6 +116,11 @@
   <action name="actionDisconnect_CAN">
    <property name="text">
     <string>Disconnect CAN</string>
+   </property>
+  </action>
+  <action name="actionSequence_Control">
+   <property name="text">
+    <string>Sequence Control</string>
    </property>
   </action>
  </widget>

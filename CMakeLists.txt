@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(RobotControlSystem)
-set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
+SET(QT_USE_QTMAIN TRUE)
 
 set(QT_DIR D:/Qt/Qt5.12.0)
 SET(QT_VERSION 5.12.0)
@@ -20,7 +21,12 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${QT_DIR}/${QT_VERSION}/${QT_ARCH}/lib/cmake)
 MESSAGE(STATUS ${CMAKE_PREFIX_PATH})
 
-add_definitions(-DNOMINMAX)
+#add_definitions(-DNOMINMAX)
+
+set(CMAKE_BUILD_TYPE Release)
+message("Generated with config types: ${CMAKE_CONFIGURATION_TYPES}")
+
+
 
 find_package(Qt5 REQUIRED COMPONENTS
         Core
@@ -31,6 +37,8 @@ find_package(Qt5 REQUIRED COMPONENTS
         Gamepad
         PrintSupport)
 
+
+
 aux_source_directory(. DIRS_SRCS)
 include_directories(AFTER libs/cx libs/gc libs/zlg)
 
@@ -40,10 +48,35 @@ file(GLOB_RECURSE HEAD_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINK
 FILE(GLOB_RECURSE UI_FILES "./*.ui")
 SET(RCC_FILES logo.rc)
 SET(QRC_FILES robot.qrc)
+set(CMAKE_CXX_FLAGS_COVERAGE "${CMAKE_CXX_FLAGS_RELEASE} -fprofile-arcs -ftest-coverage")
 
 #add_executable(${PROJECT_NAME} ${SRC_FILES} )
 
-add_executable(RobotControlSystem ${DIRS_SRCS} ${HEAD_FILES} ${QRC_FILES} ${RCC_FILES} ${UI_FILES})
+add_executable(RobotControlSystem WIN32 ${DIRS_SRCS} ${HEAD_FILES} ${QRC_FILES} ${RCC_FILES} ${UI_FILES})
+
+
+
+
+# set up a mapping so that the Release configuration for the Qt imported target is
+# used in the COVERAGE CMake configuration.
+
+get_target_property(QtCore_location Qt5::Core LOCATION)
+
+MESSAGE(${QtCore_location})
+
+set_target_properties(Qt5::Core PROPERTIES MAP_IMPORTED_CONFIG_COVERAGE "RELEASE")
+set_target_properties(Qt5::Gui PROPERTIES MAP_IMPORTED_CONFIG_COVERAGE "RELEASE")
+set_target_properties(Qt5::Widgets PROPERTIES MAP_IMPORTED_CONFIG_COVERAGE "RELEASE")
+set_target_properties(Qt5::Quick PROPERTIES MAP_IMPORTED_CONFIG_COVERAGE "RELEASE")
+set_target_properties(Qt5::Qml PROPERTIES MAP_IMPORTED_CONFIG_COVERAGE "RELEASE")
+set_target_properties(Qt5::Gamepad PROPERTIES MAP_IMPORTED_CONFIG_COVERAGE "RELEASE")
+set_target_properties(Qt5::PrintSupport PROPERTIES MAP_IMPORTED_CONFIG_COVERAGE "RELEASE")
+
+#if(${CMAKE_CXX_COMPILER} MATCHES ".*/(g\\+\\+)(\\..*)")
+#    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "-mwindows")
+#elseif(${CMAKE_CXX_COMPILER} MATCHES ".*/(cl)(\\..*)")
+#    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+#endif()
 
 target_link_libraries(${PROJECT_NAME} Qt5::Core
         Qt5::Widgets
@@ -72,7 +105,6 @@ IF (WIN32)
             ${CX_CAN_LIBRARY}
             ${GC_CAN_LIBRARY}
             DbgHelp
-            ${WINDOWS_LIB}
             )
 
 ELSEIF (APPLE)
