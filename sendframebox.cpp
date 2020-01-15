@@ -134,7 +134,7 @@ void SendFrameBox::sendFrameData()
     //Id=((DWORD2)FrameID[0]<<24)+((DWORD2)FrameID[1]<<16)+((DWORD2)FrameID[2]<<8)+((DWORD2)FrameID[3])
     currentId = ((DWORD)FrameID[2] << 8) + ((DWORD)FrameID[3]);
 
-    int ret = DataTransmission::CANTransmit(global->connectType, currentData, currentId);
+    int ret = DataTransmission::CANTransmit(globalData->connectType, currentData, currentId);
     if (ret == -1)
     {
         qDebug() << "failed- device not open\n"; //=-1表示USB-CAN设备不存在或USB掉线
@@ -160,7 +160,7 @@ void SendFrameBox::sendFrameData()
  */
 void SendFrameBox::repeatSendProcess()
 {
-    int ret = DataTransmission::CANTransmit(global->connectType, currentData, currentId);
+    int ret = DataTransmission::CANTransmit(globalData->connectType, currentData, currentId);
     if (ret == -1)
         qDebug() << "failed- device not open\n"; //=-1表示USB-CAN设备不存在或USB掉线
     else if (ret == 0)
@@ -175,7 +175,7 @@ void SendFrameBox::repeatSendProcess()
  */
 void SendFrameBox::on_sendButton_clicked()
 {
-    if (global->connectType)
+    if (globalData->connectType)
         sendFrameData();
 }
 
@@ -207,7 +207,7 @@ SendFrameBox::~SendFrameBox()
 void SendFrameBox::on_receiveMsgCheckBox_stateChanged(int arg1)
 {
     if (arg1 == 0)
-        global->showDebugInfo = false;
+        globalData->showDebugInfo = false;
     else
-        global->showDebugInfo = true;
+        globalData->showDebugInfo = true;
 }

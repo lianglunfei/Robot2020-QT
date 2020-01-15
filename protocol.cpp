@@ -30,7 +30,7 @@ void Protocol::getRawData(unsigned char rawData[], unsigned char outData[], int 
 {
     (void)len;
     int k = 0;
-    k = (id - global->sendId[0]) * 8;
+    k = (id - globalData->sendId[0]) * 8;
     for (int j = 0; j < 8; j++)
     {
         outData[k + j] = rawData[j]; //Data received from CAN

@@ -1,8 +1,8 @@
 /*
  * @Author: xingzhang.Wu 
- * @Date: 2019-09-29 10:03:36 
- * @Last Modified by:   xingzhang.Wu 
- * @Last Modified time: 2019-09-29 10:03:36 
+ * @Date: 2020-01-06 11:18:27 
+ * @Last Modified by: Qingmao.Wei
+ * @Last Modified time: 2020-01-06 13:50:45
  */
 #include "offlinecontrol.h"
 #include "ui_offlinecontrol.h"
@@ -185,7 +185,8 @@ void OfflineControl::on_exportPushButton_clicked()
         return;
     }
 #ifdef Q_OS_WIN
-    fileName = QDir::currentPath() + "/" + ui->fileNameLineEdit->text() + ".csv";
+    // fileName = QDir::currentPath() + "/" + ui->fileNameLineEdit->text() + ".csv";
+    fileName = ui->fileNameLineEdit->text();
 #else
     char *path = getenv("HOME");
     fileName = QString(path) + "/csv/" + ui->fileNameLineEdit->text() + ".csv";
@@ -199,6 +200,50 @@ void OfflineControl::on_exportPushButton_clicked()
     else
     {
         ui->fileNameLabel->setText("export " + fileName + " failed!");
+    }
+}
+
+/**
+ * @msg: 打开系统自带资源浏览器来选择csv文件
+ * @param {type} 
+ * @return: 
+ */
+void OfflineControl::on_fileSelectorButton_clicked()
+{
+    qDebug() << "In file explorer.";
+    //定义文件对话框类
+    QFileDialog *fileDialog = new QFileDialog(this);
+    //定义文件对话框标题
+    fileDialog->setWindowTitle(tr("选择csv文件"));
+    //设置默认文件路径
+    fileDialog->setDirectory(".");
+    //设置文件过滤器
+    fileDialog->setNameFilter(tr("CSV File(*.csv)"));
+    //设置可以选择多个文件,默认为只能选择一个文件QFileDialog::ExistingFiles
+    // fileDialog->setFileMode(QFileDialog::ExistingFiles);
+    //设置视图模式
+    fileDialog->setViewMode(QFileDialog::Detail);
+    //打印所有选择的文件的路径
+    QStringList fileNames;
+    if (fileDialog->exec())
+    {
+        fileNames = fileDialog->selectedFiles();
+    }
+
+    // 如果没有选择任何文件
+    if (fileNames.length() < 1)
+        return;
+    QString fileName = fileNames[0];
+    ui->fileNameLineEdit->setText(fileName);
+    ui->fileNameLabel->setText(fileName + " opening");
+    if (ui->tableView->importCsv(fileName) != -1)
+    {
+        g_fileDir = QFileInfo(fileName).absoluteFilePath();
+        ui->fileNameLabel->setText(fileName + " opened");
+    }
+    else
+    {
+        ui->fileNameLabel->setText("import " + fileName + " failed!");
     }
 }
 

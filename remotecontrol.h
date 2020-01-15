@@ -2,20 +2,22 @@
 #define REMOTECONTROL_H
 
 #include <QDialog>
-#include <QQmlComponent>
 #include <QQmlApplicationEngine>
+#include <QQmlComponent>
+//#include <QQmlApplicationEngine>
 
 #include "autocontrol.h"
 
-class RemoteControl : public QDialog
-{
-    Q_OBJECT
+class RemoteControl : public QDialog {
+Q_OBJECT
 
 public:
     RemoteControl(QDialog *parent = nullptr);
+
     ~RemoteControl();
 
 public slots:
+
     void show();
 
 private:

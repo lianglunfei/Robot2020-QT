@@ -122,12 +122,12 @@ void AutoControl::moveLeg()
         if (NODE_NUM != 12) //目前只对12个关节做处理
             return;
         flag = 1;
-        c1 = (global->currentCanAnalyticalData[leg].position - global->refValue[leg]) / PI;
-        c2 = (global->currentCanAnalyticalData[leg + 1].position - global->refValue[leg + 1]) / PI;
-        c3 = (global->currentCanAnalyticalData[leg + 2].position - global->refValue[leg + 2]) / PI;
+        c1 = (globalData->currentCanAnalyticalData[leg].position - globalData->refValue[leg]) / PI;
+        c2 = (globalData->currentCanAnalyticalData[leg + 1].position - globalData->refValue[leg + 1]) / PI;
+        c3 = (globalData->currentCanAnalyticalData[leg + 2].position - globalData->refValue[leg + 2]) / PI;
 
         for (int i = 0; i < NODE_NUM; i++)
-            currentPos[i] = global->currentCanAnalyticalData[i].position;
+            currentPos[i] = globalData->currentCanAnalyticalData[i].position;
 
         x = l2 * sin(c2) + l3 * sin(c2 + c3);
         y = l2 * sin(c1) * cos(c2) + l3 * sin(c1) * cos(c2 + c3);
@@ -157,26 +157,28 @@ void AutoControl::moveLeg()
         py = y + changePos[1] * tp;
         pz = z + changePos[2] * tp;
         c1 = atan(py / pz);
-        double f = acos((l2 * l2 + px * px + (py - l1 * sin(c1)) * (py - l1 * sin(c1)) + (pz + l1 * cos(c1)) * (pz + l1 * cos(c1)) - l3 * l3) / (2 * l2 * sqrt(px * px + (py - l1 * sin(c1)) * (py - l1 * sin(c1)) + (pz + l1 * cos(c1)) * (pz + l1 * cos(c1)))));
+        double f = acos((l2 * l2 + px * px + (py - l1 * sin(c1)) * (py - l1 * sin(c1)) +
+                         (pz + l1 * cos(c1)) * (pz + l1 * cos(c1)) - l3 * l3) / (2 * l2 * sqrt(px * px +
+                                                                                               (py - l1 * sin(c1)) *
+                                                                                               (py - l1 * sin(c1)) +
+                                                                                               (pz + l1 * cos(c1)) *
+                                                                                               (pz + l1 * cos(c1)))));
         c2 = atan(px / (sqrt(py * py + pz * pz)) - l1) - f;
         c3 = (l2 + l3) / l3 * f;
 
         double cc1 = 0, cc2 = 0, cc3 = 0;
 
-        if (leg == 0 || leg == 3)
-        {
-            cc1 = c1 * PI + global->refValue[leg];
-            cc2 = c2 * PI + global->refValue[leg + 1];
-            cc3 = c3 * PI + global->refValue[leg + 2];
+        if (leg == 0 || leg == 3) {
+            cc1 = c1 * PI + globalData->refValue[leg];
+            cc2 = c2 * PI + globalData->refValue[leg + 1];
+            cc3 = c3 * PI + globalData->refValue[leg + 2];
+        } else {
+            cc1 = -c1 * PI + globalData->refValue[leg];
+            cc2 = -c2 * PI + globalData->refValue[leg + 1];
+            cc3 = -c3 * PI + globalData->refValue[leg + 2];
         }
-        else
-        {
-            cc1 = -c1 * PI + global->refValue[leg];
-            cc2 = -c2 * PI + global->refValue[leg + 1];
-            cc3 = -c3 * PI + global->refValue[leg + 2];
-        }
-
         //isnanf代表检查数据是否为NAN
+
 #if DEBUG_SIM
         if (!isnanf(static_cast<long double>(cc1)))
             global->currentCanAnalyticalData[leg].position = cc1;
@@ -272,21 +274,21 @@ void AutoControl::moveBody()
         if (NODE_NUM != 12) //目前只对12个关节做处理
             return;
         flag = 1;
-        ca1 = (global->currentCanAnalyticalData[3].position - global->refValue[3]) / PI;
-        ca2 = (global->currentCanAnalyticalData[4].position - global->refValue[4]) / PI;
-        ca3 = (global->currentCanAnalyticalData[5].position - global->refValue[5]) / PI;
-        cb1 = (global->currentCanAnalyticalData[9].position - global->refValue[9]) / PI;
-        cb2 = (global->currentCanAnalyticalData[10].position - global->refValue[10]) / PI;
-        cb3 = (global->currentCanAnalyticalData[11].position - global->refValue[11]) / PI;
-        cc1 = (global->currentCanAnalyticalData[0].position - global->refValue[0]) / PI;
-        cc2 = (global->currentCanAnalyticalData[1].position - global->refValue[1]) / PI;
-        cc3 = (global->currentCanAnalyticalData[2].position - global->refValue[2]) / PI;
-        cd1 = (global->currentCanAnalyticalData[6].position - global->refValue[6]) / PI;
-        cd2 = (global->currentCanAnalyticalData[7].position - global->refValue[7]) / PI;
-        cd3 = (global->currentCanAnalyticalData[8].position - global->refValue[8]) / PI;
+        ca1 = (globalData->currentCanAnalyticalData[3].position - globalData->refValue[3]) / PI;
+        ca2 = (globalData->currentCanAnalyticalData[4].position - globalData->refValue[4]) / PI;
+        ca3 = (globalData->currentCanAnalyticalData[5].position - globalData->refValue[5]) / PI;
+        cb1 = (globalData->currentCanAnalyticalData[9].position - globalData->refValue[9]) / PI;
+        cb2 = (globalData->currentCanAnalyticalData[10].position - globalData->refValue[10]) / PI;
+        cb3 = (globalData->currentCanAnalyticalData[11].position - globalData->refValue[11]) / PI;
+        cc1 = (globalData->currentCanAnalyticalData[0].position - globalData->refValue[0]) / PI;
+        cc2 = (globalData->currentCanAnalyticalData[1].position - globalData->refValue[1]) / PI;
+        cc3 = (globalData->currentCanAnalyticalData[2].position - globalData->refValue[2]) / PI;
+        cd1 = (globalData->currentCanAnalyticalData[6].position - globalData->refValue[6]) / PI;
+        cd2 = (globalData->currentCanAnalyticalData[7].position - globalData->refValue[7]) / PI;
+        cd3 = (globalData->currentCanAnalyticalData[8].position - globalData->refValue[8]) / PI;
 
         for (int i = 0; i < NODE_NUM; i++)
-            currentPos[i] = global->currentCanAnalyticalData[i].position;
+            currentPos[i] = globalData->currentCanAnalyticalData[i].position;
 
         xa = l2 * sin(ca2) + l3 * sin(ca2 + ca3);
         ya = l2 * sin(ca1) * cos(ca2) + l3 * sin(ca1) * cos(ca2 + ca3);
@@ -340,25 +342,26 @@ void AutoControl::moveBody()
         cd1 = atan(pyd / pzd);
         f = acos((l2 * l2 + pxd * pxd + (pyd - l1 * sin(cd1)) * (pyd - l1 * sin(cd1)) +
                   (pzd + l1 * cos(cd1)) * (pzd + l1 * cos(cd1)) - l3 * l3) /
-                 (2 * l2 * sqrt(pxd * pxd + (pyd - l1 * sin(cd1)) * (pyd - l1 * sin(cd1)) + (pzd + l1 * cos(cd1)) * (pzd + l1 * cos(cd1)))));
+                 (2 * l2 * sqrt(pxd * pxd + (pyd - l1 * sin(cd1)) * (pyd - l1 * sin(cd1)) +
+                                (pzd + l1 * cos(cd1)) * (pzd + l1 * cos(cd1)))));
         cd2 = atan(pxd / (sqrt(pyd * pyd + pzd * pzd)) - l1) - f;
         cd3 = (l2 + l3) / l3 * f;
 
-        double cca1 = -ca1 * PI + global->refValue[3];
-        double cca2 = -ca2 * PI + global->refValue[4];
-        double cca3 = -ca3 * PI + global->refValue[5];
+        double cca1 = -ca1 * PI + globalData->refValue[3];
+        double cca2 = -ca2 * PI + globalData->refValue[4];
+        double cca3 = -ca3 * PI + globalData->refValue[5];
 
-        double ccb1 = cb1 * PI + global->refValue[9];
-        double ccb2 = cb2 * PI + global->refValue[10];
-        double ccb3 = cb3 * PI + global->refValue[11];
+        double ccb1 = cb1 * PI + globalData->refValue[9];
+        double ccb2 = cb2 * PI + globalData->refValue[10];
+        double ccb3 = cb3 * PI + globalData->refValue[11];
 
-        double ccc1 = cc1 * PI + global->refValue[0];
-        double ccc2 = cc2 * PI + global->refValue[1];
-        double ccc3 = cc3 * PI + global->refValue[2];
+        double ccc1 = cc1 * PI + globalData->refValue[0];
+        double ccc2 = cc2 * PI + globalData->refValue[1];
+        double ccc3 = cc3 * PI + globalData->refValue[2];
 
-        double ccd1 = -cd1 * PI + global->refValue[6];
-        double ccd2 = -cd2 * PI + global->refValue[7];
-        double ccd3 = -cd3 * PI + global->refValue[8];
+        double ccd1 = -cd1 * PI + globalData->refValue[6];
+        double ccd2 = -cd2 * PI + globalData->refValue[7];
+        double ccd3 = -cd3 * PI + globalData->refValue[8];
 
         //isnanf代表检查数据是否为NAN
 #if DEBUG_SIM

@@ -63,7 +63,7 @@ enum
 #define CAN_MAX_FRAM 100
 #define SIMULATE_CONNECT NONE_CONNECT //CONNECT_TYPE_ALYSIST
 
-#define global GlobalData::getInstance()
+#define globalData GlobalData::getInstance()
 
 class GlobalData
 {

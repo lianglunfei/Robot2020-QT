@@ -1,9 +1,12 @@
 /*
- * @Author: xingzhang.Wu 
- * @Date: 2019-09-29 10:03:19 
- * @Last Modified by: xingzhang.Wu
- * @Last Modified time: 2019-11-11 17:00:57
+ * @Descripttion: 
+ * @version: 
+ * @Author: xingzhang.Wu
+ * @Date: 2019-10-23 17:09:23
+ * @LastEditors  : Qingmao Wei
+ * @LastEditTime : 2020-01-15 15:21:04
  */
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -16,6 +19,7 @@
 #include "singlejointcontrol.h"
 #include "offlinecontrol.h"
 #include "receiveworkerthread.h"
+#include "offlinesequencecontrol.h"
 #include "terminal.h"
 #include "receiveerror.h"
 #include "dataserver.h"
@@ -67,6 +71,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     //Initialize remote control window
     m_remote_control = new RemoteControl;
 
+    m_offline_sequence_control = new OfflineSequenceControl;
+
     //Initialize Network Server
     m_data_server = new DataServer();
 
@@ -85,7 +91,7 @@ void MainWindow::canConnectEvent()
     connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
     workerThread->start();
     //set status
-    if (global->connectType)
+    if (globalData->connectType)
         ui->statusBar->showMessage(tr("Connected"));
     else if (SIMULATE_CONNECT != NONE_CONNECT)
         ui->statusBar->showMessage(tr("Simulate"));
@@ -105,10 +111,12 @@ void MainWindow::connectInit()
     connect(ui->actionJoint_Control, &QAction::triggered, m_joint_control, &JointControl::show);
     connect(ui->actionSingle_Joint_Control, &QAction::triggered, m_single_joint_control, &SingleJointControl::show);
     connect(ui->actionOffline_Control, &QAction::triggered, m_offline_control, &OfflineControl::show);
+    connect(ui->actionSequence_Control, &QAction::triggered, m_offline_sequence_control, &OfflineSequenceControl::show);
     connect(ui->actionRemote_Control, &QAction::triggered, m_remote_control, &RemoteControl::show);
     connect(m_connect_dialog, &ConnectDialog::accepted, this, &MainWindow::canConnectEvent);
     connect(ui->actionReceive_Error, &QAction::triggered, m_receive_error, &ReceiveError::show);
     connect(m_receive_error, &ReceiveError::jointError, m_offline_control, &OfflineControl::pausedWhenError);
+    connect(m_receive_error, &ReceiveError::jointError, m_offline_sequence_control, &OfflineSequenceControl::pausedWhenError);
 }
 
 /**
@@ -127,6 +135,7 @@ MainWindow::~MainWindow()
     delete m_receive_error;
     delete m_remote_control;
     delete m_data_server;
+    delete m_offline_sequence_control;
     delete workerThread;
     delete ui;
 }

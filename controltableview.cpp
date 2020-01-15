@@ -1,9 +1,12 @@
 /*
- * @Author: xingzhang.Wu 
- * @Date: 2019-09-29 09:58:15 
- * @Last Modified by:   xingzhang.Wu 
- * @Last Modified time: 2019-09-29 09:58:15 
+ * @Descripttion: 
+ * @version: 
+ * @Author: xingzhang.Wu
+ * @Date: 2019-09-26 19:38:15
+ * @LastEditors  : Qingmao Wei
+ * @LastEditTime : 2020-01-13 11:09:14
  */
+
 #include "controltableview.h"
 #include "globaldata.h"
 #include "package.h"
@@ -129,7 +132,7 @@ void ControlTableView::valueListInit()
 }
 
 /**
- * @brief 从当前获取的关节数据更新valueList当前获取的关节数据更新valueList
+ * @brief 从当前获取的关节数据更新valueList
  * 
  * @param currentName 
  * @param currentPeriod 
@@ -144,7 +147,7 @@ void ControlTableView::valueListSync(QString currentName, int currentPeriod)
     valueList << currentName;
     for (int i = 0; i < NODE_NUM; i++)
     {
-        value[i] = global->currentCanAnalyticalData[i].position - refValue[i];
+        value[i] = globalData->currentCanAnalyticalData[i].position - refValue[i];
         valueList << QString::number(value[i]);
     }
     valueList << QString::number(currentPeriod);
@@ -178,11 +181,11 @@ void ControlTableView::valueListSync(int row)
     {
         if (row == 0)
         {
-            value[i] = global->currentCanAnalyticalData[i].position;
+            value[i] = globalData->currentCanAnalyticalData[i].position;
         }
         else
         {
-            value[i] = global->currentCanAnalyticalData[i].position - refValue[i];
+            value[i] = globalData->currentCanAnalyticalData[i].position - refValue[i];
         }
         valueList << QString::number(value[i]);
     }
@@ -289,31 +292,30 @@ int ControlTableView::runFunc(int row)
 
     if (0 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row, 1)))->currentIndex())
     {
-        Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_SPD);
+        Package::packOperateMulti(globalData->sendId, value, NODE_NUM, PROTOCOL_TYPE_SPD);
     }
     else if (1 == qobject_cast<IncompleteCombox *>(indexWidget(model->index(row, 1)))->currentIndex())
     {
-        for (int i = 0; i < NODE_NUM; i++)
-        {
+        for (int i = 0; i < NODE_NUM; i++) {
             value[i] += refValue[i];
             double realVal = 0;
-            if (std::abs(global->currentCanAnalyticalData[i].position - value[i]) > 180)
-                realVal = 360 - std::abs(global->currentCanAnalyticalData[i].position - value[i]);
+            if (std::abs(globalData->currentCanAnalyticalData[i].position - value[i]) > 180)
+                realVal = 360 - std::abs(globalData->currentCanAnalyticalData[i].position - value[i]);
             else
-                realVal = std::abs(global->currentCanAnalyticalData[i].position - value[i]);
+                realVal = std::abs(globalData->currentCanAnalyticalData[i].position - value[i]);
             if (realVal > POS_LIMIT_VALUE)
                 return i+1;
         }
         //In order to be able to reach the initial position, set this mode here.
-        Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
+        Package::packOperateMulti(globalData->sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
     }
     else
     { //relative position mode
         for (int i = 0; i < NODE_NUM; i++)
         {
-            value[i] += global->currentCanAnalyticalData[i].position;
+            value[i] += globalData->currentCanAnalyticalData[i].position;
         }
-        Package::packOperateMulti(global->sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
+        Package::packOperateMulti(globalData->sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
     }
     return 0;
 }
@@ -653,7 +655,20 @@ int ControlTableView::importCsv(QString fileName)
         return -1;
     }
 
-    if (!QString(qlist[1][0]).contains("ref") || col != (BTN_START_INDEX + ROW_BTN_NUM + 1))
+    // csv model格式检查
+    // 头两行为空
+    if (qlist[0].length() == 0 && qlist[1].length() == 0){
+        QString str = "ref,,0,0,0,0,0,0,0,0,0,0,0,0,,1,1,1,1,1,";
+        QStringList refRow = str.split(",");
+        qlist[1] = refRow;
+        QMessageBox::warning(this, tr("Import"),
+                             tr("The imported file format is incorrect.\n"
+                                "The first 2 rows are empty."
+                                "Set all 0 as reference."),
+                             QMessageBox::Ok | QMessageBox::Cancel);
+    }
+    // 第一行不是'ref'
+    else if (!QString(qlist[1][0]).contains("ref") || col != (BTN_START_INDEX + ROW_BTN_NUM + 1))
     {
         QMessageBox::warning(this, tr("Import"),
                              tr("The imported file format is incorrect.\n"

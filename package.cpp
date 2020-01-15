@@ -32,37 +32,34 @@ bool Package::unpackOperate()
     int dataLen[CAN_MAX_FRAM] = {0};
     int id[CAN_MAX_FRAM] = {0};
     unsigned char data[CAN_MAX_FRAM][8] = {{0}};
-    int len = DataTransmission::CANReceive(global->connectType, global->currentCanData, dataLen, id, data);
+    int len = DataTransmission::CANReceive(globalData->connectType, globalData->currentCanData, dataLen, id, data);
     int nodeId[NODE_NUM] = {0};
     int nodeStatus[NODE_NUM] = {0};
     memset(nodeStatus, -1, sizeof(nodeStatus)); //全部初始化为-1
 
     for (int i = 0; i < len; i++) //只处理有值的部分
     {
-        nodeId[id[i] - global->sendId[0]] = 1; //该Id接收到了数据
-        nodeStatus[id[i] - global->sendId[0]] = data[i][0];
+        nodeId[id[i] - globalData->sendId[0]] = 1; //该Id接收到了数据
+        nodeStatus[id[i] - globalData->sendId[0]] = data[i][0];
     }
-    for (int i = 0; i < NODE_NUM; i++)
-    {
-        global->runningId[i] = nodeId[i];
-        global->statusId[i] = nodeStatus[i];
+    for (int i = 0; i < NODE_NUM; i++) {
+        globalData->runningId[i] = nodeId[i];
+        globalData->statusId[i] = nodeStatus[i];
     }
     if (len == 0)
         return isConnected;
-    for (int i = 0; i < len; i++)
-    {
+    for (int i = 0; i < len; i++) {
         // 防止出现有问题的ID
-        if (id[i] < global->sendId[0] || id[i] > global->sendId[NODE_NUM - 1])
+        if (id[i] < globalData->sendId[0] || id[i] > globalData->sendId[NODE_NUM - 1])
             return isConnected;
         Protocol::getRawData(data[i], receivedCanData, dataLen[i], id[i]);
     }
-    for (int leg = 0; leg < NODE_NUM; leg++)
-    {
+    for (int leg = 0; leg < NODE_NUM; leg++) {
         //New add two wheel 12+2
         //data:26144/360=728.18
-        global->currentCanAnalyticalData[leg].position = Protocol::parsePos(receivedCanData, leg);
-        global->currentCanAnalyticalData[leg].speed = Protocol::parseSpeed(receivedCanData, leg);
-        global->currentCanAnalyticalData[leg].current = Protocol::parseCurrent(receivedCanData, leg);
+        globalData->currentCanAnalyticalData[leg].position = Protocol::parsePos(receivedCanData, leg);
+        globalData->currentCanAnalyticalData[leg].speed = Protocol::parseSpeed(receivedCanData, leg);
+        globalData->currentCanAnalyticalData[leg].current = Protocol::parseCurrent(receivedCanData, leg);
     }
     if ((data[0][1] + data[1][2] + data[2][3]) != 0)
     {
@@ -83,7 +80,7 @@ bool Package::unpackOperate()
  */
 bool Package::packOperate(unsigned int id, double data, int type)
 {
-    if (!global->connectType)
+    if (!globalData->connectType)
         return false;
     unsigned char packData[8] = {0};
     switch (type)
@@ -130,8 +127,7 @@ bool Package::packOperate(unsigned int id, double data, int type)
     default:
         break;
     }
-    if (1 != DataTransmission::CANTransmit(global->connectType, packData, id))
-    {
+    if (1 != DataTransmission::CANTransmit(globalData->connectType, packData, id)) {
         qDebug() << "can " << id << " send failed";
         return false;
     }
@@ -150,7 +146,7 @@ bool Package::packOperate(unsigned int id, double data, int type)
  */
 bool Package::packOperateMulti(unsigned int *id, double *data, int num, int type)
 {
-    if (!global->connectType)
+    if (!globalData->connectType)
         return false;
     Q_ASSERT(num == NODE_NUM);
     unsigned char packData[num][8] = {0};
@@ -186,8 +182,7 @@ bool Package::packOperateMulti(unsigned int *id, double *data, int num, int type
             break;
         }
     }
-    if (num != DataTransmission::CANTransmitMulti(global->connectType, packData, (int *)id, num))
-    {
+    if (num != DataTransmission::CANTransmitMulti(globalData->connectType, packData, (int *) id, num)) {
         qDebug() << "can " << id << " send failed";
         return false;
     }
