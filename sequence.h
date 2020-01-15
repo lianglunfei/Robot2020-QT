@@ -4,7 +4,7 @@
  * @Author: xingzhang.Wu
  * @Date: 2020-01-13 10:18:51
  * @LastEditors  : Qingmao Wei
- * @LastEditTime : 2020-01-13 14:29:25
+ * @LastEditTime : 2020-01-15 10:08:32
  */
 #ifndef SEQUENCE_H
 #define SEQUENCE_H
@@ -17,11 +17,16 @@ class SequenceExcuteWorker : public QObject
 {
     Q_OBJECT
 private:
+    SequenceExcuteWorker();
+    ~SequenceExcuteWorker();
+    SequenceExcuteWorker(const SequenceExcuteWorker&);
+	SequenceExcuteWorker& operator=(const SequenceExcuteWorker&);
+
     QStringList headerData;
     QStringList valueList;
     QTimer *taskTimer;
     QThread *taskThread;
-    QStandardItemModel *model;
+    QStandardItemModel *seqModel;
     int execRunOrPauseFlag;
     bool cycleFlag;
     int interValue;
@@ -33,16 +38,19 @@ private:
     int runFunc(int row);
     void setListBoundaryValue(int &up, int &down);
     void getModelRowValue(double *value, int row, int len);
-    int seqExec(bool cycle, int value, int period);
-    void execStop();
-    int execPause();
-    int reverseSeqExec(bool cycle, int value, int period);
 
 public:
-    SequenceExcuteWorker();
-    ~SequenceExcuteWorker();
-    int importCSV(QString file_name);
+    static SequenceExcuteWorker& getInstance() {
+        static SequenceExcuteWorker instance;
+        return instance;
+    }
     
+    void execStop();
+    int execPause();
+    int seqExec(bool cycle, int value, int period);
+    int reverseSeqExec(bool cycle, int value, int period);
+    int importCSV(QString file_name);
+  
 private slots:
     void execSeqEvent();
 
@@ -50,5 +58,7 @@ signals:
     void stopThread();
     void execStatus(QString s);
 };
+
+
 
 #endif
