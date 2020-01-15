@@ -4,7 +4,7 @@
  * @Author: xingzhang.Wu
  * @Date: 2020-01-08 15:36:56
  * @LastEditors  : Qingmao Wei
- * @LastEditTime : 2020-01-15 08:34:54
+ * @LastEditTime : 2020-01-15 16:30:55
  */
 #ifndef OFFLINESEQUENCECONTROL_H
 #define OFFLINESEQUENCECONTROL_H
@@ -60,8 +60,13 @@ private slots:
     void on_sitButton_clicked();
     void on_stopButton_clicked();
     void on_pauseButton_clicked();
+    void on_playButton_clicked();
+    void on_resetButton_clicked();
     void runStatus(QString s);
     void stopStatus();
+
+public slots:
+    void pausedWhenError();
 };
 
 #endif // OFFLINESEQUENCECONTROL_H

@@ -4,7 +4,7 @@
  * @Author: Qingmao Wei
  * @Date: 2020-01-14 15:19:54
  * @LastEditors  : Qingmao Wei
- * @LastEditTime : 2020-01-15 15:02:20
+ * @LastEditTime : 2020-01-15 16:37:36
  */
 #include "sequencetableview.h"
 #include "controltableview.h"
@@ -22,21 +22,26 @@
 #include <QCoreApplication>
 #include <QTime>
 
-#define ROW_BTN_NUM 5     // 按钮个数：上下移动、增加删除、运行
+#define ROW_BTN_NUM 5        // 按钮个数：上下移动、增加删除、运行
 #define ACTION_COMBO_INDEX 0 // 行动作名所在的位置=0
-#define BTN_START_INDEX 1 // 行按钮开始的位置=1
+#define BTN_START_INDEX 1    // 行按钮开始的位置=1
+#define CHECKBOX_INDEX 6     // 选中按钮的位置=6
 
 SequenceTableView::SequenceTableView(QWidget *parent) : QTableView(parent)
 {
     seqWorker = &SequenceExcuteWorker::getInstance();
-    interPeriod = 5;
+    interPeriod = 50;
     interValue = 1;
+    currentRunRow = 0;
+    continuedRunning = false;
+
     headerDataInit();
-    // valueListInit();
     modelInit();
     tableViewInit();
     addTableviewRow(0, 0, true);
     horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    connect(seqWorker, &SequenceExcuteWorker::execStatus, this, &SequenceTableView::runStatus);
+    connect(seqWorker, &SequenceExcuteWorker::stopThread, this, &SequenceTableView::stopStatus);
 }
 
 SequenceTableView::~SequenceTableView()
@@ -161,19 +166,21 @@ void SequenceTableView::tableClickButton()
     QPushButton *btn = (QPushButton *)sender(); //产生事件的对象
     int row = btn->property("row").toInt();     //取得按钮的行号属性
     int col = btn->property("column").toInt();  //取得按钮的列号属性
-    qDebug()<<"col="<<col<<", row="<<row;
+    qDebug() << "col=" << col << ", row=" << row;
     switch (col)
     {
     case BTN_START_INDEX: //run
-        qDebug()<<qobject_cast<IncompleteCombox *>(indexWidget(model->index(row, ACTION_COMBO_INDEX)))->currentText();
-        execOneAction(qobject_cast<IncompleteCombox *>(indexWidget(model->index(row, ACTION_COMBO_INDEX)))->currentText());
-        qobject_cast<IncompleteCombox *>(indexWidget(model->index(row, BTN_START_INDEX)))->setEnabled(0);
-            //     emit execStatus("数据异常！");
+        // qDebug()<<qobject_cast<IncompleteCombox *>(indexWidget(model->index(row, ACTION_COMBO_INDEX)))->currentText();
+        if (!execOneAction(qobject_cast<IncompleteCombox *>(indexWidget(model->index(row, ACTION_COMBO_INDEX)))->currentText()))
+        {
+            currentRunRow = row;
+            qobject_cast<QPushButton *>(indexWidget(model->index(row, BTN_START_INDEX)))->setEnabled(0);
+        }
         break;
     case BTN_START_INDEX + 1: //add
-        model->insertRow(row+1);
-        addTableviewRow(0, row+1, true);
-        updateTablePropertyAfterLine(row+1, 0);
+        model->insertRow(row + 1);
+        addTableviewRow(0, row + 1, true);
+        updateTablePropertyAfterLine(row + 1, 0);
         break;
     case BTN_START_INDEX + 2: //delete
         model->removeRow(row);
@@ -230,10 +237,10 @@ void SequenceTableView::updateTableRowProperty(int row, int property)
 
 void SequenceTableView::updateTablePropertyAfterLine(int row, int offset)
 {
-    qDebug()<<"model->rowCount()="<<model->rowCount();
+    qDebug() << "model->rowCount()=" << model->rowCount();
     for (int i = row; i < model->rowCount(); i++)
     {
-        qDebug()<<i;
+        qDebug() << i;
         updateTableRowProperty(i, i + offset);
     }
 }
@@ -284,7 +291,6 @@ void SequenceTableView::addModelItemData(int row)
     // model->item(row, 0)->setForeground(QBrush(QColor(255, 0, 0)));
 }
 
-
 /**
  * @brief: 加载并执行一个动作
  * @param fine_name 动作的文件名,无后缀
@@ -292,7 +298,7 @@ void SequenceTableView::addModelItemData(int row)
  */
 int SequenceTableView::execOneAction(QString fine_base_name)
 {
-    qDebug()<<actionModels[fine_base_name];
+    qDebug() << actionModels[fine_base_name];
     if (seqWorker->importCSV(actionModels[fine_base_name]))
     {
         QMessageBox::warning(this, tr("CSV error"),
@@ -304,18 +310,80 @@ int SequenceTableView::execOneAction(QString fine_base_name)
     return 0;
 }
 
+void SequenceTableView::invokeNextAction()
+{
+    continuedRunning = 1;
+    //恢复上一个按钮
+    
+    if (!execOneAction(qobject_cast<IncompleteCombox *>(indexWidget(model->index(currentRunRow, ACTION_COMBO_INDEX)))->currentText()))
+    {
+        qobject_cast<QPushButton *>(indexWidget(model->index(currentRunRow, BTN_START_INDEX)))->setEnabled(0);
+    }
+    // 查找下一个选中的条目
+    do{
+        currentRunRow++;
+        // 如果超出最后一行还没找到
+        if(currentRunRow >= model->rowCount())
+        {
+            continuedRunning = 0;
+            currentRunRow--;
+            return;
+        }
+    }while (!qobject_cast<QCheckBox *>(indexWidget(model->index(currentRunRow, CHECKBOX_INDEX)))->isEnabled());
+        
+    qDebug()<<currentRunRow<<" "<<model->rowCount();
+    
+}
+
 /**
  * @brief: slot (外部UI)设置间隔时间和间隔次数
  * @param interValue 间隔次数
  * @param interPeriod 间隔时间
  */
-void SequenceTableView::setInterValue(int interValue_){
+void SequenceTableView::setInterValue(int interValue_)
+{
     interValue = interValue_;
 }
-void SequenceTableView::setInterPeriod(int interPeriod_){
+void SequenceTableView::setInterPeriod(int interPeriod_)
+{
     interPeriod = interPeriod_;
 }
+void SequenceTableView::manualStop()
+{
+    continuedRunning = 0;
+}
 
-void SequenceTableView::setActionModels(QMap<QString,QString> actionModels_){
+void SequenceTableView::setActionModels(QMap<QString, QString> actionModels_)
+{
     actionModels = actionModels_;
+}
+
+/**
+ * @brief 仿真数据运行状态显示
+ * 
+ * @param s 
+ */
+void SequenceTableView::runStatus(QString s)
+{
+}
+
+/**
+ * @brief 停止仿真时设置相关状态
+ * 
+ */
+void SequenceTableView::stopStatus()
+{
+    
+    if (!continuedRunning){
+        qobject_cast<QPushButton *>(indexWidget(model->index(currentRunRow, BTN_START_INDEX)))->setEnabled(1);
+        currentRunRow = 0;
+    }
+        
+    else{
+        if(currentRunRow!=0)
+            qobject_cast<QPushButton *>(indexWidget(model->index(currentRunRow-1, BTN_START_INDEX)))->setEnabled(1);
+        invokeNextAction();
+    }
+        
+    // ui->messageLabel->setText("执行结束。");
 }

@@ -4,7 +4,7 @@
  * @Author: xingzhang.Wu
  * @Date: 2020-01-13 10:18:42
  * @LastEditors  : Qingmao Wei
- * @LastEditTime : 2020-01-15 14:58:08
+ * @LastEditTime : 2020-01-15 16:14:56
  */
 #include "sequence.h"
 #include "globaldata.h"
@@ -417,14 +417,14 @@ void SequenceExcuteWorker::execSeqEvent()
  */
 int SequenceExcuteWorker::importCSV(QString fileName)
 {
-    qDebug()<<"in file.";
+    // qDebug()<<"in file.";
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         qDebug() << "Open file failed!";
         return -1;
     }
-    qDebug()<<"file opened.";
+    // qDebug()<<"file opened.";
 
     QList<QStringList> qlist;
     QStringList strlist;
@@ -452,7 +452,7 @@ int SequenceExcuteWorker::importCSV(QString fileName)
         row++;
     }
 
-    qDebug()<<"read end.";
+    // qDebug()<<"read end.";
     // csv model格式检查
     if (0 == col || 0 == row)
     {

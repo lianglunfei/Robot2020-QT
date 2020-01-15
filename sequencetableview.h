@@ -4,7 +4,7 @@
  * @Author: Qingmao Wei
  * @Date: 2020-01-14 15:19:54
  * @LastEditors  : Qingmao Wei
- * @LastEditTime : 2020-01-15 14:22:23
+ * @LastEditTime : 2020-01-15 16:12:00
  */
 #ifndef SEQUENCETABLEVIEW_H
 #define SEQUENCETABLEVIEW_H
@@ -20,16 +20,19 @@ public:
     SequenceTableView(QWidget *parent = 0);
     ~SequenceTableView();
     void setActionModels(QMap<QString,QString>);
+    void invokeNextAction();
+    QStringList actionList;
     
 private:
     QStandardItemModel *model;
     QStringList headerData;
     QStringList valueList;
-    QStringList actionList;
     SequenceExcuteWorker *seqWorker;
     QMap<QString,QString> actionModels;
     int interValue;
     int interPeriod;
+    int currentRunRow;
+    bool continuedRunning;
 
     void headerDataInit();
     void valueListInit();
@@ -44,12 +47,17 @@ private:
     void addTableviewRow(int mode, int row, bool hasWidget);
     void addModelItemData(int row);
     int execOneAction(QString);
+    int getNextActiveRow();
 
 private slots:
     void tableClickButton();
+    void runStatus(QString s);
+    void stopStatus();
 public slots:    
     void setInterValue(int);
     void setInterPeriod(int);
+    
+    void manualStop();
 signals:
     void setActionList(const QStringList &);
     

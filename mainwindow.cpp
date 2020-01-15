@@ -4,7 +4,7 @@
  * @Author: xingzhang.Wu
  * @Date: 2019-10-23 17:09:23
  * @LastEditors  : Qingmao Wei
- * @LastEditTime : 2020-01-10 17:12:24
+ * @LastEditTime : 2020-01-15 15:21:04
  */
 
 #include "mainwindow.h"
@@ -112,6 +112,7 @@ void MainWindow::connectInit()
     connect(m_connect_dialog, &ConnectDialog::accepted, this, &MainWindow::canConnectEvent);
     connect(ui->actionReceive_Error, &QAction::triggered, m_receive_error, &ReceiveError::show);
     connect(m_receive_error, &ReceiveError::jointError, m_offline_control, &OfflineControl::pausedWhenError);
+    connect(m_receive_error, &ReceiveError::jointError, m_offline_sequence_control, &OfflineSequenceControl::pausedWhenError);
 }
 
 /**

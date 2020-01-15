@@ -4,7 +4,7 @@
  * @Author: xingzhang.Wu
  * @Date: 2020-01-08 15:36:56
  * @LastEditors  : Qingmao Wei
- * @LastEditTime : 2020-01-15 14:28:17
+ * @LastEditTime : 2020-01-15 16:33:10
  */
 
 #include "offlinesequencecontrol.h"
@@ -27,6 +27,8 @@ OfflineSequenceControl::OfflineSequenceControl(QWidget *parent) : QDialog(parent
     ui->leftButton->setShortcut(Qt::Key_Left);
     ui->backButton->setShortcut(Qt::Key_Down);
     ui->rightButton->setShortcut(Qt::Key_Right);
+    ui->exportButton->setEnabled(0);
+    ui->importButton->setEnabled(0);
     // ui->pauseButton->setShortcut(Qt::Key_P);
     ui->stopButton->setShortcut(QKeySequence(Qt::ALT + Qt::Key_A));
     seqWorker = &SequenceExcuteWorker::getInstance();
@@ -105,7 +107,9 @@ void OfflineSequenceControl::on_assetBrowseButton_clicked()
     ui->forwardComboBox->addItems(actionNames);
     ui->leftComboBox->addItems(actionNames);
     ui->rightComboBox->addItems(actionNames);
-    ui->tableView->setActionList(actionNames);
+
+    ui->tableView->actionList = actionNames;
+    emit ui->tableView->setActionList(actionNames);
 
     // TODO: 读取这些文件 检查csv文件格式
 
@@ -160,12 +164,28 @@ void OfflineSequenceControl::on_stopButton_clicked()
 {
     ui->stopButton->setDefault(1);
     seqWorker->execStop();
+    ui->tableView->manualStop();
+    Drivers::stopJoint();
 }
 
 void OfflineSequenceControl::on_pauseButton_clicked()
 {
     ui->pauseButton->setDefault(1);
     UIWaitTask(pause_op);
+}
+void OfflineSequenceControl::on_playButton_clicked()
+{
+    ui->tableView->invokeNextAction();
+}
+
+/**
+ * @brief 初始化所有电机
+ * 
+ */
+void OfflineSequenceControl::on_resetButton_clicked()
+{
+    on_stopButton_clicked();
+    Drivers::initJoint();
 }
 
 void OfflineSequenceControl::deactivateAllMoveButtons()
@@ -303,4 +323,27 @@ void OfflineSequenceControl::keyPressEvent(QKeyEvent *e)
         //     break;
         // }
     }
+}
+
+/**
+ * @brief 异常时执行行数，一般为让电机停止运动
+ * 
+ */
+void OfflineSequenceControl::pausedWhenError()
+{
+    if(!ui->ignoreCheckBox->isEnabled()){
+        on_pauseButton_clicked();
+        ui->pauseButton->setText(QString("异常继续(P)"));
+    }
+        
+    // if (ret == 1)
+    // {
+    //     ui->execSeqPushButton->setText("顺序异常继续");
+    //     ui->execSeqPushButton->setStyleSheet("color:red;");
+    // }
+    // else if (ret == 2)
+    // {
+    //     ui->execReverseSeqPushButton->setText("逆序异常继续");
+    //     ui->execReverseSeqPushButton->setStyleSheet("color:red;");
+    // }
 }
