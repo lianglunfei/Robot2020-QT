@@ -4,7 +4,7 @@
  * @Author: xingzhang.Wu
  * @Date: 2020-01-08 15:36:56
  * @LastEditors  : Qingmao Wei
- * @LastEditTime : 2020-01-15 16:33:10
+ * @LastEditTime : 2020-01-16 10:02:16
  */
 
 #include "offlinesequencecontrol.h"
@@ -201,6 +201,7 @@ void OfflineSequenceControl::deactivateAllMoveButtons()
 
 void OfflineSequenceControl::activateAllMoveButtons()
 {
+    qDebug()<<"hello";
     ui->backButton->setEnabled(1);
     ui->rightButton->setEnabled(1);
     ui->forwardButton->setEnabled(1);
@@ -285,6 +286,7 @@ void OfflineSequenceControl::runStatus(QString s)
  */
 void OfflineSequenceControl::stopStatus()
 {
+    
     activateAllMoveButtons();
     ui->pauseButton->setEnabled(0);
     // ui->messageLabel->setText("执行结束。");

@@ -4,7 +4,7 @@
  * @Author: xingzhang.Wu
  * @Date: 2020-01-13 10:18:42
  * @LastEditors  : Qingmao Wei
- * @LastEditTime : 2020-01-15 16:14:56
+ * @LastEditTime : 2020-01-16 10:08:06
  */
 #include "sequence.h"
 #include "globaldata.h"
@@ -22,7 +22,7 @@
 #define BTN_START_INDEX NODE_NUM + 3 //行按钮开始的位置=节点数+mode+time+name
 #define ROW_BTN_NUM 5                //按钮个数：上下移动、增加删除、运行
 #define BEFORE_VALUE_NUM 2           //节点数之前的数值个数：name、mode
-#define POS_LIMIT_VALUE 361          //最大允许位置变化偏差，超过会显示数据异常
+#define POS_LIMIT_VALUE 350          //最大允许位置变化偏差，超过会显示数据异常
 #define SHOW_BTN_NUM 50              //表格显示按钮的行数，一般设定前50行s
 
 SequenceExcuteWorker::SequenceExcuteWorker()
@@ -105,6 +105,7 @@ int SequenceExcuteWorker::runFunc(int row)
     double refValue[NODE_NUM];
     getModelRowValue(refValue, 0, NODE_NUM);
     getModelRowValue(value, row, NODE_NUM);
+    qDebug()<<value[0]<<" "<<value[1]<<" "<<value[2];
 
     if (0 == seqModel->index(row, 1).data().toInt())
     {
@@ -264,7 +265,7 @@ void SequenceExcuteWorker::execSeqEvent()
         getModelRowValue(refValue, 0, NODE_NUM);
     }
     //顺序执行越界处理
-    if (row > listTail)
+    if (execRunOrPauseFlag / 10 == 1 && row >= listTail)
     { 
         if (cycleFlag)
         {
@@ -282,12 +283,13 @@ void SequenceExcuteWorker::execSeqEvent()
             lastRow[1] = -1;
             g_lastRow = -1;
             execRunOrPauseFlag = 0;
+            emit execStatus("执行上一动作结束");
             emit stopThread();
             return;
         }
     }
     //逆序执行越界处理
-    if (row < listHead)
+    if (execRunOrPauseFlag / 10 == 2 && row <= listHead)
     { 
         if (cycleFlag)
         {
@@ -381,6 +383,7 @@ void SequenceExcuteWorker::execSeqEvent()
         emit execStatus(seqModel->index(g_lastRow, 0).data().toString() + QString(" has runned for %1 ms\n").arg(timeCnt * 10) + QString("group %2: ").arg(groupCnt) + seqModel->index(row, 0).data().toString() + QString(" is running\n") + QString("elapsed time: %1 s").arg(time.elapsed() / 1000));
         timeCnt = 1;
 
+        // 数据导入异常！
         if (runFunc(row) < 0)
         {
             taskTimer->stop();
@@ -475,7 +478,7 @@ int SequenceExcuteWorker::importCSV(QString fileName)
         return -1;
     }
 
-    qDebug()<<seqModel;
+    // qDebug()<<seqModel;
 
     seqModel->clear();
     seqModel->setRowCount(row - 1);

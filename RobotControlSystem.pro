@@ -173,3 +173,4 @@ DEPENDPATH += $$PWD/libs/zlg
 RESOURCES += \
     robot.qrc
 #    logo.qrc
+RC_FILE = logo.rc
