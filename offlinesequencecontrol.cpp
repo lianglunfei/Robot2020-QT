@@ -4,7 +4,7 @@
  * @Author: xingzhang.Wu
  * @Date: 2020-01-08 15:36:56
  * @LastEditors  : Qingmao Wei
- * @LastEditTime : 2020-01-16 10:02:16
+ * @LastEditTime : 2020-01-16 15:47:28
  */
 
 #include "offlinesequencecontrol.h"
@@ -16,6 +16,9 @@
 #include <QKeyEvent>
 #include <QMessageBox>
 #include <QSpinBox>
+#include <QEventLoop>
+#include <QTimer>
+#include <QElapsedTimer>
 // #include <QWidget>
 
 OfflineSequenceControl::OfflineSequenceControl(QWidget *parent) : QDialog(parent),
@@ -29,6 +32,14 @@ OfflineSequenceControl::OfflineSequenceControl(QWidget *parent) : QDialog(parent
     ui->rightButton->setShortcut(Qt::Key_Right);
     ui->exportButton->setEnabled(0);
     ui->importButton->setEnabled(0);
+    ui->resetActionButton->setDisabled(1);
+    ui->openValveButton->setEnabled(0);
+    ui->openValveButton->hide();
+
+    QIcon myicon;                                  //新建QIcon对象
+    myicon.addFile(tr("qrc:/images/uparrow.ico")); //让QIcon对象指向想要的图标
+    ui->forwardButton->setIcon(myicon);            //给按钮添加图标
+
     // ui->pauseButton->setShortcut(Qt::Key_P);
     ui->stopButton->setShortcut(QKeySequence(Qt::ALT + Qt::Key_A));
     seqWorker = &SequenceExcuteWorker::getInstance();
@@ -37,8 +48,8 @@ OfflineSequenceControl::OfflineSequenceControl(QWidget *parent) : QDialog(parent
     ui->pauseButton->setEnabled(0);
     connect(seqWorker, &SequenceExcuteWorker::execStatus, this, &OfflineSequenceControl::runStatus);
     connect(seqWorker, &SequenceExcuteWorker::stopThread, this, &OfflineSequenceControl::stopStatus);
-    connect(ui->interPeriodSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), ui->tableView, &SequenceTableView::setInterPeriod);
-    connect(ui->interValueSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), ui->tableView, &SequenceTableView::setInterValue);
+    connect(ui->interPeriodSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), ui->tableView, &SequenceTableView::setInterPeriod);
+    connect(ui->interValueSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), ui->tableView, &SequenceTableView::setInterValue);
     // connect(seqWorker, &SequenceExcuteWorker::stopThread, this, &OfflineSequenceControl::activateAllMoveButtons);
     // connect()
 }
@@ -184,8 +195,64 @@ void OfflineSequenceControl::on_playButton_clicked()
  */
 void OfflineSequenceControl::on_resetButton_clicked()
 {
-    on_stopButton_clicked();
+    seqWorker->execStop();
     Drivers::initJoint();
+
+    // 等待500ms再检查电机状态
+    QEventLoop loop;                              //定义一个新的事件循环
+    QTimer::singleShot(500, &loop, SLOT(quit())); //创建单次定时器，槽函数为事件循环的退出函数
+    loop.exec();                                  //事件循环开始执行，程序会卡在这里，直到定时时间到，本循环被退出
+    // int status;
+    // if ((status = seqWorker->checkMotorStatus()) == -1)//若电机正常
+    // {
+    //     QMessageBox::information(this, tr("电机状态提示"),
+    //                              tr("所有电机角度正常。"),
+    //                              QMessageBox::Ok);
+    // }
+    // else
+    // {
+    //     QMessageBox::warning(this, tr("电机状态提示"),
+    //                              tr("电机id=%1角度异常！").arg(status),
+    //                              QMessageBox::Ok);
+    // }
+    // Drivers::initMotor();
+    // qDebug()<<
+    QMessageBox::information(this, tr("电机状态提示"),
+                             seqWorker->checkMotorStatus(),
+                             QMessageBox::Ok);
+}
+
+/**
+ * @brief 初始化所有电机
+ * 
+ */
+void OfflineSequenceControl::on_resetActionButton_clicked()
+{
+    if (seqWorker->importCSV(actionModels[QString("stand")]))
+    {
+        QMessageBox::warning(this, tr("CSV error"),
+                             tr("格式不正确。"),
+                             QMessageBox::Ok | QMessageBox::Cancel);
+        return;
+    }
+    if (seqWorker->resetActionFunc())
+    {
+        QMessageBox::information(this, tr("电机状态提示"),
+                                 tr("回到初始位置成功。"),
+                                 QMessageBox::Ok);
+    }
+    else
+    {
+        QMessageBox::information(this, tr("电机状态提示"),
+                                 tr("回到初始位置失败。"),
+                                 QMessageBox::Ok);
+    }
+}
+
+void OfflineSequenceControl::on_openValveButton_clicked()
+{
+    on_stopButton_clicked();
+    Drivers::initValve();
 }
 
 void OfflineSequenceControl::deactivateAllMoveButtons()
@@ -197,11 +264,11 @@ void OfflineSequenceControl::deactivateAllMoveButtons()
     ui->sitButton->setDisabled(1);
     ui->standButton->setDisabled(1);
     ui->pauseButton->setEnabled(1);
+    ui->resetActionButton->setDisabled(1);
 }
 
 void OfflineSequenceControl::activateAllMoveButtons()
 {
-    qDebug()<<"hello";
     ui->backButton->setEnabled(1);
     ui->rightButton->setEnabled(1);
     ui->forwardButton->setEnabled(1);
@@ -209,12 +276,12 @@ void OfflineSequenceControl::activateAllMoveButtons()
     ui->sitButton->setEnabled(1);
     ui->standButton->setEnabled(1);
     ui->pauseButton->setEnabled(0);
+    ui->resetActionButton->setEnabled(1);
 }
 
 int OfflineSequenceControl::UIWaitTask(move_ops mov)
 {
 
-    qDebug() << "move is " << mov;
     // 方向键
     if (mov < pause_op)
     {
@@ -248,7 +315,7 @@ int OfflineSequenceControl::UIWaitTask(move_ops mov)
         {
             QMessageBox::warning(this, tr("CSV error"),
                                  tr("格式不正确。"),
-                                 QMessageBox::Ok | QMessageBox::Cancel);
+                                 QMessageBox::Ok);
             return -1;
         }
         seqWorker->seqExec(false, ui->interValueSpinBox->value(), ui->interPeriodSpinBox->value());
@@ -258,7 +325,7 @@ int OfflineSequenceControl::UIWaitTask(move_ops mov)
         {
             QMessageBox::warning(this, tr("CSV error"),
                                  tr("格式不正确。"),
-                                 QMessageBox::Ok | QMessageBox::Cancel);
+                                 QMessageBox::Ok);
             return -1;
         }
         seqWorker->reverseSeqExec(false, ui->interValueSpinBox->value(), ui->interPeriodSpinBox->value());
@@ -286,7 +353,7 @@ void OfflineSequenceControl::runStatus(QString s)
  */
 void OfflineSequenceControl::stopStatus()
 {
-    
+
     activateAllMoveButtons();
     ui->pauseButton->setEnabled(0);
     // ui->messageLabel->setText("执行结束。");
@@ -333,11 +400,12 @@ void OfflineSequenceControl::keyPressEvent(QKeyEvent *e)
  */
 void OfflineSequenceControl::pausedWhenError()
 {
-    if(!ui->ignoreCheckBox->isEnabled()){
+    if (!ui->ignoreCheckBox->isEnabled())
+    {
         on_pauseButton_clicked();
         ui->pauseButton->setText(QString("异常继续(P)"));
     }
-        
+
     // if (ret == 1)
     // {
     //     ui->execSeqPushButton->setText("顺序异常继续");

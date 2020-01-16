@@ -4,7 +4,7 @@
  * @Author: xingzhang.Wu
  * @Date: 2020-01-13 10:18:42
  * @LastEditors  : Qingmao Wei
- * @LastEditTime : 2020-01-16 10:08:06
+ * @LastEditTime : 2020-01-16 16:18:13
  */
 #include "sequence.h"
 #include "globaldata.h"
@@ -12,12 +12,10 @@
 #include "package.h"
 // #include "incompletecombox.h"
 
-
 #include <QTimer>
 #include <QThread>
 #include <QTime>
 #include <QFile>
-
 
 #define BTN_START_INDEX NODE_NUM + 3 //行按钮开始的位置=节点数+mode+time+name
 #define ROW_BTN_NUM 5                //按钮个数：上下移动、增加删除、运行
@@ -29,17 +27,15 @@ SequenceExcuteWorker::SequenceExcuteWorker()
 {
     headerDataInit();
     eventInit();
-    modelInit();  
+    modelInit();
 }
 SequenceExcuteWorker::~SequenceExcuteWorker()
 {
-    qDebug()<<"--------------Delete-------------";
+    qDebug() << "--------------Delete-------------";
     delete taskTimer;
     delete taskThread;
     delete seqModel;
 }
-
-
 
 void SequenceExcuteWorker::headerDataInit()
 {
@@ -77,7 +73,6 @@ int SequenceExcuteWorker::modelInit()
     return 0;
 }
 
-
 /**
 *@projectName   RobotControlSystem
 *@brief         获取表中某一行的数据
@@ -93,7 +88,6 @@ void SequenceExcuteWorker::getModelRowValue(double *value, int row, int len)
     }
 }
 
-
 /**
  * @brief: 判断model中的某一行的执行类型(相对,绝对), 据此执行该行数据
  * @param row 行数
@@ -105,34 +99,35 @@ int SequenceExcuteWorker::runFunc(int row)
     double refValue[NODE_NUM];
     getModelRowValue(refValue, 0, NODE_NUM);
     getModelRowValue(value, row, NODE_NUM);
-    qDebug()<<value[0]<<" "<<value[1]<<" "<<value[2];
+    // qDebug()<<refValue[0]<<" "<<refValue[1]<<" "<<refValue[2]<<" "<<refValue[3]<<" "<<refValue[4]<<" "<<refValue[5];
+    // qDebug()<<value[0]<<" "<<value[1]<<" "<<value[2]<<" "<<value[3]<<" "<<value[4]<<" "<<value[5];
 
     if (0 == seqModel->index(row, 1).data().toInt())
     {
         Package::packOperateMulti(globalData->sendId, value, NODE_NUM, PROTOCOL_TYPE_SPD);
     }
+    // 绝对模式
     else if (1 == seqModel->index(row, 1).data().toInt())
     {
-        // qDebug()<<"hello step "<<row;
-        // qDebug()<<
-        for (int i = 0; i < NODE_NUM; i++) {
+        for (int i = 0; i < NODE_NUM; i++)
+        {
             value[i] += refValue[i];
             double realVal = 0;
             if (std::abs(globalData->currentCanAnalyticalData[i].position - value[i]) > 180)
                 realVal = 360 - std::abs(globalData->currentCanAnalyticalData[i].position - value[i]);
             else
                 realVal = std::abs(globalData->currentCanAnalyticalData[i].position - value[i]);
-            if (realVal > POS_LIMIT_VALUE){
-                qDebug()<<realVal;
+            if (realVal > POS_LIMIT_VALUE)
+            {
                 return -1;
             }
-                
         }
         //In order to be able to reach the initial position, set this mode here.
         Package::packOperateMulti(globalData->sendId, value, NODE_NUM, PROTOCOL_TYPE_POS);
     }
+    // 相对模式
     else
-    { //relative position mode
+    {
         for (int i = 0; i < NODE_NUM; i++)
         {
             value[i] += globalData->currentCanAnalyticalData[i].position;
@@ -142,6 +137,41 @@ int SequenceExcuteWorker::runFunc(int row)
     return 0;
 }
 
+/**
+ * @brief: 复位操作，执行表中的ref行
+ * @return: 执行成功返回true
+ */
+int SequenceExcuteWorker::resetActionFunc()
+{
+    double refValue[NODE_NUM];
+    getModelRowValue(refValue, 0, NODE_NUM);
+    return Package::packOperateMulti(globalData->sendId, refValue, NODE_NUM, PROTOCOL_TYPE_POS);
+}
+
+/**
+ * @brief: 上电后检查逐个电机位置，若位置位于359~360之间则报错
+ * @return: 正常返回`-1`, 否则返回第一个错误的电机序号
+ */
+QString SequenceExcuteWorker::checkMotorStatus()
+{
+    bool normal_status = 1;
+    QString rtn_msg = QString("");
+    double position;
+    for (int i = 0; i < NODE_NUM; i++)
+    {
+        position = globalData->currentCanAnalyticalData[i].position;
+        if ((359.0 < position && 360.0 > position) || globalData->statusId[i] != 0x06)
+        {
+            rtn_msg.append(tr("    电机%1 异常:%2！\n").arg(i + 1).arg(position));
+            normal_status = 0;
+        }
+        else
+        {
+            rtn_msg.append(tr("[-] 电机%1 正常。\n").arg(i + 1));
+        }
+    }
+    return normal_status ? QString("所有电机正常。") : rtn_msg;
+}
 
 /**
 *@projectName   RobotControlSystem
@@ -251,11 +281,11 @@ void SequenceExcuteWorker::execSeqEvent()
 
     //init row
     if (-1 == row)
-    { 
+    {
         time.start();
         groupCnt = 1;
         listHeadBak = 1;
-        listTail = seqModel->rowCount() - 1;
+        listTail = seqModel->rowCount() - 2;
         // setListBoundaryValue(listHeadBak, listTail);
         listHead = listHeadBak;
         if (execRunOrPauseFlag / 10 == 2)
@@ -266,7 +296,7 @@ void SequenceExcuteWorker::execSeqEvent()
     }
     //顺序执行越界处理
     if (execRunOrPauseFlag / 10 == 1 && row >= listTail)
-    { 
+    {
         if (cycleFlag)
         {
             groupCnt++;
@@ -289,8 +319,8 @@ void SequenceExcuteWorker::execSeqEvent()
         }
     }
     //逆序执行越界处理
-    if (execRunOrPauseFlag / 10 == 2 && row <= listHead)
-    { 
+    if (execRunOrPauseFlag / 10 == 2 && row < listHead)
+    {
         if (cycleFlag)
         {
             groupCnt++;
@@ -313,12 +343,12 @@ void SequenceExcuteWorker::execSeqEvent()
     }
     //手动暂停
     if (2 == execRunOrPauseFlag % 10)
-    { 
+    {
         return;
     }
     //手动结束
     else if (execRunOrPauseFlag % 10 > 2)
-    { 
+    {
         taskTimer->stop();
         execRunOrPauseFlag = 0;
         row = -1;
@@ -384,10 +414,11 @@ void SequenceExcuteWorker::execSeqEvent()
         timeCnt = 1;
 
         // 数据导入异常！
+        qDebug()<<"row = "<<row;
         if (runFunc(row) < 0)
         {
             taskTimer->stop();
-            emit execStatus(QString("行 %1").arg(row)+ " 数据导入异常！");
+            emit execStatus(QString("行 %1").arg(row) + " 数据导入异常！");
             execRunOrPauseFlag = 0;
             row = -1;
             lastRow[0] = -1;
@@ -410,7 +441,6 @@ void SequenceExcuteWorker::execSeqEvent()
     else
         row--;
 }
-
 
 /**
  * @brief: 读取csv文件, 进行格式检查, 返回model
@@ -459,21 +489,22 @@ int SequenceExcuteWorker::importCSV(QString fileName)
     // csv model格式检查
     if (0 == col || 0 == row)
     {
-        
+
         file.close();
         return -1;
     }
-    
+
     // 头两行为空
-    if (qlist[0].length() == 0 && qlist[1].length() == 0){
-        
+    if (qlist[0].length() == 0 && qlist[1].length() == 0)
+    {
+
         file.close();
         return -1;
     }
     // 第一行不是'ref'
     if (!QString(qlist[1][0]).contains("ref") || col != (BTN_START_INDEX + ROW_BTN_NUM + 1))
     {
-        
+
         file.close();
         return -1;
     }
@@ -498,7 +529,7 @@ int SequenceExcuteWorker::importCSV(QString fileName)
     for (int i = 1; i < row - 1; i++) //Remove the first line header
     {
         for (int j = 0; j < col; j++) //note:21
-        {   
+        {
             if (j != 1 && j < colMin)
             {
                 QStandardItem *item = new QStandardItem(qlist[i + 1][j]);
@@ -507,7 +538,7 @@ int SequenceExcuteWorker::importCSV(QString fileName)
             }
         }
         QStandardItem *item = new QStandardItem(qlist[i + 1][1]);
-        seqModel->setItem(i+1, 1, item);
+        seqModel->setItem(i + 1, 1, item);
         // qDebug()<<QString(qlist[i + 1][1]).toInt();
         // qDebug()<<seqModel->index(i+1,1).data().toInt()<<"-----";
     }

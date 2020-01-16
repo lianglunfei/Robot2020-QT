@@ -4,7 +4,7 @@
  * @Author: xingzhang.Wu
  * @Date: 2019-10-23 17:09:23
  * @LastEditors  : Qingmao Wei
- * @LastEditTime : 2020-01-15 15:21:04
+ * @LastEditTime : 2020-01-16 13:58:15
  */
 
 #include "mainwindow.h"
@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     setWindowIcon(QIcon(":/new/logo/robot.ico"));
     //Initialize the connection window
     m_connect_dialog = new ConnectDialog;
+    setAttribute(Qt::WA_DeleteOnClose);
 #if SIMULATE_CONNECT == NONE_CONNECT
     QTimer::singleShot(50, m_connect_dialog, &ConnectDialog::show);
 #else

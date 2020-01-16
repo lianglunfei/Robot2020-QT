@@ -25,7 +25,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab1">
         <attribute name="title">
@@ -223,6 +223,9 @@
                   <property name="focusPolicy">
                    <enum>Qt::NoFocus</enum>
                   </property>
+                  <property name="styleSheet">
+                   <string notr="true"/>
+                  </property>
                   <property name="text">
                    <string>Forward(↑)</string>
                   </property>
@@ -270,6 +273,9 @@
                   </property>
                   <property name="focusPolicy">
                    <enum>Qt::NoFocus</enum>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true"/>
                   </property>
                   <property name="text">
                    <string>Right(→)</string>
@@ -391,7 +397,7 @@
            </widget>
           </item>
           <item alignment="Qt::AlignHCenter">
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="openValveButton">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -406,6 +412,25 @@
             </property>
             <property name="text">
              <string>打开电磁阀</string>
+            </property>
+           </widget>
+          </item>
+          <item alignment="Qt::AlignHCenter">
+           <widget class="QPushButton" name="resetActionButton">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>75</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string> 初始位置</string>
             </property>
            </widget>
           </item>

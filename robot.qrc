@@ -27,5 +27,8 @@
         <file>qml/xboxControllerRightTrigger.png</file>
         <file>qml/xboxControllerStart.png</file>
         <file>logo.qrc</file>
+        <file>images/arrow.png</file>
+        <file>images/arrow2.png</file>
+        <file>images/uparrow.ico</file>
     </qresource>
 </RCC>

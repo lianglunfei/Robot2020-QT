@@ -4,7 +4,7 @@
  * @Author: xingzhang.Wu
  * @Date: 2020-01-13 10:18:51
  * @LastEditors  : Qingmao Wei
- * @LastEditTime : 2020-01-15 10:08:32
+ * @LastEditTime : 2020-01-16 14:23:50
  */
 #ifndef SEQUENCE_H
 #define SEQUENCE_H
@@ -50,6 +50,9 @@ public:
     int seqExec(bool cycle, int value, int period);
     int reverseSeqExec(bool cycle, int value, int period);
     int importCSV(QString file_name);
+    // int checkMotorStatus();
+    QString checkMotorStatus();
+    int resetActionFunc();
   
 private slots:
     void execSeqEvent();

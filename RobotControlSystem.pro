@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = RobotControlSystem
 TEMPLATE = app
-CONFIG += release
+#CONFIG += release
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -123,8 +123,8 @@ win32: LIBS += -lDbgHelp
 #QMAKE_CFLAGS_RELEASE += -g
 #QMAKE_CXXFLAGS_RELEASE += -g
 #禁止优化
-QMAKE_CFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS_RELEASE -= -O2
+#QMAKE_CFLAGS_RELEASE -= -O2
+#QMAKE_CXXFLAGS_RELEASE -= -O2
 #release在最后link时默认有"-s”参数，表示"Omit all symbol information from the output file"，因此要去掉该参数
 #QMAKE_LFLAGS_RELEASE -= -Wl,-s
 #QMAKE_LFLAGS_RELEASE += -Wl,-Map,RobotControlSystem.map

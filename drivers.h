@@ -15,6 +15,8 @@ private:
 
 public:
     static void initJoint();
+    static void initMotor();
+    static void initValve();
     static void stopJoint();
     static void calJoint();
     static void initJoint(int nodeNum);

@@ -78,6 +78,7 @@ void Drivers::initJoint()
     double value[NODE_NUM] = {0}; //数据位为0
 #ifndef DELAY_INIT
     Package::packOperateMulti(globalData->sendId, value, NODE_NUM, PROTOCOL_TYPE_START);
+    // Delay_MSec(200);
 #ifdef DRIVE_NEW
     Package::packOperateMulti(globalData->sendId, value, NODE_NUM, PROTOCOL_TYPE_OPENVALVE);
 #endif
@@ -92,6 +93,26 @@ void Drivers::initJoint()
         qDebug() << "elapsed: " << t.elapsed();
     }
 #endif
+}
+
+/**
+ * @brief 初始化所有电机
+ * ! 如果是旧的关节，需要进行校准操作
+ */
+void Drivers::initMotor()
+{
+    double value[NODE_NUM] = {0}; //数据位为0
+    Package::packOperateMulti(globalData->sendId, value, NODE_NUM, PROTOCOL_TYPE_START);
+}
+
+/**
+ * @brief 打开电磁阀
+ * ! 如果是旧的关节，需要进行校准操作
+ */
+void Drivers::initValve()
+{
+    double value[NODE_NUM] = {0}; //数据位为0
+    Package::packOperateMulti(globalData->sendId, value, NODE_NUM, PROTOCOL_TYPE_OPENVALVE);
 }
 
 /**
