@@ -55,9 +55,9 @@ SOURCES += \
     autocontrol.cpp \
     remotecontrol.cpp \
     dataserver.cpp \
-    tcpreadthread.cpp
+    tcpreadthread.cpp\
     offlinesequencecontrol.cpp\
-    sequence.cpp \
+    sequence.cpp\
     sequencetableview.cpp
 
 HEADERS += \
@@ -95,9 +95,9 @@ HEADERS += \
     libs/gc/ecanvci.h \
     libs/cx/controlcan.h \
     libs/zlg/ControlCANZLG.h\
-    sequence.h \
-    sequencetableview.h
-    dataserver.h \
+    sequence.h\
+    sequencetableview.h\
+    dataserver.h\
     tcpreadthread.h
 
 FORMS += \
@@ -172,3 +172,4 @@ DEPENDPATH += $$PWD/libs/zlg
 
 RESOURCES += \
     robot.qrc
+#    logo.qrc

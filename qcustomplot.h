@@ -112,7 +112,7 @@ class QCPColorMap;
 class QCPColorScale;
 class QCPBars;
 
-/* including file 'src/global.h', size 16357                                 */
+/* including file 'src/globaldata.h', size 16357                                 */
 /* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
 
 #define QCUSTOMPLOT_VERSION_STR "2.0.1"
@@ -452,7 +452,7 @@ Q_DECLARE_METATYPE(QCP::Interaction)
 Q_DECLARE_METATYPE(QCP::SelectionRectMode)
 Q_DECLARE_METATYPE(QCP::SelectionType)
 
-/* end of 'src/global.h' */
+/* end of 'src/globaldata.h' */
 
 /* including file 'src/vector2d.h', size 4928                                */
 /* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */

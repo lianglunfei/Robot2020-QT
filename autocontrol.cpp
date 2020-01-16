@@ -181,14 +181,14 @@ void AutoControl::moveLeg()
 
 #if DEBUG_SIM
         if (!isnanf(static_cast<long double>(cc1)))
-            global->currentCanAnalyticalData[leg].position = cc1;
+            globalData->currentCanAnalyticalData[leg].position = cc1;
         if (!isnanf(static_cast<long double>(cc2)))
-            global->currentCanAnalyticalData[leg + 1].position = cc2;
+            globalData->currentCanAnalyticalData[leg + 1].position = cc2;
         if (!isnanf(static_cast<long double>(cc3)))
-            global->currentCanAnalyticalData[leg + 2].position = cc3;
+            globalData->currentCanAnalyticalData[leg + 2].position = cc3;
 
-        qDebug() << global->currentCanAnalyticalData[leg].position << global->currentCanAnalyticalData[leg + 1].position
-                 << global->currentCanAnalyticalData[leg + 2].position;
+        qDebug() << globalData->currentCanAnalyticalData[leg].position << globalData->currentCanAnalyticalData[leg + 1].position
+                 << globalData->currentCanAnalyticalData[leg + 2].position;
 #else
         if (!isnanf(static_cast<long double>(cc1)))
             currentPos[leg] = cc1;
@@ -201,7 +201,7 @@ void AutoControl::moveLeg()
                  << currentPos[leg + 2];
 
         //逆运算完成后，将计算出的目标角度输出给关节，启动四足运动
-        Package::packOperateMulti(global->sendId, currentPos, NODE_NUM, PROTOCOL_TYPE_POS);
+        Package::packOperateMulti(globalData->sendId, currentPos, NODE_NUM, PROTOCOL_TYPE_POS);
 #endif
     }
     else
@@ -366,32 +366,32 @@ void AutoControl::moveBody()
         //isnanf代表检查数据是否为NAN
 #if DEBUG_SIM
         if (!isnanf(static_cast<long double>(cca1)))
-            global->currentCanAnalyticalData[3].position = cca1;
+            globalData->currentCanAnalyticalData[3].position = cca1;
         if (!isnanf(static_cast<long double>(cca2)))
-            global->currentCanAnalyticalData[4].position = cca2;
+            globalData->currentCanAnalyticalData[4].position = cca2;
         if (!isnanf(static_cast<long double>(cca3)))
-            global->currentCanAnalyticalData[5].position = cca3;
+            globalData->currentCanAnalyticalData[5].position = cca3;
 
         if (!isnanf(static_cast<long double>(ccb1)))
-            global->currentCanAnalyticalData[9].position = ccb1;
+            globalData->currentCanAnalyticalData[9].position = ccb1;
         if (!isnanf(static_cast<long double>(ccb2)))
-            global->currentCanAnalyticalData[10].position = ccb2;
+            globalData->currentCanAnalyticalData[10].position = ccb2;
         if (!isnanf(static_cast<long double>(ccb3)))
-            global->currentCanAnalyticalData[11].position = ccb3;
+            globalData->currentCanAnalyticalData[11].position = ccb3;
 
         if (!isnanf(static_cast<long double>(ccc1)))
-            global->currentCanAnalyticalData[0].position = ccc1;
+            globalData->currentCanAnalyticalData[0].position = ccc1;
         if (!isnanf(static_cast<long double>(ccc2)))
-            global->currentCanAnalyticalData[1].position = ccc2;
+            globalData->currentCanAnalyticalData[1].position = ccc2;
         if (!isnanf(static_cast<long double>(ccc3)))
-            global->currentCanAnalyticalData[2].position = ccc3;
+            globalData->currentCanAnalyticalData[2].position = ccc3;
 
         if (!isnanf(static_cast<long double>(ccd1)))
-            global->currentCanAnalyticalData[6].position = ccd1;
+            globalData->currentCanAnalyticalData[6].position = ccd1;
         if (!isnanf(static_cast<long double>(ccd2)))
-            global->currentCanAnalyticalData[7].position = ccd2;
+            globalData->currentCanAnalyticalData[7].position = ccd2;
         if (!isnanf(static_cast<long double>(ccd3)))
-            global->currentCanAnalyticalData[8].position = ccd3;
+            globalData->currentCanAnalyticalData[8].position = ccd3;
 #else
         if (!isnanf(static_cast<long double>(cca1)))
             currentPos[3] = cca1;
@@ -426,7 +426,7 @@ void AutoControl::moveBody()
                  << currentPos[10] << currentPos[11];
 
         //逆运算完成后，将计算出的目标角度输出给关节，启动四足运动
-        Package::packOperateMulti(global->sendId, currentPos, NODE_NUM, PROTOCOL_TYPE_POS);
+        Package::packOperateMulti(globalData->sendId, currentPos, NODE_NUM, PROTOCOL_TYPE_POS);
 #endif
     }
 }
@@ -435,7 +435,7 @@ void AutoControl::moveBody()
  * @brief 自动运行函数，用来自动进行路径规划，从导航、相机等外设获取控制信号，
  * 来计算控制数据，最后输出给四足运行，无需人工进行干预
  * TODO: 待完善
- * 建议数据获取：global->navigateData/global->CanAnalysis
+ * 建议数据获取：globalData->navigateData/globalData->CanAnalysis
  */
 void AutoControl::autoRunFunc()
 {

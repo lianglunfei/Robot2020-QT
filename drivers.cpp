@@ -84,8 +84,8 @@ void Drivers::initJoint()
 #else
     for (int i = 0; i < NODE_NUM; i++)
     {
-        Package::packOperate(global->sendId[i], value[i], PROTOCOL_TYPE_START);
-        Package::packOperate(global->sendId[i], value[i], PROTOCOL_TYPE_OPENVALVE);
+        Package::packOperate(globalData->sendId[i], value[i], PROTOCOL_TYPE_START);
+        Package::packOperate(globalData->sendId[i], value[i], PROTOCOL_TYPE_OPENVALVE);
         QElapsedTimer t;
         t.start();
         Delay_MSec(DELAY_INIT);

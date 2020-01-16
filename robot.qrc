@@ -26,5 +26,6 @@
         <file>qml/xboxControllerRightThumbstick.png</file>
         <file>qml/xboxControllerRightTrigger.png</file>
         <file>qml/xboxControllerStart.png</file>
+        <file>logo.qrc</file>
     </qresource>
 </RCC>

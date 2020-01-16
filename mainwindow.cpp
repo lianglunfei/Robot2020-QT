@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    setWindowIcon(QIcon(":/new/logo/robot.ico"));
     //Initialize the connection window
     m_connect_dialog = new ConnectDialog;
 #if SIMULATE_CONNECT == NONE_CONNECT

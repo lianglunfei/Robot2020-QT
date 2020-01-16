@@ -105,21 +105,21 @@ void DataServer::tcpWriteFunc()
         // sendData.append(QString::number(DataReceive::instance().fLegPos.right_hind_waist));
         // sendData.append(QString::number(DataReceive::instance().fLegPos.right_hind_hip));
         // sendData.append(QString::number(DataReceive::instance().fLegPos.right_hind_knee));
-        sendData.append(QString::number(global->currentCanAnalyticalData[0].position));
-        sendData.append(QString::number(global->currentCanAnalyticalData[1].position));
-        sendData.append(QString::number(global->currentCanAnalyticalData[2].position));
+        sendData.append(QString::number(globalData->currentCanAnalyticalData[0].position));
+        sendData.append(QString::number(globalData->currentCanAnalyticalData[1].position));
+        sendData.append(QString::number(globalData->currentCanAnalyticalData[2].position));
 
-        sendData.append(QString::number(global->currentCanAnalyticalData[3].position));
-        sendData.append(QString::number(global->currentCanAnalyticalData[4].position));
-        sendData.append(QString::number(global->currentCanAnalyticalData[5].position));
+        sendData.append(QString::number(globalData->currentCanAnalyticalData[3].position));
+        sendData.append(QString::number(globalData->currentCanAnalyticalData[4].position));
+        sendData.append(QString::number(globalData->currentCanAnalyticalData[5].position));
 
-        sendData.append(QString::number(global->currentCanAnalyticalData[6].position));
-        sendData.append(QString::number(global->currentCanAnalyticalData[7].position));
-        sendData.append(QString::number(global->currentCanAnalyticalData[8].position));
+        sendData.append(QString::number(globalData->currentCanAnalyticalData[6].position));
+        sendData.append(QString::number(globalData->currentCanAnalyticalData[7].position));
+        sendData.append(QString::number(globalData->currentCanAnalyticalData[8].position));
 
-        sendData.append(QString::number(global->currentCanAnalyticalData[9].position));
-        sendData.append(QString::number(global->currentCanAnalyticalData[10].position));
-        sendData.append(QString::number(global->currentCanAnalyticalData[11].position));
+        sendData.append(QString::number(globalData->currentCanAnalyticalData[9].position));
+        sendData.append(QString::number(globalData->currentCanAnalyticalData[10].position));
+        sendData.append(QString::number(globalData->currentCanAnalyticalData[11].position));
 #else
         sendData.append("10,");
         sendData.append("20,");
