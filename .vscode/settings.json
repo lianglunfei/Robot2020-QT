@@ -16,6 +16,11 @@
         "qmainwindow": "cpp",
         "random": "cpp",
         "cmath": "cpp",
-        "qtcpsocket": "cpp"
-    }
+        "qtcpsocket": "cpp",
+        "qqmlapplicationengine": "cpp",
+        "qdialog": "cpp",
+        "qqmlcomponent": "cpp",
+        "thread": "cpp"
+    },
+    "C_Cpp.intelliSenseEngineFallback": "Enabled"
 }

@@ -21,8 +21,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/home/robot/Qt5.12.0/5.12.0/Src/qtbase/include/**",
-                "/home/robot/src/**"
+                "/home/robot2019/Qt5.12.0/5.12.0/Src/qtbase/include/**",
+                "/home/robot2019//build-RobotControlSystem-Desktop_Qt_5_12_0_GCC_64bit-Debug/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

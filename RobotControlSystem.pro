@@ -58,7 +58,9 @@ SOURCES += \
     tcpreadthread.cpp\
     offlinesequencecontrol.cpp\
     sequence.cpp\
-    sequencetableview.cpp
+    sequencetableview.cpp \
+    armcontrol.cpp \
+    armsyncworker.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -98,7 +100,10 @@ HEADERS += \
     sequence.h\
     sequencetableview.h\
     dataserver.h\
-    tcpreadthread.h
+    tcpreadthread.h \
+    mycustomslider.h \
+    armcontrol.h \
+    armsyncworker.h
 
 FORMS += \
         mainwindow.ui \
@@ -112,7 +117,8 @@ FORMS += \
     offlinecontrol.ui \
     singlejointcontrol.ui \
     receiveerror.ui \
-    offlinesequencecontrol.ui
+    offlinesequencecontrol.ui \
+    armcontrol.ui
 
 #target.path = ../
 #INSTALLS += target

@@ -41,7 +41,7 @@ private:
     QMap<QString,QString> actionModels;
     // QStringList actionModels;
     SequenceExcuteWorker *seqWorker;
-     
+    void readAssetDir(const QString &dirpath);
 
     void keyPressEvent(QKeyEvent *e) override;
     void movementPtrInit();
@@ -66,6 +66,8 @@ private slots:
     void on_resetActionButton_clicked();
     void runStatus(QString s);
     void stopStatus();
+
+    void transDirLine();
 
 public slots:
     void pausedWhenError();

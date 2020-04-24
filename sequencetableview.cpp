@@ -122,7 +122,7 @@ void SequenceTableView::addTableviewRowWidget(int mode, int row, bool checkState
     m_combox->setProperty("row", row); //为按钮设置row属性
     m_combox->setParent(this);
     m_combox->setEditable(true);
-    connect(this, &setActionList, m_combox, &IncompleteCombox::addItems);
+    connect(this, &SequenceTableView::setActionList, m_combox, &IncompleteCombox::addItems);
     setIndexWidget(model->index(row, 0), m_combox);
     if (complete)
     {

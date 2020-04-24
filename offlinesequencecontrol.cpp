@@ -50,6 +50,8 @@ OfflineSequenceControl::OfflineSequenceControl(QWidget *parent) : QDialog(parent
     connect(seqWorker, &SequenceExcuteWorker::stopThread, this, &OfflineSequenceControl::stopStatus);
     connect(ui->interPeriodSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), ui->tableView, &SequenceTableView::setInterPeriod);
     connect(ui->interValueSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), ui->tableView, &SequenceTableView::setInterValue);
+//    ui->assetPathlineEdit->returnPressed.connect(self.lineEdit_function)
+    connect(ui->assetPathlineEdit, SIGNAL(returnPressed()), this, SLOT(transDirLine()));
     // connect(seqWorker, &SequenceExcuteWorker::stopThread, this, &OfflineSequenceControl::activateAllMoveButtons);
     // connect()
 }
@@ -87,13 +89,9 @@ QStringList OfflineSequenceControl::getFileNames(const QString &path)
 /**
  * @brief: 读取动作库
  */
-void OfflineSequenceControl::on_assetBrowseButton_clicked()
+void OfflineSequenceControl::readAssetDir(const QString &dirpath)
 {
-    qDebug() << "In file explorer.";
 
-    //定义文件对话框类
-    QFileDialog *fileDialog = new QFileDialog(this);
-    QString dirpath = fileDialog->getExistingDirectory(this, QString("选择动作库文件夹"), QString("./"), QFileDialog::ShowDirsOnly);
     // 检查路径是否为空（即 未选择）
     if (dirpath.isEmpty())
     {
@@ -135,9 +133,37 @@ void OfflineSequenceControl::on_assetBrowseButton_clicked()
         }
     }
     ui->tableView->setActionModels(actionModels);
-    ui->assetPathlineEdit->setText(dirpath);
     ui->messageLabel->setText(QString("加载完成"));
     activateAllMoveButtons();
+}
+
+/**
+ * @brief: Open File Explorer
+ */
+void OfflineSequenceControl::transDirLine()
+{
+    readAssetDir(ui->assetPathlineEdit->text());
+}
+
+
+
+/**
+ * @brief: Open File Explorer
+ */
+void OfflineSequenceControl::on_assetBrowseButton_clicked()
+{
+    qDebug() << "In file explorer.";
+
+    //定义文件对话框类
+    QFileDialog *fileDialog = new QFileDialog(this);
+    QString dirpath = fileDialog->getExistingDirectory(this, QString("选择动作库文件夹"), QString("./"), QFileDialog::ShowDirsOnly);
+    // 检查路径是否为空（即 未选择）
+    if (dirpath.isEmpty())
+    {
+        qDebug() << "Nothing.";
+        return;
+    }
+    readAssetDir(dirpath);
 }
 
 void OfflineSequenceControl::on_leftButton_clicked()

@@ -22,6 +22,7 @@ class ReceiveWorkerThread;
 class RemoteControl;
 class OfflineSequenceControl;
 class DataServer;
+class ArmControl;
 
 namespace Ui
 {
@@ -50,6 +51,7 @@ private:
     OfflineSequenceControl *m_offline_sequence_control = nullptr;
     ReceiveError *m_receive_error = nullptr;
     ReceiveWorkerThread *workerThread = nullptr;
+    ArmControl *m_arm_control = nullptr;
     DataServer *m_data_server = nullptr;
     void connectInit();
 

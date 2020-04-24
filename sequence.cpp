@@ -31,7 +31,7 @@ SequenceExcuteWorker::SequenceExcuteWorker()
 }
 SequenceExcuteWorker::~SequenceExcuteWorker()
 {
-    qDebug() << "--------------Delete-------------";
+//    qDebug() << "--------------Delete-------------";
     delete taskTimer;
     delete taskThread;
     delete seqModel;
@@ -167,7 +167,7 @@ QString SequenceExcuteWorker::checkMotorStatus()
         }
         else
         {
-            rtn_msg.append(tr("[-] 电机%1 正常。\n").arg(i + 1));
+            rtn_msg.append(tr("[-] 电机%1 正常。%2 \n").arg(i + 1).arg(position));
         }
     }
     return normal_status ? QString("所有电机正常。") : rtn_msg;

@@ -24,6 +24,7 @@
 #include "receiveerror.h"
 #include "dataserver.h"
 #include "globaldata.h"
+#include "armcontrol.h"
 
 #include <QTimer>
 
@@ -74,6 +75,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
     m_offline_sequence_control = new OfflineSequenceControl;
 
+    m_arm_control = new ArmControl;
+
     //Initialize Network Server
     m_data_server = new DataServer();
 
@@ -113,6 +116,7 @@ void MainWindow::connectInit()
     connect(ui->actionSingle_Joint_Control, &QAction::triggered, m_single_joint_control, &SingleJointControl::show);
     connect(ui->actionOffline_Control, &QAction::triggered, m_offline_control, &OfflineControl::show);
     connect(ui->actionSequence_Control, &QAction::triggered, m_offline_sequence_control, &OfflineSequenceControl::show);
+    connect(ui->actionArm_Control, &QAction::triggered, m_arm_control, &ArmControl::show);
     connect(ui->actionRemote_Control, &QAction::triggered, m_remote_control, &RemoteControl::show);
     connect(m_connect_dialog, &ConnectDialog::accepted, this, &MainWindow::canConnectEvent);
     connect(ui->actionReceive_Error, &QAction::triggered, m_receive_error, &ReceiveError::show);
