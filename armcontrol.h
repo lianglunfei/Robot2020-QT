@@ -6,6 +6,11 @@
 
 #include "globaldata.h"
 #include "armsyncworker.h"
+#include "kinemetics.h"
+#include "Eigen/Core"
+#include "Eigen/Dense"
+#include "armscene.h"
+
 #include <QTimer>
 #include <QThread>
 
@@ -48,19 +53,25 @@ public:
 private:
     Ui::ArmControl *ui;
     QTimer *taskTimer;
+    QTimer *paintTimer;
     QThread *taskThread;
     ArmSyncWorker *worker;
-    
+    double armAngle[6];
+    arm *ur;
+    ArmScene *modifier;
+
     void initObject();
     void keyPressEvent(QKeyEvent *e) override;
+    void updateModel();
 
 public slots:
     void syncPosition();
 
+
 private slots:
     void setPosButtonClicked();
     void posValueChanged();
-    void comDataRecv(double[]);
+    void comDataRecv(rawData);
     void on_initDriverPushButton_clicked();
     void on_emergencyStopPushButton_clicked();
     void on_caliPushButton_clicked();

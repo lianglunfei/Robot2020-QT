@@ -9,12 +9,8 @@
 
 struct rawData
 {
-    double x0;
-    double x1;
-    double x2;
-    double x3;
-    double x4;
-    double x5;
+    double R[3][3];
+    double p[3];
 };
 
 class ArmSyncWorker : public QObject
@@ -33,7 +29,7 @@ private:
 private slots:
     void ServerNewConnection();
 signals:
-    void recvData(double[]);
+    void recvData(rawData);
 };
 
 
