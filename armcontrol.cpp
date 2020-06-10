@@ -76,6 +76,9 @@ ArmControl::ArmControl(QWidget *parent) : QDialog(parent),
     connect(taskTimer, SIGNAL(timeout()), this, SLOT(syncPosition()), Qt::DirectConnection);
     connect(this, SIGNAL(stopThread()), taskThread, SLOT(quit()));
 
+    pos[0] = .0f;
+    pos[1] = .0f;
+    pos[2] = .0f;
     Eigen::Matrix<double, 6, 1> a;
     Eigen::Matrix<double, 6, 1> alpha;
     Eigen::Matrix<double, 6, 1> d;
@@ -87,9 +90,6 @@ ArmControl::ArmControl(QWidget *parent) : QDialog(parent),
 
     //定义ur对象
     ur = new arm(a, alpha, d, theta);
-
-
-
 
     initObject();
     if (initUiObject())
@@ -256,8 +256,8 @@ void ArmControl::posValueChanged()
             int motorID = motorIDs[i]-1;
             readyToSendCanData[motorID]=
                 findChild<QDoubleSpinBox *>(positionSpinBox[i])->text().toDouble();
-            armAngle[i] =  degree2rad(readyToSendCanData[motorID]);
-            updateModel();
+            armAngle[i] =  (readyToSendCanData[motorID]);
+            updateModel(1);
 //            qDebug()<<i<<": "<<armAngle[i];
         }
 
@@ -322,13 +322,18 @@ void ArmControl::stopSync()
 // 通过TCP通信控制时的逻辑
 void ArmControl::comDataRecv(rawData data)
 {
+    pos[0] += data.p[0];
+    pos[1] += data.p[1];
+    pos[2] += data.p[2];
 
     Eigen::Matrix4d T;
-    T << data.R[0][0],data.R[0][1],data.R[0][2],data.p[0],
-         data.R[1][0],data.R[1][1],data.R[1][2],data.p[1],
-         data.R[2][0],data.R[2][1],data.R[2][2],data.p[2],
+    T << data.R[0][0],data.R[0][1],data.R[0][2],pos[0],
+         data.R[1][0],data.R[1][1],data.R[1][2],pos[1],
+         data.R[2][0],data.R[2][1],data.R[2][2],pos[2],
          0,0,0,0;
     // 求逆解
+//    qDebug()<<T(2,3);
+    qDebug()<<pos[0]<<pos[1]<<pos[2]<<data.p[0]<<data.p[1]<<data.p[2];
     Eigen::Matrix<double, 8, 6> solve = ur->ikine(T);
     // 取第一个解
     int choice = 0;
@@ -340,12 +345,10 @@ void ArmControl::comDataRecv(rawData data)
         for (int i = 0; i < ARM_NODE_NUM; i++)
         {
             armAngle[i] = rad2degree(solve(choice,i));
-//
-
             findChild<QDoubleSpinBox *>(positionSpinBox[i])->setValue(armAngle[i]);
             findChild<MyCustomSlider *>(positionSlider[i])->doubleSetValue(armAngle[i]);
         }
-        updateModel();
+        updateModel(0);
     }
 
     if(ui->comCheckBox->isChecked())
@@ -356,7 +359,7 @@ void ArmControl::comDataRecv(rawData data)
             int motorID = motorIDs[i]-1;
             readyToSendCanData[motorID]=armAngle[i];
         }
-        updateModel();
+        updateModel(0);
         setPosButtonClicked();
     }
 
@@ -399,6 +402,7 @@ void ArmControl::update_motor_ids(){
  */
 void ArmControl::on_initDriverPushButton_clicked()
 {
+
     Drivers::initJoint();
     update_motor_ids();
 
@@ -422,6 +426,19 @@ void ArmControl::on_initDriverPushButton_clicked()
     QMessageBox::information(this, tr("电机状态提示"),
                              rtn_msg,
                              QMessageBox::Ok);
+    pos[0] = .0f;
+    pos[1] = .0f;
+    pos[2] = .0f;
+    for(int i=0;i<6;i++)
+    {
+        armAngle[i] = 0.0f;
+    }
+    for (int i = 0; i < ARM_NODE_NUM; i++)
+    {
+        findChild<QDoubleSpinBox *>(positionSpinBox[i])->setValue(armAngle[i]);
+        findChild<MyCustomSlider *>(positionSlider[i])->doubleSetValue(armAngle[i]);
+    }
+    updateModel(1);
 }
 
 /**
@@ -443,10 +460,17 @@ void ArmControl::on_caliPushButton_clicked()
 }
 
 
-void ArmControl::updateModel()
+void ArmControl::updateModel(int manual)
 {
-//    double a1[3][6] = {0};
-    Eigen::Matrix<double, 6, 1> q(armAngle);
+    Eigen::Matrix<double, 6, 1> q;
+
+    q << degree2rad(armAngle[0]),
+        degree2rad(armAngle[1]),
+        degree2rad(armAngle[2]),
+        degree2rad(armAngle[3]),
+        degree2rad(armAngle[4]),
+        degree2rad(armAngle[5]);
+
     Eigen::Matrix<double, 3, 6> T = ur->fkine2(q);
 //    qDebug()<<T2(0,0)<<T2(0,1)<<T2(0,2);
     modifier->setArms(T.col(0).data(),
@@ -455,7 +479,15 @@ void ArmControl::updateModel()
                       T.col(3).data(),
                       T.col(4).data(),
                       T.col(5).data());
-//    updateModel();
+    if(manual)
+    {
+        pos[0] = T.col(5).data()[0];
+        pos[1] = T.col(5).data()[1];
+        pos[2] = T.col(5).data()[2];
+        qDebug()<<"le "<<T.col(5).data()[0]<<T.col(5).data()[1]<<T.col(5).data()[2];
+        qDebug()<<"re "<<pos[0]<<pos[1]<<pos[2];
+    }
+
 }
 
 /**

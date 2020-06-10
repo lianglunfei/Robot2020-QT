@@ -57,12 +57,13 @@ private:
     QThread *taskThread;
     ArmSyncWorker *worker;
     double armAngle[6];
+    double pos[3];
     arm *ur;
     ArmScene *modifier;
 
     void initObject();
     void keyPressEvent(QKeyEvent *e) override;
-    void updateModel();
+    void updateModel(int);
 
 public slots:
     void syncPosition();

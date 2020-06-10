@@ -28,7 +28,8 @@ void ArmSyncWorker::ServerNewConnection()
                            {
                             //从通讯套接字中取出内容
                             QByteArray b = tcpSocket->read(sizeof (rawData));
-//                            convertData((rawData*)b.data());
+                            rawData* rd = ((rawData*)b.data());
+//                            qDebug()<<rd->p[0]<<' '<<rd->p[1] <<' '<< rd->p[2];
                             emit recvData(*(rawData*)b.data());
 
                         }
@@ -40,9 +41,6 @@ void ArmSyncWorker::ServerNewConnection()
 void ArmSyncWorker::convertData(rawData* data)
 {
 
-
-    // 转换完成，通过signal将数据发给控制类
-//    emit recvData(converted_data);
 }
 
 
