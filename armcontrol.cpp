@@ -285,9 +285,8 @@ void ArmControl::posValueChanged()
             int motorID = motorIDs[i]-1;
             readyToSendCanData[motorID]=
                 findChild<QDoubleSpinBox *>(positionSpinBox[i])->text().toDouble();
-            armAngle[i] =  entity2model(readyToSendCanData[motorID],cal[i]);
+            armAngle[i] =  360.0-entity2model(readyToSendCanData[motorID],cal[i]);
             updateModel(1);
-//            qDebug()<<i<<": "<<armAngle[i];
         }
 
     }
@@ -373,8 +372,8 @@ void ArmControl::comDataRecv(rawData data)
         for (int i = 0; i < ARM_NODE_NUM; i++)
         {
             armAngle[i] = rad2degree(solve(choice,i));
-            findChild<QDoubleSpinBox *>(positionSpinBox[i])->setValue(model2entity(armAngle[i],cal[i]));
-            findChild<MyCustomSlider *>(positionSlider[i])->doubleSetValue(model2entity(armAngle[i],cal[i]));
+            findChild<QDoubleSpinBox *>(positionSpinBox[i])->setValue(model2entity(360.0-armAngle[i],cal[i]));
+            findChild<MyCustomSlider *>(positionSlider[i])->doubleSetValue(model2entity(360.0-armAngle[i],cal[i]));
         }
         updateModel(0);
     }
@@ -385,7 +384,7 @@ void ArmControl::comDataRecv(rawData data)
         {
             armAngle[i] = rad2degree(solve(choice,i));
             int motorID = motorIDs[i]-1;
-            readyToSendCanData[motorID]=model2entity(armAngle[i],cal[i]);
+            readyToSendCanData[motorID]=model2entity(360.0-armAngle[i],cal[i]);
         }
         updateModel(0);
         setPosButtonClicked();
