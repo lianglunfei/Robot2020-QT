@@ -35,6 +35,7 @@ public:
     int motorIDs[ARM_NODE_NUM];
     void initConnection();
     void controlWidgetInit();
+    void initModel();
     bool initUiObject();
     void setCurrentNode(int nodeNum);
     void setPositionSlider(const QList<QString> &l);

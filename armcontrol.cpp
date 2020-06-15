@@ -50,12 +50,23 @@
 #include <Qt3DExtras/qorbitcameracontroller.h>
 
 inline double rad2degree(double x){
-    return (x > 0 ? x : (2*PI + x)) * 180 / PI;
+    return (x > 0 ? x : (2*PI + x)) * 180.0 / PI;
 }
 
 inline double degree2rad(double x){
-    return (x > 0 ? x : (360 + x)) * PI / 180;
+    return (x > 0 ? x : (360.0 + x)) * PI / 180.0;
 }
+
+inline double entity2model(double x, double cal){
+    return fmod(x-cal, 360.0);
+}
+
+inline double model2entity(double x, double cal){
+    return fmod(x+cal, 360.0);
+}
+
+
+const double cal[6] = {182.141, 164.137, 90.896, 332.53, 349.84, 315.49};
 
 
 
@@ -158,7 +169,13 @@ ArmControl::ArmControl(QWidget *parent) : QDialog(parent),
     info->setIconSize(QSize(0,0));
 
 
-
+    for (int i = 0; i < ARM_NODE_NUM; i++)
+    {
+        armAngle[i] = 0.0f;
+        findChild<QDoubleSpinBox *>(positionSpinBox[i])->setValue(model2entity(armAngle[i],cal[i]));
+        findChild<MyCustomSlider *>(positionSlider[i])->doubleSetValue(model2entity(armAngle[i],cal[i]));
+    }
+    updateModel(1);
 
 
 }
@@ -170,6 +187,18 @@ ArmControl::~ArmControl()
     delete taskThread;
     delete worker;
 }
+
+
+/**
+*@projectName   RobotControlSystem
+*@brief         判断对象数组是否有赋值，如果没有则返回false
+*@date          20200615
+**/
+void ArmControl::initModel()
+{
+
+}
+
 
 /**
 *@projectName   RobotControlSystem
@@ -256,7 +285,7 @@ void ArmControl::posValueChanged()
             int motorID = motorIDs[i]-1;
             readyToSendCanData[motorID]=
                 findChild<QDoubleSpinBox *>(positionSpinBox[i])->text().toDouble();
-            armAngle[i] =  (readyToSendCanData[motorID]);
+            armAngle[i] =  entity2model(readyToSendCanData[motorID],cal[i]);
             updateModel(1);
 //            qDebug()<<i<<": "<<armAngle[i];
         }
@@ -322,22 +351,21 @@ void ArmControl::stopSync()
 // 通过TCP通信控制时的逻辑
 void ArmControl::comDataRecv(rawData data)
 {
-    pos[0] += data.p[0];
-    pos[1] += data.p[1];
-    pos[2] += data.p[2];
+    ui->statusLabel->setText(tr("收到数据"));
+    pos[0] = data.p[0];
+    pos[1] = data.p[1];
+    pos[2] = data.p[2];
 
     Eigen::Matrix4d T;
     T << data.R[0][0],data.R[0][1],data.R[0][2],pos[0],
          data.R[1][0],data.R[1][1],data.R[1][2],pos[1],
          data.R[2][0],data.R[2][1],data.R[2][2],pos[2],
          0,0,0,0;
-    // 求逆解
-//    qDebug()<<T(2,3);
     qDebug()<<pos[0]<<pos[1]<<pos[2]<<data.p[0]<<data.p[1]<<data.p[2];
     Eigen::Matrix<double, 8, 6> solve = ur->ikine(T);
     // 取第一个解
     int choice = 0;
-    ui->statusLabel->setText(tr("收到数据"));
+
 
     if(ui->comPreviewCheckBox->isChecked())
     {
@@ -345,8 +373,8 @@ void ArmControl::comDataRecv(rawData data)
         for (int i = 0; i < ARM_NODE_NUM; i++)
         {
             armAngle[i] = rad2degree(solve(choice,i));
-            findChild<QDoubleSpinBox *>(positionSpinBox[i])->setValue(armAngle[i]);
-            findChild<MyCustomSlider *>(positionSlider[i])->doubleSetValue(armAngle[i]);
+            findChild<QDoubleSpinBox *>(positionSpinBox[i])->setValue(model2entity(armAngle[i],cal[i]));
+            findChild<MyCustomSlider *>(positionSlider[i])->doubleSetValue(model2entity(armAngle[i],cal[i]));
         }
         updateModel(0);
     }
@@ -357,7 +385,7 @@ void ArmControl::comDataRecv(rawData data)
         {
             armAngle[i] = rad2degree(solve(choice,i));
             int motorID = motorIDs[i]-1;
-            readyToSendCanData[motorID]=armAngle[i];
+            readyToSendCanData[motorID]=model2entity(armAngle[i],cal[i]);
         }
         updateModel(0);
         setPosButtonClicked();
@@ -426,17 +454,15 @@ void ArmControl::on_initDriverPushButton_clicked()
     QMessageBox::information(this, tr("电机状态提示"),
                              rtn_msg,
                              QMessageBox::Ok);
+//     重设所有角度为0
     pos[0] = .0f;
     pos[1] = .0f;
     pos[2] = .0f;
-    for(int i=0;i<6;i++)
-    {
-        armAngle[i] = 0.0f;
-    }
     for (int i = 0; i < ARM_NODE_NUM; i++)
     {
-        findChild<QDoubleSpinBox *>(positionSpinBox[i])->setValue(armAngle[i]);
-        findChild<MyCustomSlider *>(positionSlider[i])->doubleSetValue(armAngle[i]);
+        armAngle[i] = 0.0f;
+        findChild<QDoubleSpinBox *>(positionSpinBox[i])->setValue(model2entity(armAngle[i],cal[i]));
+        findChild<MyCustomSlider *>(positionSlider[i])->doubleSetValue(model2entity(armAngle[i],cal[i]));
     }
     updateModel(1);
 }
