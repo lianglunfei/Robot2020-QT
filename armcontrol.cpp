@@ -94,9 +94,9 @@ ArmControl::ArmControl(QWidget *parent) : QDialog(parent),
     Eigen::Matrix<double, 6, 1> alpha;
     Eigen::Matrix<double, 6, 1> d;
     Eigen::Matrix<double, 6, 1> theta;
-    a << 0, -425, -392.25, 0, 0, 0;
+    a << 0, -244, -213, 0, 0, 0;
     alpha << PI/2, 0, 0,PI/2, -PI/2, 0;
-    d << 89.459, 0, 0, 109.15, 94.65, 82.3;
+    d << 59.3, 0, 0, 102.3, 102.3, 51.8;
     theta << 0, 0, 0, 0, 0, 0;
 
     //定义ur对象
@@ -284,7 +284,7 @@ void ArmControl::posValueChanged()
         {
             int motorID = motorIDs[i]-1;
             readyToSendCanData[motorID]=
-                findChild<QDoubleSpinBox *>(positionSpinBox[i])->text().toDouble();
+                findChild<QDoubleSpinBox *>(positionSpinBox[i])->value();
             if(i==2)
                 armAngle[i] =  360.0-entity2model(readyToSendCanData[motorID],cal[i]);
             else
