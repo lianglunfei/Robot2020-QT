@@ -65,6 +65,7 @@ private:
     void initObject();
     void keyPressEvent(QKeyEvent *e) override;
     void updateModel(int);
+    void clawAct(int);
 
 public slots:
     void syncPosition();
@@ -77,6 +78,8 @@ private slots:
     void on_initDriverPushButton_clicked();
     void on_emergencyStopPushButton_clicked();
     void on_caliPushButton_clicked();
+    void on_clawOpenPushButton_clicked();
+    void on_clawClosePushButton_clicked();
     void update_motor_ids();
 
 signals:

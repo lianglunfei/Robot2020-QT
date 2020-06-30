@@ -5,7 +5,7 @@
 #include "package.h"
 #include "debug.h"
 #include "drivers.h"
-
+#include "datatransmission.h"
 
 #include <QDoubleSpinBox>
 #include <QPushButton>
@@ -87,9 +87,6 @@ ArmControl::ArmControl(QWidget *parent) : QDialog(parent),
     connect(taskTimer, SIGNAL(timeout()), this, SLOT(syncPosition()), Qt::DirectConnection);
     connect(this, SIGNAL(stopThread()), taskThread, SLOT(quit()));
 
-    pos[0] = .0f;
-    pos[1] = .0f;
-    pos[2] = .0f;
     Eigen::Matrix<double, 6, 1> a;
     Eigen::Matrix<double, 6, 1> alpha;
     Eigen::Matrix<double, 6, 1> d;
@@ -280,8 +277,8 @@ void ArmControl::posValueChanged()
 
     for (int i = 0; i < ARM_NODE_NUM; i++)
     {
-        if ((Spin == findChild<QDoubleSpinBox *>(positionSpinBox[i]) || Slider == findChild<MyCustomSlider *>(positionSlider[i])))
-        {
+//        if ((Spin == findChild<QDoubleSpinBox *>(positionSpinBox[i]) || Slider == findChild<MyCustomSlider *>(positionSlider[i])))
+//        {
             int motorID = motorIDs[i]-1;
             readyToSendCanData[motorID]=
                 findChild<QDoubleSpinBox *>(positionSpinBox[i])->value();
@@ -290,7 +287,7 @@ void ArmControl::posValueChanged()
             else
                 armAngle[i] =  entity2model(readyToSendCanData[motorID],cal[i]);
             updateModel(1);
-        }
+//        }
 
     }
 
@@ -308,8 +305,7 @@ void ArmControl::setPosButtonClicked()
 //    auto *btn = qobject_cast<QPushButton *>(this->sender());
 
     Package::packOperateMulti(globalData->sendId, readyToSendCanData,
-                         NODE_NUM, PROTOCOL_TYPE_POS);
-
+                         6, PROTOCOL_TYPE_POS);
 }
 
 void ArmControl::setPositionSlider(const QList<QString> &l)
@@ -354,26 +350,35 @@ void ArmControl::stopSync()
 void ArmControl::comDataRecv(rawData data)
 {
     ui->statusLabel->setText(tr("收到数据"));
-    pos[0] = data.p[0];
-    pos[1] = data.p[1];
-    pos[2] = data.p[2];
-
+    if(data.clawAction==1)
+        clawAct(1);
+    else if(data.clawAction==2)
+        clawAct(0);
     Eigen::Matrix4d T;
-    T << data.R[0][0],data.R[0][1],data.R[0][2],pos[0],
-         data.R[1][0],data.R[1][1],data.R[1][2],pos[1],
-         data.R[2][0],data.R[2][1],data.R[2][2],pos[2],
+    T << data.R[0][0],data.R[0][1],data.R[0][2],data.p[0],
+         data.R[1][0],data.R[1][1],data.R[1][2],data.p[1],
+         data.R[2][0],data.R[2][1],data.R[2][2],data.p[2],
          0,0,0,0;
-    qDebug()<<pos[0]<<pos[1]<<pos[2]<<data.p[0]<<data.p[1]<<data.p[2];
     Eigen::Matrix<double, 8, 6> solve = ur->ikine(T);
     // 取第一个解
     int choice = 0;
-
+    for (int i = 0; i < ARM_NODE_NUM; i++)
+    {
+        bool unreach = false;
+        if(qIsNaN(rad2degree(solve(choice,i))))
+        {
+            unreach = true;
+            return;
+        }
+    }
 
     if(ui->comPreviewCheckBox->isChecked())
     {
 
+
         for (int i = 0; i < ARM_NODE_NUM; i++)
         {
+
             armAngle[i] = rad2degree(solve(choice,i));
             if(i==2)
             {
@@ -468,9 +473,6 @@ void ArmControl::on_initDriverPushButton_clicked()
                              rtn_msg,
                              QMessageBox::Ok);
 //     重设所有角度为0
-    pos[0] = .0f;
-    pos[1] = .0f;
-    pos[2] = .0f;
     for (int i = 0; i < ARM_NODE_NUM; i++)
     {
         armAngle[i] = 0.0f;
@@ -498,6 +500,51 @@ void ArmControl::on_caliPushButton_clicked()
     syncPosition();
 }
 
+/**
+ * @brief 打开爪子
+ *
+ */
+void ArmControl::on_clawOpenPushButton_clicked()
+{
+    clawAct(1);
+}
+
+/**
+ * @brief 关爪子
+ *
+ */
+void ArmControl::on_clawClosePushButton_clicked()
+{
+    clawAct(0);
+}
+
+/**
+ * @brief 动作爪子 1开 0关
+ *
+ */
+void ArmControl::clawAct(int action)
+{
+    unsigned char currentData[8] = {0x8A,0x0F,0x00,0x00,0x00,0x00,0x00,0x01};;
+    if(!action)
+        currentData[1] = 0x00;
+
+    unsigned int currentId = 7;
+    int ret = DataTransmission::CANTransmit(globalData->connectType, currentData, currentId);
+    if (ret == -1)
+    {
+        qDebug() << "failed- device not open"; //=-1表示USB-CAN设备不存在或USB掉线
+        return;
+    }
+    else if (ret == 0)
+    {
+        qDebug() << "send error";
+        return;
+    }
+    else
+    {
+        qDebug() << "send successful";
+    }
+}
 
 void ArmControl::updateModel(int manual)
 {
@@ -520,11 +567,11 @@ void ArmControl::updateModel(int manual)
                       T.col(5).data());
     if(manual)
     {
-        pos[0] = T.col(5).data()[0];
-        pos[1] = T.col(5).data()[1];
-        pos[2] = T.col(5).data()[2];
-        qDebug()<<"le "<<T.col(5).data()[0]<<T.col(5).data()[1]<<T.col(5).data()[2];
-        qDebug()<<"re "<<pos[0]<<pos[1]<<pos[2];
+//        pos[0] = T.col(5).data()[0];
+//        pos[1] = T.col(5).data()[1];
+//        pos[2] = T.col(5).data()[2];
+//        qDebug()<<"le "<<T.col(5).data()[0]<<T.col(5).data()[1]<<T.col(5).data()[2];
+//        qDebug()<<"re "<<pos[0]<<pos[1]<<pos[2];
     }
 
 }

@@ -27,10 +27,12 @@ void ArmSyncWorker::ServerNewConnection()
                            [=]()
                            {
                             //从通讯套接字中取出内容
-                            QByteArray b = tcpSocket->read(sizeof (rawData));
-                            rawData* rd = ((rawData*)b.data());
+                            QByteArray b = tcpSocket->read(sizeof (rawData)+256);
+                            rawData recv;
+                            memcpy(&recv, b.data(), sizeof (rawData));
+//                            rawData* rd = ((rawData*)b.data());
 //                            qDebug()<<rd->p[0]<<' '<<rd->p[1] <<' '<< rd->p[2];
-                            emit recvData(*(rawData*)b.data());
+                            emit recvData(recv);
 
                         }
                         );
