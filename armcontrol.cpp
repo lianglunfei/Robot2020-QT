@@ -272,8 +272,8 @@ void ArmControl::setCurrentNode(int nodeNum)
 
 void ArmControl::posValueChanged()
 {
-    auto *Spin = qobject_cast<QDoubleSpinBox *>(this->sender());
-    auto *Slider = qobject_cast<MyCustomSlider *>(this->sender());
+//    auto *Spin = qobject_cast<QDoubleSpinBox *>(this->sender());
+//    auto *Slider = qobject_cast<MyCustomSlider *>(this->sender());
 
     for (int i = 0; i < ARM_NODE_NUM; i++)
     {
@@ -364,10 +364,9 @@ void ArmControl::comDataRecv(rawData data)
     int choice = 0;
     for (int i = 0; i < ARM_NODE_NUM; i++)
     {
-        bool unreach = false;
+        // 无解
         if(qIsNaN(rad2degree(solve(choice,i))))
         {
-            unreach = true;
             return;
         }
     }
@@ -448,30 +447,54 @@ void ArmControl::update_motor_ids(){
  */
 void ArmControl::on_initDriverPushButton_clicked()
 {
-
+    init:
     Drivers::initJoint();
     update_motor_ids();
 
     bool normal_status = 1;
     QString rtn_msg = QString("");
     double position;
+    
+     // 等待500ms再检查电机状态
+    QEventLoop loop;                              //定义一个新的事件循环
+    QTimer::singleShot(500, &loop, SLOT(quit())); //创建单次定时器，槽函数为事件循环的退出函数
+    loop.exec();                                  //事件循环开始执行，程序会卡在这里，直到定时时间到，本循环被退出
     for (int i = 0; i < NODE_NUM; i++)
     {
         position = globalData->currentCanAnalyticalData[i].position;
-        if ((359.0 < position && 360.0 > position) || globalData->statusId[i] != 0x06)
+        if ((359.98 < position && 360.0 > position) )
         {
-            rtn_msg.append(tr("    电机%1 异常:%2！\n").arg(i + 1).arg(position));
+            rtn_msg.append(tr("角度异常:%1！%2\n").arg(i + 1).arg(position));
             normal_status = 0;
+            break;
+        }
+        else if(globalData->statusId[i] != 0x06)
+        {
+            normal_status = 0;
+            rtn_msg.append(tr("[x] 电机%1 返回码异常: 0x0%2 \n").arg(i + 1).arg(globalData->statusId[i]));
         }
         else
         {
             rtn_msg.append(tr("[-] 电机%1 正常。%2 \n").arg(i + 1).arg(position));
         }
     }
-    rtn_msg = normal_status ? QString("所有电机正常。") : rtn_msg;
-    QMessageBox::information(this, tr("电机状态提示"),
-                             rtn_msg,
-                             QMessageBox::Ok);
+
+    if(normal_status)
+    {
+        QMessageBox:: StandardButton result = QMessageBox::information(this, tr("电机状态提示"),
+                                 QString("所有电机正常。"),
+                                 QMessageBox::Retry|QMessageBox::Ok);
+        if (result ==  QMessageBox::Retry)
+            goto init;                         
+    }
+    else{
+        QMessageBox:: StandardButton result = QMessageBox::warning(this, tr("电机状态提示"),
+                                 rtn_msg,
+                                 QMessageBox::Retry|QMessageBox::Close);
+        if (result ==  QMessageBox::Retry)
+            goto init;
+    }
+
 //     重设所有角度为0
     for (int i = 0; i < ARM_NODE_NUM; i++)
     {
@@ -498,6 +521,17 @@ void ArmControl::on_emergencyStopPushButton_clicked()
 void ArmControl::on_caliPushButton_clicked()
 {
     syncPosition();
+    // 更新模型
+    for (int i = 0; i < ARM_NODE_NUM; i++)
+    {
+            int motorID = motorIDs[i]-1;
+            if(i==2)
+                armAngle[i] =  360.0-entity2model(readyToSendCanData[motorID],cal[i]);
+            else
+                armAngle[i] =  entity2model(readyToSendCanData[motorID],cal[i]);
+            
+    }
+    updateModel(1);
 }
 
 /**

@@ -3,14 +3,15 @@
  * @version: 
  * @Author: xingzhang.Wu
  * @Date: 2020-01-08 15:36:56
- * @LastEditors  : Qingmao Wei
- * @LastEditTime : 2020-01-16 15:47:28
+ * @LastEditors: Qingmao Wei
+ * @LastEditTime: 2020-07-01 14:01:59
  */
 
 #include "offlinesequencecontrol.h"
 #include "ui_offlinesequencecontrol.h"
 #include "debug.h"
 #include "drivers.h"
+#include "globaldata.h"
 
 #include <QFileDialog>
 #include <QKeyEvent>
@@ -222,30 +223,52 @@ void OfflineSequenceControl::on_playButton_clicked()
 void OfflineSequenceControl::on_resetButton_clicked()
 {
     seqWorker->execStop();
+    init:
     Drivers::initJoint();
 
     // 等待500ms再检查电机状态
     QEventLoop loop;                              //定义一个新的事件循环
     QTimer::singleShot(500, &loop, SLOT(quit())); //创建单次定时器，槽函数为事件循环的退出函数
     loop.exec();                                  //事件循环开始执行，程序会卡在这里，直到定时时间到，本循环被退出
-    // int status;
-    // if ((status = seqWorker->checkMotorStatus()) == -1)//若电机正常
-    // {
-    //     QMessageBox::information(this, tr("电机状态提示"),
-    //                              tr("所有电机角度正常。"),
-    //                              QMessageBox::Ok);
-    // }
-    // else
-    // {
-    //     QMessageBox::warning(this, tr("电机状态提示"),
-    //                              tr("电机id=%1角度异常！").arg(status),
-    //                              QMessageBox::Ok);
-    // }
-    // Drivers::initMotor();
-    // qDebug()<<
-    QMessageBox::information(this, tr("电机状态提示"),
-                             seqWorker->checkMotorStatus(),
-                             QMessageBox::Ok);
+
+    bool normal_status = 1;
+    QString rtn_msg = QString("");
+    double position;
+    for (int i = 0; i < NODE_NUM; i++)
+    {
+        position = globalData->currentCanAnalyticalData[i].position;
+        if ((359.98 < position && 360.0 > position) )
+        {
+            rtn_msg.append(tr("角度异常:%2！\n").arg(i + 1).arg(position));
+            normal_status = 0;
+            break;
+        }
+        else if(globalData->statusId[i] != 0x06)
+        {
+            normal_status = 0;
+            rtn_msg.append(tr("[x] 电机%1状态码异常: 0x0%2 \n").arg(i + 1).arg(globalData->statusId[i]));
+        }
+        else
+        {
+            rtn_msg.append(tr("[-] 电机%1 正常。%2 \n").arg(i + 1).arg(position));
+        }
+    }
+
+    if(normal_status)
+    {
+        QMessageBox:: StandardButton result = QMessageBox::information(this, tr("电机状态提示"),
+                                 QString("所有电机正常。"),
+                                 QMessageBox::Retry|QMessageBox::Ok);
+        if (result ==  QMessageBox::Retry)
+            goto init;
+    }
+    else{
+        QMessageBox:: StandardButton result = QMessageBox::warning(this, tr("电机状态提示"),
+                                 rtn_msg,
+                                 QMessageBox::Retry|QMessageBox::Close);
+        if (result ==  QMessageBox::Retry)
+            goto init;
+    }
 }
 
 /**
