@@ -148,7 +148,7 @@ bool Package::packOperateMulti(unsigned int *id, double *data, int num, int type
 {
     if (!globalData->connectType)
         return false;
-    Q_ASSERT(num == NODE_NUM);
+//    Q_ASSERT(num == NODE_NUM);
     unsigned char packData[num][8] = {0};
     for (int i = 0; i < num; i++)
     {
