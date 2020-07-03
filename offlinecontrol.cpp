@@ -6,11 +6,13 @@
  */
 #include "offlinecontrol.h"
 #include "ui_offlinecontrol.h"
+#include "globaldata.h"
 
 #include "debug.h"
 #include "drivers.h"
 #include <QFileDialog>
 #include <QKeyEvent>
+#include <QMessageBox>
 
 /**
  * @brief Construct a new Offline Control:: Offline Control object
@@ -290,7 +292,53 @@ void OfflineControl::on_importPushButton_clicked()
 void OfflineControl::on_initDriverPushButton_clicked()
 {
     on_execSeqStopPushButton_clicked();
+    init:
     Drivers::initJoint();
+
+    bool normal_status = 1;
+    QString rtn_msg = QString("");
+    double position;
+
+/*     // 等待500ms再检查电机状态
+    QEventLoop loop;                              //定义一个新的事件循环
+    QTimer::singleShot(500, &loop, SLOT(quit())); //创建单次定时器，槽函数为事件循环的退出函数
+    loop.exec();    */                              //事件循环开始执行，程序会卡在这里，直到定时时间到，本循环被退出
+
+    for (int i = 0; i < NODE_NUM; i++)
+    {
+        position = globalData->currentCanAnalyticalData[i].position;
+        if ((359.98 < position && 360.0 > position) )
+        {
+            rtn_msg.append(tr("角度异常:%1！%2\n").arg(i + 1).arg(position));
+            normal_status = 0;
+            break;
+        }
+        else if(globalData->statusId[i] != 0x06)
+        {
+            normal_status = 0;
+            rtn_msg.append(tr("[x] 电机%1 返回码异常: 0x0%2 \n").arg(i + 1).arg(globalData->statusId[i]));
+        }
+        else
+        {
+            rtn_msg.append(tr("[-] 电机%1 正常。%2 \n").arg(i + 1).arg(position));
+        }
+    }
+
+    if(normal_status)
+    {
+        QMessageBox:: StandardButton result = QMessageBox::information(this, tr("电机状态提示"),
+                                 QString("所有电机正常。"),
+                                 QMessageBox::Retry|QMessageBox::Ok);
+        if (result ==  QMessageBox::Retry)
+            goto init;
+    }
+    else{
+        QMessageBox:: StandardButton result = QMessageBox::warning(this, tr("电机状态提示"),
+                                 rtn_msg,
+                                 QMessageBox::Retry|QMessageBox::Close);
+        if (result ==  QMessageBox::Retry)
+            goto init;
+    }
 }
 
 /**

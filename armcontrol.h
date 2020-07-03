@@ -78,8 +78,10 @@ private slots:
     void on_initDriverPushButton_clicked();
     void on_emergencyStopPushButton_clicked();
     void on_caliPushButton_clicked();
-    void on_clawOpenPushButton_clicked();
-    void on_clawClosePushButton_clicked();
+    void on_clawOpenPushButton_pressed();
+    void on_clawOpenPushButton_released();
+    void on_clawClosePushButton_pressed();
+    void on_clawClosePushButton_released();
     void update_motor_ids();
 
 signals:

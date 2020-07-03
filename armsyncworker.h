@@ -27,6 +27,7 @@ private:
     QTcpServer *tcpServer; //定义监听套接字tcpServer
     QList<QTcpSocket*> tcpClient;
     QTcpSocket *tcpSocket; //定义通信套接字tcpSocket
+    rawData recv; //TCP接受缓存
 private slots:
     void ServerNewConnection();
 signals:

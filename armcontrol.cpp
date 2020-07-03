@@ -49,6 +49,10 @@
 #include <Qt3DExtras/qfirstpersoncameracontroller.h>
 #include <Qt3DExtras/qorbitcameracontroller.h>
 
+#define CLAW_OPEN 1
+#define CLAW_CLOSE 2
+#define CLAW_STOP 0
+
 inline double rad2degree(double x){
     return (x > 0 ? x : (2*PI + x)) * 180.0 / PI;
 }
@@ -67,6 +71,10 @@ inline double model2entity(double x, double cal){
 
 
 const double cal[6] = {182.141, 164.137, 90.896, 332.53, 349.84, 315.49};
+
+unsigned char openCode[8] = {0x3A,0x00,0x00,0x09,0x00,0x00,0x00,0x05};
+unsigned char closeCode[8] = {0x3A,0xFF,0x00,0x09,0x00,0x00,0x00,0x05};
+unsigned char stopCode[8] = {0xBB,0x00,0x00,0x00,0x00,0x00,0x00,0x07};
 
 
 
@@ -94,6 +102,7 @@ ArmControl::ArmControl(QWidget *parent) : QDialog(parent),
     a << 0, -244, -213, 0, 0, 0;
     alpha << PI/2, 0, 0,PI/2, -PI/2, 0;
     d << 59.3, 0, 0, 102.3, 102.3, 51.8;
+   // d << 59.3, 0, 0, 102.3, 102.3, 200;
     theta << 0, 0, 0, 0, 0, 0;
 
     //定义ur对象
@@ -330,6 +339,12 @@ void ArmControl::syncPosition(){
         double position = globalData->currentCanAnalyticalData[motorID].position;
         findChild<QDoubleSpinBox *>(positionSpinBox[i])->setValue(position);
         findChild<MyCustomSlider *>(positionSlider[i])->doubleSetValue(position);
+        if(i==2)
+            armAngle[i] =  360.0-entity2model(position,cal[i]);
+        else
+            armAngle[i] =  entity2model(position,cal[i]);
+            
+    
     }
 }
 
@@ -349,11 +364,9 @@ void ArmControl::stopSync()
 // 通过TCP通信控制时的逻辑
 void ArmControl::comDataRecv(rawData data)
 {
-    ui->statusLabel->setText(tr("收到数据"));
-    if(data.clawAction==1)
-        clawAct(1);
-    else if(data.clawAction==2)
-        clawAct(0);
+
+
+
     Eigen::Matrix4d T;
     T << data.R[0][0],data.R[0][1],data.R[0][2],data.p[0],
          data.R[1][0],data.R[1][1],data.R[1][2],data.p[1],
@@ -361,19 +374,26 @@ void ArmControl::comDataRecv(rawData data)
          0,0,0,0;
     Eigen::Matrix<double, 8, 6> solve = ur->ikine(T);
     // 取第一个解
-    int choice = 0;
+    int choice = 2;
     for (int i = 0; i < ARM_NODE_NUM; i++)
     {
         // 无解
         if(qIsNaN(rad2degree(solve(choice,i))))
         {
+            ui->statusLabel->setText(tr("-无解- X:%1 Y:%2 Z:%3").arg(data.p[0]).arg(data.p[1]).arg(data.p[2]));
             return;
         }
     }
+    ui->statusLabel->setText(tr("收到数据"));
 
-    if(ui->comPreviewCheckBox->isChecked())
+    if(ui->comPreviewCheckBox->isChecked())//如果勾选框被勾选
     {
-
+        if(data.clawAction==6)
+            clawAct(CLAW_STOP);
+        else if(data.clawAction==7)
+            clawAct(CLAW_OPEN);
+        else if(data.clawAction==8)
+            clawAct(CLAW_CLOSE);
 
         for (int i = 0; i < ARM_NODE_NUM; i++)
         {
@@ -459,6 +479,7 @@ void ArmControl::on_initDriverPushButton_clicked()
     QEventLoop loop;                              //定义一个新的事件循环
     QTimer::singleShot(500, &loop, SLOT(quit())); //创建单次定时器，槽函数为事件循环的退出函数
     loop.exec();                                  //事件循环开始执行，程序会卡在这里，直到定时时间到，本循环被退出
+
     for (int i = 0; i < NODE_NUM; i++)
     {
         position = globalData->currentCanAnalyticalData[i].position;
@@ -522,15 +543,6 @@ void ArmControl::on_caliPushButton_clicked()
 {
     syncPosition();
     // 更新模型
-    for (int i = 0; i < ARM_NODE_NUM; i++)
-    {
-            int motorID = motorIDs[i]-1;
-            if(i==2)
-                armAngle[i] =  360.0-entity2model(readyToSendCanData[motorID],cal[i]);
-            else
-                armAngle[i] =  entity2model(readyToSendCanData[motorID],cal[i]);
-            
-    }
     updateModel(1);
 }
 
@@ -538,32 +550,51 @@ void ArmControl::on_caliPushButton_clicked()
  * @brief 打开爪子
  *
  */
-void ArmControl::on_clawOpenPushButton_clicked()
+void ArmControl::on_clawOpenPushButton_pressed()
 {
-    clawAct(1);
+    clawAct(CLAW_OPEN);
 }
+void ArmControl::on_clawOpenPushButton_released()
+{
+    clawAct(CLAW_STOP);
+}
+
 
 /**
  * @brief 关爪子
  *
  */
-void ArmControl::on_clawClosePushButton_clicked()
+void ArmControl::on_clawClosePushButton_pressed()
 {
-    clawAct(0);
+    clawAct(CLAW_CLOSE);
+}
+void ArmControl::on_clawClosePushButton_released()
+{
+    clawAct(CLAW_STOP);
 }
 
+
 /**
- * @brief 动作爪子 1开 0关
+ * @brief 动作爪子 0停止 1开 2关
  *
  */
 void ArmControl::clawAct(int action)
 {
-    unsigned char currentData[8] = {0x8A,0x0F,0x00,0x00,0x00,0x00,0x00,0x01};;
-    if(!action)
-        currentData[1] = 0x00;
-
     unsigned int currentId = 7;
-    int ret = DataTransmission::CANTransmit(globalData->connectType, currentData, currentId);
+    int ret;
+    switch (action) {
+        case CLAW_STOP://停止
+            ret = DataTransmission::CANTransmit(globalData->connectType, stopCode, currentId);
+            break;
+        case CLAW_OPEN://开
+            ret = DataTransmission::CANTransmit(globalData->connectType, openCode, currentId);
+            break;
+        case CLAW_CLOSE://关
+            ret = DataTransmission::CANTransmit(globalData->connectType, closeCode, currentId);
+            break;
+
+    }
+
     if (ret == -1)
     {
         qDebug() << "failed- device not open"; //=-1表示USB-CAN设备不存在或USB掉线
