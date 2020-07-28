@@ -23,6 +23,7 @@ class RemoteControl;
 class OfflineSequenceControl;
 class DataServer;
 class ArmControl;
+class ReconfigControl;
 
 namespace Ui
 {
@@ -53,6 +54,7 @@ private:
     ReceiveWorkerThread *workerThread = nullptr;
     ArmControl *m_arm_control = nullptr;
     DataServer *m_data_server = nullptr;
+    ReconfigControl *m_reconfig_control = nullptr;
     void connectInit();
 
 private slots:

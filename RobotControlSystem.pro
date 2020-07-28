@@ -39,6 +39,7 @@ SOURCES += \
     jointspeedmeas.cpp \
     hexintegervalidator.cpp \
     hexstringvalidator.cpp \
+    reconfigcontrol.cpp \
     terminal.cpp \
     receiveframebox.cpp \
     sendframebox.cpp \
@@ -78,6 +79,7 @@ HEADERS += \
     debug.h \
     hexintegervalidator.h \
     hexstringvalidator.h \
+    reconfigcontrol.h \
     terminal.h \
     receiveframebox.h \
     sendframebox.h \
@@ -115,6 +117,7 @@ FORMS += \
     connectdialog.ui \
     jointplot.ui \
     jointspeedmeas.ui \
+    reconfigcontrol.ui \
     terminal.ui \
     receiveframebox.ui \
     sendframebox.ui \

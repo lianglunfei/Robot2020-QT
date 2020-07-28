@@ -46,9 +46,9 @@ void Protocol::getRawData(unsigned char rawData[], unsigned char outData[], int 
  */
 double Protocol::parsePos(unsigned char data[], int index)
 {
-    if (index == 13)
-        return data[index * 8 + 1] > 127 ? data[index * 8 + 1] - 256 : data[index * 8 + 1];
-    else
+//    if (index == 13)
+//        return data[index * 8 + 1] > 127 ? data[index * 8 + 1] - 256 : data[index * 8 + 1];
+//    else
         return (data[index * 8 + 1] * 65536 + data[index * 8 + 2] * 256 + data[index * 8 + 3]) / POS_MAX;
 }
 

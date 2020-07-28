@@ -25,6 +25,7 @@
 #include "dataserver.h"
 #include "globaldata.h"
 #include "armcontrol.h"
+#include "reconfigcontrol.h"
 
 #include <QTimer>
 
@@ -75,10 +76,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
     m_offline_sequence_control = new OfflineSequenceControl;
 
+    //Initialize arm_control window
     m_arm_control = new ArmControl;
 
     //Initialize Network Server
     m_data_server = new DataServer();
+
+    //Initialize reconfig_control window
+    m_reconfig_control = new ReconfigControl;
+
 
     connectInit();
 }
@@ -122,6 +128,7 @@ void MainWindow::connectInit()
     connect(ui->actionReceive_Error, &QAction::triggered, m_receive_error, &ReceiveError::show);
     connect(m_receive_error, &ReceiveError::jointError, m_offline_control, &OfflineControl::pausedWhenError);
     connect(m_receive_error, &ReceiveError::jointError, m_offline_sequence_control, &OfflineSequenceControl::pausedWhenError);
+    connect(ui->actionReconfig_Control, &QAction::triggered, m_reconfig_control, &ReconfigControl::show);
 }
 
 /**
@@ -139,6 +146,7 @@ MainWindow::~MainWindow()
     delete m_offline_control;
     delete m_receive_error;
     delete m_remote_control;
+    delete m_reconfig_control;
     delete m_data_server;
     delete m_offline_sequence_control;
     delete workerThread;

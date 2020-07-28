@@ -66,6 +66,7 @@ private:
     void keyPressEvent(QKeyEvent *e) override;
     void updateModel(int);
     void clawAct(int);
+    void motor6Act(int action);
 
 public slots:
     void syncPosition();

@@ -12,6 +12,7 @@ struct rawData
     double R[3][3];
     double p[3];
     unsigned char clawAction;
+    unsigned char MOTOR6;
 };
 
 class ArmSyncWorker : public QObject

@@ -52,7 +52,9 @@
 #define CLAW_OPEN 1
 #define CLAW_CLOSE 2
 #define CLAW_STOP 0
-
+#define MOTOR6_STOP 0
+#define MOTOR6_ZHENG 1
+#define MOTOR6_FAN 2
 inline double rad2degree(double x){
     return (x > 0 ? x : (2*PI + x)) * 180.0 / PI;
 }
@@ -76,6 +78,9 @@ unsigned char openCode[8] = {0x3A,0x00,0x00,0x09,0x00,0x00,0x00,0x05};
 unsigned char closeCode[8] = {0x3A,0xFF,0x00,0x09,0x00,0x00,0x00,0x05};
 unsigned char stopCode[8] = {0xBB,0x00,0x00,0x00,0x00,0x00,0x00,0x07};
 
+unsigned char Motor6P[8] = {0x9A,0x00,0x10,0x00,0x00,0x00,0x00,0x01};
+unsigned char Motor6N[8] = {0x9A,0xFF,0x10,0x00,0x00,0x00,0x00,0x01};
+unsigned char Motor6S[8] = {0x9A,0x00,0x00,0x00,0x00,0x00,0x00,0x01};
 
 
 ArmControl::ArmControl(QWidget *parent) : QDialog(parent),
@@ -99,7 +104,9 @@ ArmControl::ArmControl(QWidget *parent) : QDialog(parent),
     Eigen::Matrix<double, 6, 1> alpha;
     Eigen::Matrix<double, 6, 1> d;
     Eigen::Matrix<double, 6, 1> theta;
-    a << 0, -244, -213, 0, 0, 0;
+    //a << 0, -244, -213, 0, 0, 0;
+    //change the length of 2 links
+    a << 0, -334, -293, 0, 0, 0;
     alpha << PI/2, 0, 0,PI/2, -PI/2, 0;
     d << 59.3, 0, 0, 102.3, 102.3, 51.8;
    // d << 59.3, 0, 0, 102.3, 102.3, 200;
@@ -394,6 +401,12 @@ void ArmControl::comDataRecv(rawData data)
             clawAct(CLAW_OPEN);
         else if(data.clawAction==8)
             clawAct(CLAW_CLOSE);
+        if(data.MOTOR6==0)
+            motor6Act(MOTOR6_STOP);
+        else if(data.MOTOR6==1)
+            motor6Act(MOTOR6_ZHENG);
+        else if(data.MOTOR6==2)
+            motor6Act(MOTOR6_FAN);
 
         for (int i = 0; i < ARM_NODE_NUM; i++)
         {
@@ -610,7 +623,41 @@ void ArmControl::clawAct(int action)
         qDebug() << "send successful";
     }
 }
+/*
+ * TODO:数据帧需要修改
+ * 6电机旋转*/
 
+void ArmControl::motor6Act(int action){
+    unsigned int currentId = 8;
+    int ret;
+    switch (action) {
+        case MOTOR6_STOP://停止
+            ret = DataTransmission::CANTransmit(globalData->connectType, Motor6S, currentId);
+            break;
+        case MOTOR6_ZHENG://开
+            ret = DataTransmission::CANTransmit(globalData->connectType, Motor6P, currentId);
+            break;
+        case MOTOR6_FAN://关
+            ret = DataTransmission::CANTransmit(globalData->connectType, Motor6N, currentId);
+            break;
+
+    }
+
+    if (ret == -1)
+    {
+        qDebug() << "failed- device not open"; //=-1表示USB-CAN设备不存在或USB掉线
+        return;
+    }
+    else if (ret == 0)
+    {
+        qDebug() << "send error";
+        return;
+    }
+    else
+    {
+        qDebug() << "send successful";
+    }
+}
 void ArmControl::updateModel(int manual)
 {
     Eigen::Matrix<double, 6, 1> q;
