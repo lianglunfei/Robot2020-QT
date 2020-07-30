@@ -348,3 +348,89 @@ void Protocol::packSpdPaw(unsigned char data[], double value)
     }
     data[7] = 0x01;
 }
+
+/**
+ * @brief 可重构平台直流电机速度控制
+ *
+ * @param data
+ * @param value
+ */
+void Protocol::packRePlatformSpeed(unsigned char data[],unsigned int currentId, double value)
+{
+    int readValue;
+    readValue = static_cast<int>(value + 0.5);
+    data[0] = 0x08;
+    data[1] = currentId;
+    data[2] = 0x90;
+    data[3] = 0x00;
+    data[4] = readValue % 256;
+    data[5] = readValue / 256;
+    data[6] = 0x00;
+    data[7] = 0x00;
+}
+
+/**
+ * @brief 可重构平台直流电机位置控制
+ *
+ * @param data
+ * @param value
+ */
+void Protocol::packRePlatformPos(unsigned char data[],unsigned int currentId, double value)
+{
+    int readValue;
+    readValue = static_cast<int>(value + 0.5);
+    data[0] = 0x08;
+    data[1] = currentId;
+    data[2] = 0x90;
+    data[3] = 0x00;
+    data[4] = 0x00;
+    data[5] = 0x00;
+    data[6] = 0x00;
+    data[7] = 0x00;
+}
+
+/**
+ * @brief 可重构臂杆电机速度控制
+ *
+ * @param data
+ * @param value
+ */
+void Protocol::packReconfigSpeed(unsigned char data[],double value)
+{
+    int readValue;
+    readValue = static_cast<int>(value + 0.5);
+    data[0] = 0x9A;
+    if (readValue > 0)
+        data[1] = 0x00;
+    else
+    {
+        readValue = -readValue;
+        data[1] = 0xff;
+    }
+    data[2] = readValue / 256;
+    data[3] = readValue % 256;
+    data[4] = 0x00;
+    data[5] = 0x00;
+    data[6] = 0x00;
+    data[7] = 0x01;
+}
+
+/**
+ * @brief 可重构臂杆电机位置控制
+ *
+ * @param data
+ * @param value
+ */
+void Protocol::packReconfigPos(unsigned char data[],double value)
+{
+    int readValue;
+    readValue = static_cast<int>(value + 0.5);
+    data[0] = 0x8A;
+    data[1] = 0x00;
+    data[2] = readValue / 256;
+    data[3] = readValue % 256;
+    data[4] = 0x00;
+    data[5] = 0x00;
+    data[6] = 0x00;
+    data[7] = 0x01;
+}

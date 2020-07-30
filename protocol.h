@@ -32,6 +32,10 @@ public:
     static void packWheelSpeed(unsigned char data[], double value);
     static void packWheelRef(unsigned char data[], double value);
     static void packSpdPaw(unsigned char data[], double value);
+    static void packRePlatformPos(unsigned char data[], unsigned int currentId,double value);  // 可重构平台位置数据包
+    static void packRePlatformSpeed(unsigned char data[],unsigned int currentId, double value);    //可重构平台速度数据包
+    static void packReconfigPos(unsigned char data[], double value);  // 可重构臂杆位置数据包
+    static void packReconfigSpeed(unsigned char data[], double value);    //可重构臂杆速度数据包
 };
 
 #endif // PROTOCOL_H

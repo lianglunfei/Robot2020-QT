@@ -9,12 +9,14 @@
 
 #include <QKeyEvent>
 
-#include "mycustomslider.h"
+//#include "mycustomslider.h"
 #include "drivers.h"
 #include "qdebug.h"
 #include "package.h"
 #include "datatransmission.h"
 #include "debug.h"
+#include "doubleslider.h"
+#include "protocol.h"
 
 #include <QDoubleSpinBox>
 #include <QPushButton>
@@ -30,25 +32,30 @@
 #include <QtWidgets/QCommandLinkButton>
 #include <QtGui/QScreen>
 
-
+#define Platform_SpeedMode  5
+#define Platform_STOP  6
 #define Platform_Forward 1
 #define Platform_Backward 2
 #define Reconfig_Open 3
 #define Reconfig_Close 4
+#define Reconfig_Stop  7
 
 
+unsigned char FlatformSpeedMode[8]  = {0x08,0x11,0x2A,0x00,0x00,0x00,0x00,0x00};
+unsigned char ForwardCode[8]        = {0x08,0x11,0x90,0x00,0x88,0x13,0x00,0x00};
+unsigned char BackwardCode[8]       = {0x08,0x11,0x90,0x00,0x78,0xEC,0xFF,0xFF};
+unsigned char FlatformStopCode[8]   = {0x08,0x11,0x90,0x00,0x00,0x00,0x00,0x00};
 
-unsigned char ForwardCode[8]    = {0x8A,0x00,0x10,0x00,0x00,0x00,0x00,0x01};
-unsigned char BackwardCode[8]   = {0x8A,0xFF,0x10,0x00,0x00,0x00,0x00,0x01};
-unsigned char OpenCode[8]       = {0x8A,0x00,0x00,0x00,0x00,0x00,0x00,0x01};
-unsigned char CloseCode[8]      = {0x8A,0x00,0x01,0x67,0x00,0x00,0x00,0x01};
-
+unsigned char OpenCode[8]       = {0x9A,0x00,0x00,0xC8,0x00,0x00,0x00,0x01};
+unsigned char CloseCode[8]      = {0x9A,0xFF,0x00,0xC8,0x00,0x00,0x00,0x01};
+unsigned char ReStopCode[8]     = {0x9A,0x00,0x00,0x00,0x00,0x00,0x00,0x01};
 
 /**
  * @brief Construct a new Reconfig Control:: Reconfig Control object
  *
  */
-ReconfigControl::ReconfigControl() : ui(new Ui::ReconfigControl)
+ReconfigControl::ReconfigControl(QWidget *parent) : QDialog(parent),ui(new Ui::ReconfigControl)
+//ReconfigControl::ReconfigControl() : ui(new Ui::ReconfigControl)
 {
     ui->setupUi(this);
     this->setWindowTitle(tr("Reconfig Control"));
@@ -59,7 +66,7 @@ ReconfigControl::ReconfigControl() : ui(new Ui::ReconfigControl)
         initConnection();
         controlWidgetInit();
     }
-//    setCurrentNode(0);
+
 
 }
 
@@ -70,13 +77,15 @@ ReconfigControl::ReconfigControl() : ui(new Ui::ReconfigControl)
 void ReconfigControl::initObject()
 {
     setSpeedSlider(QList<QString>({"PlatformSpeedHorizontalSlider","ReconfigSpeedHorizontalSlider"}));
-    setPositionSlider(QList<QString>({"PlatformPosHorizontalSlider","ReconfigPosHorizontalSlider"}));
+    setPositionSlider(QList<QString>({"PlatformAbsPosHorizontalSlider","ReconfigAbsPosHorizontalSlider"}));
     setSpeedSpinBox(QList<QString>({"PlatformSpeedDoubleSpinBox","ReconfigSpeedDoubleSpinBox"}));
-    setPositionSpinBox(QList<QString>({"PlatformPosDoubleSpinBox","ReconfigPosDoubleSpinBox"}));
-    setPositionSetButton(QList<QString>({"PlatformPosSetButton","ReconfigPosSetButton"}));
+    setPositionSpinBox(QList<QString>({"PlatformAbsPosDoubleSpinBox","ReconfigAbsPosDoubleSpinBox"}));
+    setPositionSetButton(QList<QString>({"PlatformAbsPosSetButton","ReconfigAbsPosSetButton"}));
     setSpeedSetButton(QList<QString>({"PlatformSpeedSetButton","ReconfigSpeedSetButton"}));
-    setForwardReversePushButton(QList<QString>({"PlatformPosFWPushButton", "PlatformPosRPushButton","ReconfigPosFWPushButton", "ReconfigPosRPushButton"}));
-    setRelativeSpinBox(QList<QString>({"PlatfromRPosDoubleSpinBox","ReconfigRPosDoubleSpinBox"}));
+    setForwardReversalPushButton(QList<QString>({"PlatformPosFWPushButton", "PlatformPosRPushButton",
+                                                "ReconfigPosFWPushButton", "ReconfigPosRPushButton"}));
+    setRelativeSpinBox(QList<QString>({"PlatfromRPosDoubleSpinBox","ReconfigRPositionDoubleSpinBox"}));
+
 }
 
 
@@ -90,9 +99,71 @@ void ReconfigControl::initObject()
 **/
 bool ReconfigControl::initUiObject()
 {
-    if (SpeedSlider.length() == 0 || PositionSlider.length() == 0 || SpeedSpinBox.length() == 0 || PositionSpinBox.length() == 0 || PositionSetButton.length() == 0 || SpeedSetButton.length() == 0 || ForwardReversePushButton.length() == 0 || RelativeSpinBox.length() == 0 )
+    if (SpeedSlider.length() == 0 || PositionSlider.length() == 0 || SpeedSpinBox.length() == 0 ||
+            PositionSpinBox.length() == 0 || PositionSetButton.length() == 0 || SpeedSetButton.length() == 0 ||
+            ForwardReversalPushButton.length() == 0 || RelativeSpinBox.length() == 0 )
         return false;
     return true;
+}
+
+
+/**
+*@projectName   RobotControlSystem
+*@brief         信号与槽的初始化
+*@parameter
+*@author        Lunfei.Liang
+*@date          20200728
+**/
+void ReconfigControl::initConnection()
+{
+    for (int i = 0; i < SpeedSpinBox.length(); i++)
+    {
+        connect(findChild<QDoubleSpinBox *>(SpeedSpinBox[i]), SIGNAL(valueChanged(double)),
+                findChild<DoubleSlider *>(SpeedSlider[i]), SLOT(doubleSetValue(double)));
+        connect(findChild<QDoubleSpinBox *>(SpeedSpinBox[i]), SIGNAL(editingFinished()),
+                this, SLOT(speedValueChanged()));
+    }
+    for (int i = 0; i < PositionSpinBox.length(); i++)
+    {
+        connect(findChild<QDoubleSpinBox *>(PositionSpinBox[i]), SIGNAL(valueChanged(double)),
+                findChild<DoubleSlider *>(PositionSlider[i]), SLOT(doubleSetValue(double)));
+        connect(findChild<QDoubleSpinBox *>(PositionSpinBox[i]), SIGNAL(editingFinished()),
+                this, SLOT(posValueChanged()));
+    }
+    for (int i = 0; i < SpeedSlider.length(); i++)
+    {
+        connect(findChild<DoubleSlider *>(SpeedSlider[i]), SIGNAL(doubleValueChanged(double)),
+                findChild<QDoubleSpinBox *>(SpeedSpinBox[i]), SLOT(setValue(double)));
+        connect(findChild<DoubleSlider *>(SpeedSlider[i]), SIGNAL(sliderReleased()),
+                this, SLOT(speedValueChanged()));
+    }
+    for (int i = 0; i < PositionSlider.length(); i++)
+    {
+        connect(findChild<DoubleSlider *>(PositionSlider[i]), SIGNAL(doubleValueChanged(double)),
+                findChild<QDoubleSpinBox *>(PositionSpinBox[i]), SLOT(setValue(double)));
+        connect(findChild<DoubleSlider *>(PositionSlider[i]), SIGNAL(sliderReleased()),
+                this, SLOT(posValueChanged()));
+    }
+    for (int i = 0; i < SpeedSetButton.length(); i++)
+    {
+        connect(findChild<QPushButton *>(SpeedSetButton[i]), SIGNAL(pressed()),
+                this, SLOT(setSpeedButtonClicked()));
+        connect(findChild<QPushButton *>(SpeedSetButton[i]), SIGNAL(released()),
+                this, SLOT(setSpeedButtonReleased()));
+    }
+    for (int i = 0; i < PositionSetButton.length(); i++)
+    {
+        connect(findChild<QPushButton *>(PositionSetButton[i]), SIGNAL(pressed()),
+                this, SLOT(setPosButtonClicked()));
+    }
+
+    for (int i = 0; i < ForwardReversalPushButton.length(); i++)
+    {
+        connect(findChild<QPushButton *>(ForwardReversalPushButton[i]), SIGNAL(pressed()),
+                this, SLOT(ForwardReversalPushbtnClicked()));
+    }
+
+
 }
 
 /**
@@ -107,109 +178,24 @@ void ReconfigControl::controlWidgetInit()
 
     for (int i = 0; i < SpeedSlider.length(); i++)
     {
-        findChild<DoubleSlider *>(SpeedSlider[i])->setRange(SPEED_MIN, SPEED_MAX);
+        findChild<DoubleSlider *>(SpeedSlider[i])->setRange(RE_SPEED_MIN, RE_SPEED_MAX);
     }
     for (int i = 0; i < PositionSlider.length(); i++)
     {
-        findChild<DoubleSlider *>(PositionSlider[i])->setRange(POSITION_MIN, POSITION_MAX);
+        findChild<DoubleSlider *>(PositionSlider[i])->setRange(RE_POSITION_MIN, RE_POSITION_MAX);
     }
     for (int i = 0; i < SpeedSpinBox.length(); i++)
     {
-        findChild<QDoubleSpinBox *>(SpeedSpinBox[i])->setRange(SPEED_MIN, SPEED_MAX);
+        findChild<QDoubleSpinBox *>(SpeedSpinBox[i])->setRange(RE_SPEED_MIN, RE_SPEED_MAX);
     }
     for (int i = 0; i < PositionSpinBox.length(); i++)
     {
-        findChild<QDoubleSpinBox *>(PositionSpinBox[i])->setRange(POSITION_MIN, POSITION_MAX);
+        findChild<QDoubleSpinBox *>(PositionSpinBox[i])->setRange(RE_POSITION_MIN, RE_POSITION_MAX);
     }
 }
 
-/**
-*@projectName   RobotControlSystem
-*@brief         信号与槽的初始化
-*@parameter
-*@author        Lunfei.Liang
-*@date          20200728
-**/
-void ReconfigControl::initConnection()
-{
-    for (int i = 0; i < SpeedSpinBox.length(); i++)
-    {
-        connect(findChild<QDoubleSpinBox *>(SpeedSpinBox[i]), SIGNAL(valueChanged(double)),
-                findChild<DoubleSlider *>(SpeedSpinBox[i]), SLOT(doubleSetValue(double)));
-        connect(findChild<QDoubleSpinBox *>(SpeedSpinBox[i]), SIGNAL(editingFinished()),
-                this, SLOT(speedValueChanged()));
-    }
-    for (int i = 0; i < PositionSpinBox.length(); i++)
-    {
-        connect(findChild<QDoubleSpinBox *>(PositionSpinBox[i]), SIGNAL(valueChanged(double)),
-                findChild<DoubleSlider *>(PositionSpinBox[i]), SLOT(doubleSetValue(double)));
-        connect(findChild<QDoubleSpinBox *>(PositionSpinBox[i]), SIGNAL(editingFinished()),
-                this, SLOT(posValueChanged()));
-    }
-    for (int i = 0; i < PositionSpinBox.length(); i++)
-    {
-        connect(findChild<DoubleSlider *>(PositionSpinBox[i]), SIGNAL(doubleValueChanged(double)),
-                findChild<QDoubleSpinBox *>(PositionSpinBox[i]), SLOT(setValue(double)));
-        connect(findChild<DoubleSlider *>(PositionSpinBox[i]), SIGNAL(sliderReleased()),
-                this, SLOT(posValueChanged()));
-    }
-    for (int i = 0; i < SpeedSlider.length(); i++)
-    {
-        connect(findChild<DoubleSlider *>(SpeedSlider[i]), SIGNAL(doubleValueChanged(double)),
-                findChild<QDoubleSpinBox *>(SpeedSlider[i]), SLOT(setValue(double)));
-        connect(findChild<DoubleSlider *>(SpeedSlider[i]), SIGNAL(sliderReleased()),
-                this, SLOT(speedValueChanged()));
-    }
-    for (int i = 0; i < PositionSetButton.length(); i++)
-    {
-        connect(findChild<QPushButton *>(PositionSetButton[i]), SIGNAL(pressed()),
-                this, SLOT(setPosButtonClicked()));
-    }
-    for (int i = 0; i < SpeedSetButton.length(); i++)
-    {
-        connect(findChild<QPushButton *>(SpeedSetButton[i]), SIGNAL(pressed()),
-                this, SLOT(setSpeedButtonClicked()));
-        connect(findChild<QPushButton *>(SpeedSetButton[i]), SIGNAL(released()),
-                this, SLOT(setSpeedButtonReleased()));
-    }
-    for (int i = 0; i < ForwardReversePushButton.length(); i++)
-    {
-        connect(findChild<QPushButton *>(ForwardReversePushButton[i]), SIGNAL(pressed()),
-                this, SLOT(forwardReversalPushbtnClicked()));
-    }
-
-//    connect(worker, &ArmSyncWorker::recvData, this, &ReconfigControl::comDataRecv);
-
-}
-
-//void ReconfigControl::setCurrentNode(int nodeNum)
-//{
-//    currentNode = nodeNum > ARM_NODE_NUM - 1 ? ARM_NODE_NUM - 1 : nodeNum;
-//}
 
 
-//void ReconfigControl::posValueChanged()
-//{
-////    auto *Spin = qobject_cast<QDoubleSpinBox *>(this->sender());
-////    auto *Slider = qobject_cast<MyCustomSlider *>(this->sender());
-
-//    for (int i = 0; i < ARM_NODE_NUM; i++)
-//    {
-////        if ((Spin == findChild<QDoubleSpinBox *>(positionSpinBox[i]) || Slider == findChild<MyCustomSlider *>(positionSlider[i])))
-////        {
-//            int motorID = motorIDs[i]-1;
-//            readyToSendCanData[motorID]=
-//                findChild<QDoubleSpinBox *>(positionSpinBox[i])->value();
-//            if(i==2)
-//                armAngle[i] =  360.0-entity2model(readyToSendCanData[motorID],cal[i]);
-//            else
-//                armAngle[i] =  entity2model(readyToSendCanData[motorID],cal[i]);
-//            updateModel(1);
-////        }
-
-//    }
-
-//}
 
 /**
 *@projectName   RobotControlSystem
@@ -222,38 +208,35 @@ void ReconfigControl::initConnection()
 
 void ReconfigControl::speedValueChanged()
 {
-    for (int i = 0; i < RE_NODE_NUM; i++)
+    auto *Spin = qobject_cast<QDoubleSpinBox *>(this->sender());
+    auto *Slider = qobject_cast<DoubleSlider *>(this->sender());
+    if (Spin == findChild<QDoubleSpinBox *>(SpeedSpinBox[0]) || Slider == findChild<DoubleSlider *>(SpeedSlider[0]))
     {
-//       if ((Spin == findChild<QDoubleSpinBox *>(positionSpinBox) || Slider == findChild<MyCustomSlider *>(positionSlider)))
-//       {
-           int ReconfigID = ReconfigIDs[i]-1;
-            ReadyToSendCanData[ReconfigID] = findChild<QDoubleSpinBox *>(SpeedSpinBox[i])->value();
-//            if(i==2)
-//                armAngle[i] =  360.0-entity2model(readyToSendCanData[motorID],cal[i]);
-//            else
-//                armAngle[i] =  entity2model(readyToSendCanData[motorID],cal[i]);
-//            updateModel(1);
-//       }
-
+        ReadPlatformSpeedData = findChild<QDoubleSpinBox *>(SpeedSpinBox[0])->text().toDouble();
     }
+    else if (Spin == findChild<QDoubleSpinBox *>(SpeedSpinBox[1]) || Slider == findChild<DoubleSlider *>(SpeedSlider[1]))
+    {
+        ReadReconfigSpeedData = findChild<QDoubleSpinBox *>(SpeedSpinBox[1])->text().toDouble();
+    }
+
+
+
 }
 
 void ReconfigControl::posValueChanged()
 {
-    for (int i = 0; i < RE_NODE_NUM; i++)
-    {
-//       if ((Spin == findChild<QDoubleSpinBox *>(positionSpinBox) || Slider == findChild<MyCustomSlider *>(positionSlider)))
-//       {
-           int ReconfigID = ReconfigIDs[i]-1;
-            ReadyToSendCanData[ReconfigID] = findChild<QDoubleSpinBox *>(PositionSpinBox[i])->value();
-//            if(i==2)
-//                armAngle[i] =  360.0-entity2model(readyToSendCanData[motorID],cal[i]);
-//            else
-//                armAngle[i] =  entity2model(readyToSendCanData[motorID],cal[i]);
-//            updateModel(1);
-//       }
+    auto *Spin = qobject_cast<QDoubleSpinBox *>(this->sender());
+    auto *Slider = qobject_cast<DoubleSlider *>(this->sender());
 
-    }
+    if (Spin == findChild<QDoubleSpinBox *>(PositionSpinBox[0]) || Slider == findChild<DoubleSlider *>(PositionSlider[0]))
+    {
+         ReadPlatformPositionData = findChild<QDoubleSpinBox *>(PositionSpinBox[0])->text().toDouble();
+     }
+    else if (Spin == findChild<QDoubleSpinBox *>(PositionSpinBox[1]) || Slider == findChild<DoubleSlider *>(PositionSlider[1]))
+    {
+         ReadReconfigPositionData = findChild<QDoubleSpinBox *>(PositionSpinBox[1])->text().toDouble();
+     }
+
 }
 
 /**
@@ -265,139 +248,106 @@ void ReconfigControl::posValueChanged()
 **/
 void ReconfigControl::setPosButtonClicked()
 {
-//    auto *btn = qobject_cast<QPushButton *>(this->sender());
-
-    Package::packOperateMulti(globalData->sendId, ReadyToSendCanData, 2, PROTOCOL_TYPE_POS);
+    auto *btn = qobject_cast<QPushButton *>(this->sender());
+    if (btn == findChild<QPushButton *>(PositionSetButton[0]))
+    {
+        PlatformPositionControl(ReadPlatformPositionData);
+     }
+    else if (btn == findChild<QPushButton *>(PositionSetButton[1]))
+    {
+        ReconfigPositionControl(ReadReconfigPositionData);
+     }
 }
 
 void ReconfigControl::setSpeedButtonClicked()
 {
-    Package::packOperateMulti(globalData->sendId, ReadyToSendCanData, 2, PROTOCOL_TYPE_SPD);
+    auto *btn = qobject_cast<QPushButton *>(this->sender());
+    if (btn == findChild<QPushButton *>(SpeedSetButton[0]))
+    {
+        PlatformSpeedControl(ReadPlatformSpeedData);
+    }
+    else if (btn == findChild<QPushButton *>(SpeedSetButton[1]))
+    {
+        ReconfigSpeedControl(ReadReconfigSpeedData);
+    }
 }
 
 
 void ReconfigControl::setSpeedButtonReleased()
 {
-
+    auto *btn = qobject_cast<QPushButton *>(this->sender());
+    if (btn == findChild<QPushButton *>(SpeedSetButton[0]))
+    {
+        PlatformSpeedControl(0);
+    }
+    else if (btn == findChild<QPushButton *>(SpeedSetButton[1]))
+    {
+        ReconfigSpeedControl(0);
+    }
 }
 
 
 
-void ReconfigControl::forwardReversalPushbtnClicked()
+void ReconfigControl::ForwardReversalPushbtnClicked()
 {
 
 }
 
 
 
-
-
-
-void ReconfigControl::setPositionSlider(const QList<QString> &l)
+/**
+ * @brief 速度模式
+ *
+ */
+void ReconfigControl::on_PlatformReModepushButton_clicked()
 {
-    PositionSlider = l;
+
+    PlatformAct(Platform_SpeedMode);
 }
 
-void ReconfigControl::setPositionSpinBox(const QList<QString> &l)
-{
-    PositionSpinBox = l;
-}
-
-void ReconfigControl::setPositionSetButton(const QList<QString> &l)
-{
-    PositionSetButton = l;
-}
-
-void ReconfigControl::setSpeedSlider(const QList<QString> &l)
-{
-    SpeedSlider = l;
-}
-
-void ReconfigControl::setSpeedSpinBox(const QList<QString> &l)
-{
-    SpeedSpinBox = l;
-}
-
-void ReconfigControl::setSpeedSetButton(const QList<QString> &l)
-{
-    SpeedSetButton = l;
-}
-
-void ReconfigControl::setForwardReversePushButton(const QList<QString> &l)
-{
-     ForwardReversePushButton =l;
-}
-void ReconfigControl::setRelativeSpinBox(const QList<QString> &l)
-{
-      RelativeSpinBox = l;
-}
-
-
-
-
-//void ReconfigControl::syncPosition(){
-//    for (int i = 0; i < ARM_NODE_NUM; i++)
-//    {
-//        int motorID = motorIDs[i]-1;
-//        double position = globalData->currentCanAnalyticalData[motorID].position;
-//        findChild<QDoubleSpinBox *>(positionSpinBox[i])->setValue(position);
-//        findChild<MyCustomSlider *>(positionSlider[i])->doubleSetValue(position);
-//        if(i==2)
-//            armAngle[i] =  360.0-entity2model(position,cal[i]);
-//        else
-//            armAngle[i] =  entity2model(position,cal[i]);
-
-
-//    }
-//}
-
-//void ReconfigControl::startSync()
-//{
-//    QTimer::singleShot(0, taskTimer, SLOT(start()));
-//    taskThread->start();
-//}
-
-//void ReconfigControl::stopSync()
-//{
-////    taskTimer->stop();
-//    emit stopThread();
-
-//}
 
 
 /**
  * @brief 平台前进
  *
  */
-void ReconfigControl::on_PlatformFWpushButton_clicked()
+void ReconfigControl::on_PlatformFWpushButton_pressed()
 {
     PlatformAct(Platform_Forward);
 }
+
+void ReconfigControl::on_PlatformFWpushButton_released()
+{
+    PlatformAct(Platform_STOP);
+}
+
 
 /**
  * @brief 平台后退
  *
  */
-void ReconfigControl::on_PlatformBWpushButton_clicked()
+void ReconfigControl::on_PlatformBWpushButton_pressed()
 {
     PlatformAct(Platform_Backward);
 }
 
-
-
-//void ReconfigControl::on_clawOpenPushButton_released()
-//{
-//    clawAct(CLAW_STOP);
-//}
-
+void ReconfigControl::on_PlatformBWpushButton_released()
+{
+    PlatformAct(Platform_STOP);
+}
 
 /**
  * @brief 臂杆分离
  *
  */
-void ReconfigControl::on_ReOpenpushButton_clicked()
+void ReconfigControl::on_ReOpenpushButton_pressed()
 {
     ReconfigAct(Reconfig_Open);
+}
+
+void ReconfigControl::on_ReOpenpushButton_released()
+{
+    PlatformAct(Reconfig_Stop);
 }
 
 
@@ -405,17 +355,15 @@ void ReconfigControl::on_ReOpenpushButton_clicked()
  * @brief 臂杆重构
  *
  */
-void ReconfigControl::on_ReClosepushButton_clicked()
+void ReconfigControl::on_ReClosepushButton_pressed()
 {
     ReconfigAct(Reconfig_Close);
 }
 
-
-//void ReconfigControl::on_clawClosePushButton_released()
-//{
-//    clawAct(CLAW_STOP);
-//}
-
+void ReconfigControl::on_ReClosepushButton_released()
+{
+    PlatformAct(Reconfig_Stop);
+}
 
 /**
  * @brief 可重构平台控制 1前进  2后退
@@ -427,11 +375,17 @@ void ReconfigControl::PlatformAct(int action)
     int ret;
     switch (action)
     {
+        case Platform_SpeedMode://平台速度模式
+            ret = DataTransmission::CANTransmit(globalData->connectType, FlatformSpeedMode, currentId);
+            break;
         case Platform_Forward://平台前进
             ret = DataTransmission::CANTransmit(globalData->connectType, ForwardCode, currentId);
             break;
         case Platform_Backward://平台后退
             ret = DataTransmission::CANTransmit(globalData->connectType, BackwardCode, currentId);
+            break;
+        case Platform_STOP://平台电机停止运动
+            ret = DataTransmission::CANTransmit(globalData->connectType, FlatformStopCode, currentId);
             break;
     }
 
@@ -470,6 +424,9 @@ void ReconfigControl::ReconfigAct(int action)
         case Reconfig_Close://臂杆重构
             ret = DataTransmission::CANTransmit(globalData->connectType, CloseCode, currentId);
             break;
+        case Reconfig_Stop://臂杆电机停止运动
+            ret = DataTransmission::CANTransmit(globalData->connectType, ReStopCode, currentId);
+            break;
     }
 
     if (ret == -1)
@@ -488,74 +445,174 @@ void ReconfigControl::ReconfigAct(int action)
     }
 }
 
+/**
+ * @brief 可重构平台速度控制
+ *
+ */
 
-/**
- * @brief 初始化电机
- *
- */
-/*
-void SingleJointControl::on_initDriverPushButton_clicked()
+void ReconfigControl::PlatformSpeedControl(double SpeedData)
 {
-    Drivers::initJoint(ui->comboBox->currentIndex());
-}
-*/
-/**
- * @brief 紧急停止
- *
- */
-/*
-void SingleJointControl::on_emergencyStopPushButton_clicked()
-{
-    Drivers::stopJoint(ui->comboBox->currentIndex());
-}
-*/
-/**
- * @brief 电机校准
- *
- */
-/*
-void SingleJointControl::on_caliPushButton_clicked()
-{
-    Drivers::calJoint(ui->comboBox->currentIndex());
-}
-*/
-/**
- * @brief 紧急停止快捷键ALT+A
- *
- * @param e
- */
-/*
-void SingleJointControl::keyPressEvent(QKeyEvent *e)
-{
-    switch (e->key())
+    unsigned int currentId = 17;
+    int ret;
+    unsigned char packData[8] = {0};
+    Protocol::packRePlatformSpeed(packData,currentId,SpeedData);
+    ret = DataTransmission::CANTransmit(globalData->connectType, packData, currentId);
+
+
+    if (ret == -1)
     {
-    case Qt::Key_A:
-    {
-        if (QApplication::keyboardModifiers() == Qt::AltModifier)
-        {
-            on_emergencyStopPushButton_clicked();
-        }
-        break;
+        qDebug() << "failed- device not open"; //=-1表示USB-CAN设备不存在或USB掉线
+        return;
     }
+    else if (ret == 0)
+    {
+        qDebug() << "send error";
+        return;
+    }
+    else
+    {
+        qDebug() << "send successful";
     }
 }
-*/
+
 /**
- * @brief 选择需要进行操控的CAN节点
+ * @brief 可重构平台位置控制
  *
- * @param index 节点ID
  */
-/*
-void SingleJointControl::on_comboBox_currentIndexChanged(int index)
+
+void ReconfigControl::PlatformPositionControl(double SpeedData)
 {
-    setCurrentNode(index);
+    unsigned int currentId = 17;
+    int ret;
+    unsigned char packData[8] = {0};
+    Protocol::packRePlatformPos(packData,currentId,SpeedData);
+    ret = DataTransmission::CANTransmit(globalData->connectType, packData, currentId);
+
+
+    if (ret == -1)
+    {
+        qDebug() << "failed- device not open"; //=-1表示USB-CAN设备不存在或USB掉线
+        return;
+    }
+    else if (ret == 0)
+    {
+        qDebug() << "send error";
+        return;
+    }
+    else
+    {
+        qDebug() << "send successful";
+    }
 }
 
-*/
+
+
+
+/**
+ * @brief 可重构臂杆速度控制
+ *
+ */
+
+void ReconfigControl::ReconfigSpeedControl(double SpeedData)
+{
+    unsigned int currentId = 18;
+    int ret;
+    unsigned char packData[8] = {0};
+    Protocol::packReconfigSpeed(packData,SpeedData);
+    ret = DataTransmission::CANTransmit(globalData->connectType, packData, currentId);
+
+
+    if (ret == -1)
+    {
+        qDebug() << "failed- device not open"; //=-1表示USB-CAN设备不存在或USB掉线
+        return;
+    }
+    else if (ret == 0)
+    {
+        qDebug() << "send error";
+        return;
+    }
+    else
+    {
+        qDebug() << "send successful";
+    }
+}
+
+/**
+ * @brief 可重构臂杆位置控制
+ *
+ */
+void ReconfigControl::ReconfigPositionControl(double SpeedData)
+{
+    unsigned int currentId = 18;
+    int ret;
+    unsigned char packData[8] = {0};
+    Protocol::packReconfigPos(packData,SpeedData);
+    ret = DataTransmission::CANTransmit(globalData->connectType, packData, currentId);
+
+
+    if (ret == -1)
+    {
+        qDebug() << "failed- device not open"; //=-1表示USB-CAN设备不存在或USB掉线
+        return;
+    }
+    else if (ret == 0)
+    {
+        qDebug() << "send error";
+        return;
+    }
+    else
+    {
+        qDebug() << "send successful";
+    }
+}
+
+
+
+
+
 ReconfigControl::~ReconfigControl()
 {
     delete ui;
 }
 
+void ReconfigControl::setPositionSlider(const QList<QString> &l)
+{
+    PositionSlider = l;
+}
+
+void ReconfigControl::setPositionSpinBox(const QList<QString> &l)
+{
+    PositionSpinBox = l;
+}
+
+void ReconfigControl::setPositionSetButton(const QList<QString> &l)
+{
+    PositionSetButton = l;
+}
+
+void ReconfigControl::setSpeedSlider(const QList<QString> &l)
+{
+    SpeedSlider = l;
+}
+
+void ReconfigControl::setSpeedSpinBox(const QList<QString> &l)
+{
+    SpeedSpinBox = l;
+}
+
+void ReconfigControl::setSpeedSetButton(const QList<QString> &l)
+{
+    SpeedSetButton = l;
+}
+
+void ReconfigControl::setForwardReversalPushButton(const QList<QString> &l)
+{
+     ForwardReversalPushButton =l;
+}
+void ReconfigControl::setRelativeSpinBox(const QList<QString> &l)
+{
+      RelativeSpinBox = l;
+}
 
 

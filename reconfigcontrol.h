@@ -7,10 +7,10 @@
 //#include "controls.h"
 
 #define RE_NODE_NUM 2
-#define SPEED_MIN -3000
-#define SPEED_MAX 3000
-#define POSITION_MIN 0
-#define POSITION_MAX 360
+#define RE_SPEED_MIN -80000
+#define RE_SPEED_MAX 80000
+#define RE_POSITION_MIN 0
+#define RE_POSITION_MAX 3600
 
 namespace Ui
 {
@@ -22,8 +22,11 @@ class ReconfigControl : public QDialog
     Q_OBJECT
 
 public:
-    explicit ReconfigControl();
-    ~ReconfigControl();
+//    explicit ReconfigControl();
+//    ~ReconfigControl();
+
+    explicit ReconfigControl(QWidget *parent = 0);
+    virtual ~ReconfigControl();
 
     void initConnection();
     void controlWidgetInit();
@@ -35,8 +38,11 @@ public:
     void setPositionSpinBox(const QList<QString> &l);
     void setSpeedSetButton(const QList<QString> &l);
     void setPositionSetButton(const QList<QString> &l);
-    void setForwardReversePushButton(const QList<QString> &l);
+    void setForwardReversalPushButton(const QList<QString> &l);
     void setRelativeSpinBox(const QList<QString> &l);
+
+
+
 
 
     QStringList PositionSlider;
@@ -45,15 +51,27 @@ public:
     QStringList SpeedSlider;
     QStringList SpeedSpinBox;
     QStringList SpeedSetButton;
-    QStringList ForwardReversePushButton;
+    QStringList ForwardReversalPushButton;
     QStringList RelativeSpinBox;
 
     double ReadyToSendCanData[RE_NODE_NUM];
     int ReconfigIDs[RE_NODE_NUM];
+    double ReadPlatformSpeedData,ReadPlatformPositionData,ReadReconfigSpeedData,ReadReconfigPositionData;
 
 private:
+
+    void initObject();
     void ReconfigAct(int);
     void PlatformAct(int);
+    void PlatformSpeedControl(double);
+    void PlatformPositionControl(double);
+    void ReconfigSpeedControl(double);
+    void ReconfigPositionControl(double);
+
+
+    Ui::ReconfigControl *ui;
+
+
 private slots:
 //    void on_initDriverPushButton_clicked();
 
@@ -69,19 +87,26 @@ private slots:
     void speedValueChanged();
     void setSpeedButtonReleased();
     void posValueChanged();
-    void forwardReversalPushbtnClicked();
+    void ForwardReversalPushbtnClicked();
 
-    void on_PlatformFWpushButton_clicked();
-    void on_PlatformBWpushButton_clicked();
-    void on_ReOpenpushButton_clicked();
-    void on_ReClosepushButton_clicked();
+    void on_PlatformReModepushButton_clicked();
+
+    void on_PlatformFWpushButton_pressed();
+    void on_PlatformFWpushButton_released();
+
+    void on_PlatformBWpushButton_pressed();
+    void on_PlatformBWpushButton_released();
 
 
+//    void on_ReOpenpushButton_clicked();
+//    void on_ReClosepushButton_clicked();
 
-private:
-    Ui::ReconfigControl *ui;
+    void on_ReOpenpushButton_pressed();
+    void on_ReOpenpushButton_released();
 
-    void initObject();
+    void on_ReClosepushButton_pressed();
+    void on_ReClosepushButton_released();
+
 
 //    void keyPressEvent(QKeyEvent *e) override;
 };

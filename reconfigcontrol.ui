@@ -188,7 +188,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="PlatfromPosFWPushButton">
+       <widget class="QPushButton" name="PlatformPosFWPushButton">
         <property name="text">
          <string>Forward</string>
         </property>
@@ -199,7 +199,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="PlatfromPosRPushButton">
+       <widget class="QPushButton" name="PlatformPosRPushButton">
         <property name="text">
          <string>Reversal</string>
         </property>
@@ -249,39 +249,13 @@
     <string>重构控制</string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
-   <property name="geometry">
-    <rect>
-     <x>100</x>
-     <y>240</y>
-     <width>158</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <item>
-     <widget class="QPushButton" name="PlatformFWpushButton">
-      <property name="text">
-       <string>平台前进</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="PlatformBWpushButton">
-      <property name="text">
-       <string>平台后退</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>530</x>
      <y>240</y>
-     <width>158</width>
-     <height>25</height>
+     <width>168</width>
+     <height>33</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -301,7 +275,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>440</x>
@@ -492,13 +466,42 @@
     </item>
    </layout>
   </widget>
-  <zorder>PlatformFWpushButton</zorder>
-  <zorder>PlatformBWpushButton</zorder>
-  <zorder>ReOpenpushButton</zorder>
-  <zorder>ReClosepushButton</zorder>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>240</y>
+     <width>302</width>
+     <height>33</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPushButton" name="PlatformReModepushButton">
+      <property name="text">
+       <string>速度模式</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="PlatformFWpushButton">
+      <property name="text">
+       <string>平台前进</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="PlatformBWpushButton">
+      <property name="text">
+       <string>平台后退</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget_2</zorder>
-  <zorder>layoutWidget_3</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget</zorder>
   <zorder>layoutWidget_4</zorder>
   <zorder>Reconfiglabel</zorder>
   <zorder>Platfromlabel</zorder>

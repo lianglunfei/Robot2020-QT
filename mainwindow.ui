@@ -26,7 +26,7 @@
      <x>0</x>
      <y>0</y>
      <width>1089</width>
-     <height>28</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTool">
@@ -55,6 +55,7 @@
     <addaction name="actionRemote_Control"/>
     <addaction name="actionSequence_Control"/>
     <addaction name="actionArm_Control"/>
+    <addaction name="actionReconfig_Control"/>
    </widget>
    <addaction name="menuTool"/>
    <addaction name="menuPlot"/>
@@ -127,6 +128,11 @@
   <action name="actionArm_Control">
    <property name="text">
     <string>Arm Control</string>
+   </property>
+  </action>
+  <action name="actionReconfig_Control">
+   <property name="text">
+    <string>Reconfig Control</string>
    </property>
   </action>
  </widget>
