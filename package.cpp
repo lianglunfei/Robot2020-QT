@@ -97,6 +97,9 @@ bool Package::packOperate(unsigned int id, double data, int type)
     case PROTOCOL_TYPE_CAL:
         Protocol::packCal(packData, data);
         break;
+    case PROTOCOL_TYPE_FAULT:
+        Protocol::packStateFault(packData, data);
+        break;
     case PROTOCOL_TYPE_START:
         Protocol::packStart(packData, data);
         break;

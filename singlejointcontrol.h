@@ -35,6 +35,14 @@ private slots:
 
     void on_caliPushButton_clicked();
 
+    void on_faultPushButton_clicked();
+
+    void on_OpenValvePushButton_clicked();
+
+    void on_CloseValvePushButton_clicked();
+
+
+
 private:
     Ui::SingleJointControl *ui;
 

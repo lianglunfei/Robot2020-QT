@@ -17,11 +17,17 @@ public:
     static void initJoint();
     static void initMotor();
     static void initValve();
+    static void CloseValve();
     static void stopJoint();
     static void calJoint();
+    static void faultJoint();
     static void initJoint(int nodeNum);
     static void stopJoint(int nodeNum);
     static void calJoint(int nodeNum);
+    static void faultJoint(int nodeNum);
+    static void initValve(int nodeNum);
+    static void CloseValve(int nodeNum);
+
 };
 
 #endif // DRIVERS_H

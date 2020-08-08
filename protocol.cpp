@@ -255,6 +255,20 @@ void Protocol::packCloseValve(unsigned char data[], double value)
 }
 
 /**
+ * @brief 封装关闭阀门命令
+ *
+ * @param data 原始数据
+ * @param value 封装后的数据
+ */
+void Protocol::packStateFault(unsigned char data[], double value)
+{
+    (void)value;
+    data[0] = 0x6a;
+    data[7] = 0x01;
+}
+
+
+/**
  * @brief 轮子控制，暂时未启用
  * 
  * @param data 
@@ -370,7 +384,7 @@ void Protocol::packRePlatformSpeed(unsigned char data[],unsigned int currentId, 
 }
 
 /**
- * @brief 可重构平台直流电机位置控制
+ * @brief 可重构平台直流电机位置控制  未启用
  *
  * @param data
  * @param value

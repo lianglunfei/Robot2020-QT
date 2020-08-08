@@ -27,6 +27,7 @@ public:
     static void packShutDown(unsigned char data[], double value);
     static void packOpenValve(unsigned char data[], double value);
     static void packCloseValve(unsigned char data[], double value);
+    static void packStateFault(unsigned char data[], double value);
     static void packWheelReset(unsigned char data[], double value);
     static void packWheelSelect(unsigned char data[], double value);
     static void packWheelSpeed(unsigned char data[], double value);

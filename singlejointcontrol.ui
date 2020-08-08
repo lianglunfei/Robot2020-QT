@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>360</width>
-    <height>186</height>
+    <height>235</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -293,6 +293,31 @@
       <widget class="QPushButton" name="emergencyStopPushButton">
        <property name="text">
         <string>急停(ALT+A)</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QPushButton" name="faultPushButton">
+       <property name="text">
+        <string>状态清除</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="OpenValvePushButton">
+       <property name="text">
+        <string>开电磁阀</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="CloseValvePushButton">
+       <property name="text">
+        <string>关电磁阀</string>
        </property>
       </widget>
      </item>

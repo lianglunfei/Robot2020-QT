@@ -70,6 +70,49 @@ void Drivers::calJoint(int nodeNum)
 }
 
 /**
+ * @brief 清除单个电机状态信息
+ *
+ * @param nodeNum
+ */
+void Drivers::faultJoint(int nodeNum)
+{
+    if (nodeNum < 0 || nodeNum > NODE_NUM - 1)
+        return;
+    double value = 0; //数据位为0
+    Package::packOperate(globalData->sendId[nodeNum], value, PROTOCOL_TYPE_FAULT);
+}
+
+/**
+ * @brief 打开单个电机电磁阀
+ *
+ * @param nodeNum
+ */
+void Drivers::initValve(int nodeNum)
+{
+    if (nodeNum < 0 || nodeNum > NODE_NUM - 1)
+        return;
+    double value = 0; //数据位为0
+    Package::packOperate(globalData->sendId[nodeNum], value, PROTOCOL_TYPE_OPENVALVE);
+}
+
+
+/**
+ * @brief 关闭单个电机电磁阀
+ *
+ * @param nodeNum
+ */
+void Drivers::CloseValve(int nodeNum)
+{
+    if (nodeNum < 0 || nodeNum > NODE_NUM - 1)
+        return;
+    double value = 0; //数据位为0
+    Package::packOperate(globalData->sendId[nodeNum], value, PROTOCOL_TYPE_CLOSEVALVE);
+}
+
+
+
+
+/**
  * @brief 初始化所有电机
  * ! 如果是旧的关节，需要进行校准操作
  */
@@ -106,14 +149,25 @@ void Drivers::initMotor()
 }
 
 /**
- * @brief 打开电磁阀
- * ! 如果是旧的关节，需要进行校准操作
+ * @brief 打开所有电磁阀
+ *
  */
 void Drivers::initValve()
 {
     double value[NODE_NUM] = {0}; //数据位为0
     Package::packOperateMulti(globalData->sendId, value, NODE_NUM, PROTOCOL_TYPE_OPENVALVE);
 }
+
+/**
+ * @brief 关闭所有电磁阀
+ *
+ */
+void Drivers::CloseValve()
+{
+    double value[NODE_NUM] = {0}; //数据位为0
+    Package::packOperateMulti(globalData->sendId, value, NODE_NUM, PROTOCOL_TYPE_CLOSEVALVE);
+}
+
 
 /**
  * @brief 停止所有电机

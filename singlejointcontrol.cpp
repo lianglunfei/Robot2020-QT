@@ -74,6 +74,39 @@ void SingleJointControl::on_caliPushButton_clicked()
 }
 
 /**
+ * @brief 电机状态位清除
+ *
+ */
+void SingleJointControl::on_faultPushButton_clicked()
+{
+    Drivers::faultJoint(ui->comboBox->currentIndex());
+}
+
+
+/**
+ * @brief 打开关节电磁阀
+ *
+ */
+void SingleJointControl::on_OpenValvePushButton_clicked()
+{
+    Drivers::initValve(ui->comboBox->currentIndex());
+}
+
+
+/**
+ * @brief 关闭关节电磁阀
+ *
+ */
+void SingleJointControl::on_CloseValvePushButton_clicked()
+{
+    Drivers::CloseValve(ui->comboBox->currentIndex());
+}
+
+
+
+
+
+/**
  * @brief 紧急停止快捷键ALT+A
  * 
  * @param e 
