@@ -282,7 +282,7 @@ void ReconfigControl::setSpeedButtonReleased()
     }
     else if (btn == findChild<QPushButton *>(SpeedSetButton[1]))
     {
-        ReconfigSpeedControl(0);
+        ReconfigAct(Reconfig_Stop);
     }
 }
 
@@ -347,7 +347,7 @@ void ReconfigControl::on_ReOpenpushButton_pressed()
 
 void ReconfigControl::on_ReOpenpushButton_released()
 {
-    PlatformAct(Reconfig_Stop);
+    ReconfigAct(Reconfig_Stop);
 }
 
 
@@ -362,7 +362,7 @@ void ReconfigControl::on_ReClosepushButton_pressed()
 
 void ReconfigControl::on_ReClosepushButton_released()
 {
-    PlatformAct(Reconfig_Stop);
+    ReconfigAct(Reconfig_Stop);
 }
 
 /**

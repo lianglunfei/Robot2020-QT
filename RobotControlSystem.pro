@@ -142,6 +142,7 @@ win32: LIBS += -lDbgHelp
 #release在最后link时默认有"-s”参数，表示"Omit all symbol information from the output file"，因此要去掉该参数
 #QMAKE_LFLAGS_RELEASE -= -Wl,-s
 #QMAKE_LFLAGS_RELEASE += -Wl,-Map,RobotControlSystem.map
+QMAKE_LFLAGS += -no-pie
 
 DISTFILES += \
     qml/xboxControllerBack.png \

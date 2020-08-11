@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     m_joint_widget = new JointPlot;
 
     //Initialize joint speed measure window
-    // m_joint_speed_meas_widget = new JointSpeedMeas;
+    m_joint_speed_meas_widget = new JointSpeedMeas;
 
     //Initialize terminal window
     m_terminal = new Terminal;
@@ -117,7 +117,7 @@ void MainWindow::connectInit()
     connect(ui->actionDisconnect_CAN, &QAction::triggered, m_connect_dialog, &ConnectDialog::disconnect);
     connect(ui->actionTerminal, &QAction::triggered, m_terminal, &Terminal::show);
     connect(ui->actionJoint, &QAction::triggered, m_joint_widget, &JointPlot::show);
-    // connect(ui->actionJoint_Speed_Meas, &QAction::triggered, m_joint_speed_meas_widget, &JointSpeedMeas::show);
+    connect(ui->actionJoint_Speed_Meas, &QAction::triggered, m_joint_speed_meas_widget, &JointSpeedMeas::show);
     connect(ui->actionJoint_Control, &QAction::triggered, m_joint_control, &JointControl::show);
     connect(ui->actionSingle_Joint_Control, &QAction::triggered, m_single_joint_control, &SingleJointControl::show);
     connect(ui->actionOffline_Control, &QAction::triggered, m_offline_control, &OfflineControl::show);
