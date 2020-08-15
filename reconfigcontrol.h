@@ -9,7 +9,7 @@
 #define RE_NODE_NUM 2
 #define RE_SPEED_MIN -80000
 #define RE_SPEED_MAX 80000
-#define RE_POSITION_MIN 0
+#define RE_POSITION_MIN -3600
 #define RE_POSITION_MAX 3600
 
 namespace Ui
@@ -90,6 +90,7 @@ private slots:
     void ForwardReversalPushbtnClicked();
 
     void on_PlatformReModepushButton_clicked();
+    void on_PlatformPosModepushButton_clicked();
 
     void on_PlatformFWpushButton_pressed();
     void on_PlatformFWpushButton_released();

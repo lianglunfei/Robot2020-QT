@@ -13,6 +13,7 @@
 #define ECODER_MAX (DRIVE_NEW > 0 ? 524288 : 262144) //2^19
 #define POS_MAX (ECODER_MAX / 360.0)
 #define SPEED_COEFFICIENT (65536.0 / 4000.0)
+#define PlatPosition_COEFFICIENT 111000         //丝扛走1mm的脉冲数
 
 Protocol::Protocol()
 {
@@ -392,15 +393,31 @@ void Protocol::packRePlatformSpeed(unsigned char data[],unsigned int currentId, 
 void Protocol::packRePlatformPos(unsigned char data[],unsigned int currentId, double value)
 {
     int readValue;
-    readValue = static_cast<int>(value + 0.5);
+    if (value > 0)
+     {
+        readValue = static_cast<int>(value * PlatPosition_COEFFICIENT + 0.5);
+        data[4] = readValue % 256;
+        data[5] = (readValue % 65536) / 256;
+        data[6] = (readValue % 4294967296) / 65536;
+        data[7] = readValue / 4294967296;
+     }
+    else
+     {
+        readValue = static_cast<int>(value * PlatPosition_COEFFICIENT - 0.5);
+        data[4] = (readValue % 256);
+        data[5] = ((readValue % 65536) / 256) - 1;
+        data[6] = ((readValue % 4294967296) / 65536) - 1;
+        data[7] = (readValue / 4294967296) - 1;
+     }
+
     data[0] = 0x08;
     data[1] = currentId;
-    data[2] = 0x90;
+    data[2] = 0x9A;
     data[3] = 0x00;
-    data[4] = 0x00;
-    data[5] = 0x00;
-    data[6] = 0x00;
-    data[7] = 0x00;
+
+
+
+
 }
 
 /**

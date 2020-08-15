@@ -39,12 +39,14 @@
 #define Reconfig_Open 3
 #define Reconfig_Close 4
 #define Reconfig_Stop  7
+#define Platform_RePositionMode 8
 
 
-unsigned char FlatformSpeedMode[8]  = {0x08,0x11,0x2A,0x00,0x00,0x00,0x00,0x00};
-unsigned char ForwardCode[8]        = {0x08,0x11,0x90,0x00,0x88,0x13,0x00,0x00};
-unsigned char BackwardCode[8]       = {0x08,0x11,0x90,0x00,0x78,0xEC,0xFF,0xFF};
-unsigned char FlatformStopCode[8]   = {0x08,0x11,0x90,0x00,0x00,0x00,0x00,0x00};
+unsigned char FlatformSpeedMode[8]      = {0x08,0x11,0x2A,0x00,0x00,0x00,0x00,0x00};
+unsigned char FlatformRePositionMode[8] = {0x08,0x11,0x2A,0x00,0x00,0x01,0x00,0x00};
+unsigned char ForwardCode[8]            = {0x08,0x11,0x90,0x00,0x88,0x13,0x00,0x00};
+unsigned char BackwardCode[8]           = {0x08,0x11,0x90,0x00,0x78,0xEC,0xFF,0xFF};
+unsigned char FlatformStopCode[8]       = {0x08,0x11,0x90,0x00,0x00,0x00,0x00,0x00};
 
 unsigned char OpenCode[8]       = {0x9A,0x00,0x00,0xC8,0x00,0x00,0x00,0x01};
 unsigned char CloseCode[8]      = {0x9A,0xFF,0x00,0xC8,0x00,0x00,0x00,0x01};
@@ -306,6 +308,16 @@ void ReconfigControl::on_PlatformReModepushButton_clicked()
 }
 
 
+/**
+ * @brief 位置模式
+ *
+ */
+void ReconfigControl::on_PlatformPosModepushButton_clicked()
+{
+
+    PlatformAct(Platform_RePositionMode);
+}
+
 
 /**
  * @brief 平台前进
@@ -378,6 +390,9 @@ void ReconfigControl::PlatformAct(int action)
         case Platform_SpeedMode://平台速度模式
             ret = DataTransmission::CANTransmit(globalData->connectType, FlatformSpeedMode, currentId);
             break;
+        case Platform_RePositionMode://平台位置模式
+            ret = DataTransmission::CANTransmit(globalData->connectType, FlatformRePositionMode, currentId);
+        break;
         case Platform_Forward://平台前进
             ret = DataTransmission::CANTransmit(globalData->connectType, ForwardCode, currentId);
             break;
@@ -480,12 +495,12 @@ void ReconfigControl::PlatformSpeedControl(double SpeedData)
  *
  */
 
-void ReconfigControl::PlatformPositionControl(double SpeedData)
+void ReconfigControl::PlatformPositionControl(double RePositionData)
 {
     unsigned int currentId = 17;
     int ret;
     unsigned char packData[8] = {0};
-    Protocol::packRePlatformPos(packData,currentId,SpeedData);
+    Protocol::packRePlatformPos(packData,currentId,RePositionData);
     ret = DataTransmission::CANTransmit(globalData->connectType, packData, currentId);
 
 
@@ -542,12 +557,12 @@ void ReconfigControl::ReconfigSpeedControl(double SpeedData)
  * @brief 可重构臂杆位置控制
  *
  */
-void ReconfigControl::ReconfigPositionControl(double SpeedData)
+void ReconfigControl::ReconfigPositionControl(double AbsPositionData)
 {
     unsigned int currentId = 18;
     int ret;
     unsigned char packData[8] = {0};
-    Protocol::packReconfigPos(packData,SpeedData);
+    Protocol::packReconfigPos(packData,AbsPositionData);
     ret = DataTransmission::CANTransmit(globalData->connectType, packData, currentId);
 
 

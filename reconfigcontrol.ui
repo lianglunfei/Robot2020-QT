@@ -469,9 +469,9 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>30</x>
      <y>240</y>
-     <width>302</width>
+     <width>340</width>
      <height>33</height>
     </rect>
    </property>
@@ -480,6 +480,13 @@
      <widget class="QPushButton" name="PlatformReModepushButton">
       <property name="text">
        <string>速度模式</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="PlatformPosModepushButton">
+      <property name="text">
+       <string>位置模式</string>
       </property>
      </widget>
     </item>
